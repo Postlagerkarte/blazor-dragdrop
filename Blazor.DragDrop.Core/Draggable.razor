@@ -6,7 +6,7 @@
 @{
     @if (DragDropService.HasDraggablesForElement(_draggableId))
     {
-        <div draggable="true" @ondragstart="Ondragstart" @ondragend="OndragEnd" class="draggable @IsInTransit?'draggable-intransit':''" @ondragenter="Ondragenter">
+        <div draggable="true" ondragover="event.preventDefault();" @ondragstart="Ondragstart" @ondragend="OndragEnd" class="draggable @IsInTransit?'draggable-intransit':''" @ondragenter="Ondragenter">
             @ChildContent
         </div>
     }
