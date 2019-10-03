@@ -27,18 +27,23 @@ namespace Blazor.DragDrop.Core
         }
 
         public void DropActiveItem(int targetId)
-        {
+        { 
+            Debug.WriteLine($"DropActiveItem: target {targetId} , source: {_activeItem.SourceDropzoneId} , draggable-id: {_activeItem.DraggableId}");
 
-            Debug.WriteLine($"DropActiveItem: target {targetId} , source: {_activeItem.SourceId} , draggable-id: {_activeItem.DraggableId}");
-            //var activeRenderFragment = _dic.Values.SelectMany(i => i).Single(x => x.DraggableId == _activeItem.DraggableId);
-            //_dic[_activeItem.SourceId].Remove(activeRenderFragment);
-            //_dic[targetId].Add(activeRenderFragment);
-            //StateHasChanged?.Invoke();
+            //if same dropzone - do nothing;
+            if (targetId == _activeItem.SourceDropzoneId) return;
+
+            //remove from sourcedropzone and add to target dropzone:
+            var activeDataItem = _dic[_activeItem.SourceDropzoneId].Single(x => x.DraggableId == _activeItem.DraggableId);
+            _dic[_activeItem.SourceDropzoneId].Remove(activeDataItem);
+            _dic[targetId].Add(activeDataItem);
+
+            StateHasChanged?.Invoke();
         }
 
         public void SetActiveItem(int sourceId, int draggableId)
         {
-            var activeItem = new ActiveItem() { SourceId = sourceId, DraggableId = draggableId };
+            var activeItem = new ActiveItem() { SourceDropzoneId = sourceId, DraggableId = draggableId };
             Debug.WriteLine($"SetActiveItem: SourceId: {sourceId}, DraggableId: {draggableId}");
             _activeItem = activeItem;
         }
@@ -72,17 +77,17 @@ namespace Blazor.DragDrop.Core
             else
             {
                 Debug.WriteLine($"Register: dropzone {dropzoneId}");
-                _dic.Add(dropzoneId, null);
+                _dic.Add(dropzoneId, new List<DataItem>());
                 _dropzones.Add(dropzoneId);
             }
         }
 
         public void RegisterDraggableForDropzone(int dropzoneId, DataItem dataItem)
         {
-            if(_dic[dropzoneId] == null)
-            {
-                _dic[dropzoneId] = new List<DataItem>();
-            }
+            //if(_dic[dropzoneId] == null)
+            //{
+            //    _dic[dropzoneId] = new List<DataItem>();
+            //}
 
             _dic[dropzoneId].Add(dataItem);
 

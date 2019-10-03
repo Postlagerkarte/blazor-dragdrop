@@ -6,7 +6,7 @@ namespace Blazor.DragDrop.Core
 {
     public class ActiveItem
     {
-        public int SourceId { get; set; }
+        public int SourceDropzoneId { get; set; }
         public int DraggableId { get; set; }
     }
 }
