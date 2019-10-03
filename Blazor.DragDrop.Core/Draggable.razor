@@ -1,0 +1,68 @@
+﻿@inject DragDropService DragDropService
+@using System.Diagnostics
+
+
+
+@{
+    @if (DragDropService.HasDraggablesForElement(_draggableId))
+    {
+        <div draggable="true" @ondragstart="Ondragstart" @ondragend="OndragEnd" class="draggable @IsInTransit?'draggable-intransit':''" @ondragenter="Ondragenter">
+            @ChildContent
+        </div>
+    }
+}
+
+
+@code {
+
+    private int _draggableId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _draggableId = DragDropService.GetId();
+
+        var dataItem = new DataItem() { DraggableId = _draggableId, RenderFragement = ChildContent };
+
+        if(Dropzone != null)
+        {
+            Dropzone.RegisterDraggable(dataItem);
+        }
+        else
+        {
+            DragDropService.RegisterDraggable(_draggableId, dataItem);
+        }
+
+
+        DragDropService.StateHasChanged += async () =>
+        {
+            await InvokeAsync(() => StateHasChanged());
+        };
+
+    }
+
+    private bool IsInTransit { get; set; }
+
+    private void OndragEnd()
+    {
+        IsInTransit = false;
+    }
+
+
+    private void Ondragstart()
+    {
+        IsInTransit = true;
+        DragDropService.SetActiveItem(_draggableId, _draggableId);
+    }
+
+    private void Ondragenter()
+    {
+        DragDropService.Swap(_draggableId);
+    }
+
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter] Dropzone Dropzone { get; set; }
+
+}

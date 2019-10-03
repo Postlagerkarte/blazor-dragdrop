@@ -1,0 +1,94 @@
+﻿@inject DragDropService DragDropService;
+
+
+<div ondragover="event.preventDefault();" @ondrop="Ondrop" class="dropzone">
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+    @{
+        if (DragDropService.HasDraggablesForElement(_dropzoneId))
+        {
+            <p>render new draggable(s) (inside dropzone): @_dropzoneId</p>
+
+            foreach (var frag in DragDropService.GetRenderFragments(_dropzoneId))
+            {
+                <div draggable="true" @ondragstart="()=>OnDragStart(frag.DraggableId)" @ondragover="OnDragOver" 
+                     @ondragenter="()=>OnDragEnter(frag.DraggableId)" 
+                     @ondragend="() =>OnDragEnd(frag.DraggableId)" 
+                     class=@GetClasses(frag.DraggableId)>
+                    @frag.RenderFragement
+                </div>
+            }
+        }
+    }
+
+</div>
+
+
+
+@code {
+
+    private int _inTransitId;
+
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private int _dropzoneId { get; set; }
+
+    private string GetClasses(int draggableId)
+    {
+        if(_inTransitId == draggableId)
+        {
+            return $"draggable{draggableId} draggable-intransit";
+        }
+
+        return "draggable"+draggableId;
+    }
+
+    private void OnDragStart(int draggableId)
+    {
+        DragDropService.SetActiveItem(_dropzoneId, draggableId);
+
+        _inTransitId = draggableId;
+    }
+
+    private void OnDragEnd(int draggableId)
+    {
+        _inTransitId = 0;
+    }
+
+
+    private void OnDragEnter(int draggableId)
+    {
+        DragDropService.Swap(draggableId);
+    }
+
+    protected override void OnInitialized()
+    {
+        _dropzoneId = DragDropService.GetId();
+
+        DragDropService.RegisterDropzone(_dropzoneId);
+
+        DragDropService.StateHasChanged += async () =>
+        {
+            await InvokeAsync(() => StateHasChanged());
+        };
+    }
+
+    private void Ondrop()
+    {
+        DragDropService.DropActiveItem(_dropzoneId);
+    }
+
+    private void OnDragOver()
+    {
+
+    }
+
+    public void RegisterDraggable(DataItem dataItem)
+    {
+        DragDropService.RegisterDraggableForDropzone(_dropzoneId, dataItem);
+    }
+
+}
