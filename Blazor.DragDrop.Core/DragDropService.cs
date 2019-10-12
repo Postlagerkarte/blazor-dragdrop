@@ -16,6 +16,8 @@ namespace Blazor.DragDrop.Core
         private int _idDraggableCounter = 0;
         private DraggableItem _activeItem;
 
+        public bool EnableDebug => false;
+
         public DraggableItem ActiveItem {
             get => _activeItem;
             set
