@@ -88,7 +88,7 @@ namespace Blazor.DragDrop.Core
             ActiveItem = _dic[dropzoneId].Single(x => x.Id == draggableId);
         }
 
-        public void Swap(int draggableId)
+        public void SwapOrInsert(int draggableId)
         {
             Debug.WriteLine($"Swap Request: draggedover id: {draggableId}");
 

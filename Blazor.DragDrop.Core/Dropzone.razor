@@ -81,17 +81,7 @@
 
 
         // swap position
-        DragDropService.Swap(draggableId);
-
-
-
-        //var draggedOverDropzoneId = DragDropService.GetDropzoneForDraggableId(draggableId);
-
-        //if(DragDropService.ActiveItem.DropzoneId != draggedOverDropzoneId)
-        //{
-        //    DragDropService.AssignNewDropzoneToActiveItem(draggedOverDropzoneId, draggableId);
-        //}
-
+        DragDropService.SwapOrInsert(draggableId);
 
     }
 
@@ -110,11 +100,6 @@
     private void Ondrop()
     {
         DragDropService.DropActiveItem(_dropzoneId, null);
-    }
-
-    private void OnDragOver()
-    {
-
     }
 
     public void RegisterDraggable(DraggableItem dataItem)
