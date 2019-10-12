@@ -2,7 +2,7 @@
 @using System.Diagnostics;
 
 
-<div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" @ondrop="Ondrop" class="dropzone">
+<div ondragover="event.preventDefault();"  ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="dropzone">
     <CascadingValue Value="this">
         @ChildContent
     </CascadingValue>

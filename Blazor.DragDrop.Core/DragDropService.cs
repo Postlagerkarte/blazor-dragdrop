@@ -79,21 +79,13 @@ namespace Blazor.DragDrop.Core
             //assign new dropzone
             ActiveItem.DropzoneId = targetDropzoneId;
 
-        
-
             ActiveItem = null;
-
-          
-
 
         }
 
         public void SetActiveItem(int dropzoneId, int draggableId)
         {
             ActiveItem = _dic[dropzoneId].Single(x => x.Id == draggableId);
-
-      
-
         }
 
         public void Swap(int draggableId)
