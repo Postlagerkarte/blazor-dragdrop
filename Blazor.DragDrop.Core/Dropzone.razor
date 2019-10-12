@@ -1,4 +1,5 @@
 ﻿@inject DragDropService DragDropService;
+@using System.Diagnostics;
 
 
 <div ondragover="event.preventDefault();" ondragenter="event.preventDefault();"   @ondrop="Ondrop" class="dropzone">
@@ -6,17 +7,17 @@
         @ChildContent
     </CascadingValue>
     @{
-        if (DragDropService.HasDraggablesForElement(_dropzoneId))
+        if (DragDropService.HasDraggablesForDropzone(_dropzoneId))
         {
-            <p>render new draggable(s) (inside dropzone): @_dropzoneId</p>
+            <p>render draggable(s) inside dropzone @_dropzoneId</p>
 
-            foreach (var frag in DragDropService.GetRenderFragments(_dropzoneId))
+            foreach (var frag in DragDropService.GetDraggablesForDropzone(_dropzoneId))
             {
-                <div draggable="true" @ondragstart="()=>OnDragStart(frag.DraggableId)" @ondragover="OnDragOver" 
-                     @ondragenter="()=>OnDragEnter(frag.DraggableId)" 
-                     @ondragend="() =>OnDragEnd(frag.DraggableId)" 
-                     class=@GetClasses(frag.DraggableId)>
-                    <p>@frag.DraggableId</p>
+                <div draggable="true" @ondragstart="()=>OnDragStart(frag.Id)" @ondragover="OnDragOver" 
+                     @ondragenter="()=>OnDragEnter(frag.Id)" 
+                     @ondragend="() =>OnDragEnd(frag.Id)" 
+                     class=@GetClasses(frag.Id)>
+                    <p>@frag.Id</p>
                     @frag.RenderFragement
                 </div>
             }
@@ -49,6 +50,9 @@
 
     private void OnDragStart(int draggableId)
     {
+
+        DragDropService.SupressRendering = true;
+
         DragDropService.SetActiveItem(_dropzoneId, draggableId);
 
         _inTransitId = draggableId;
@@ -56,26 +60,38 @@
 
     private void OnDragEnd(int draggableId)
     {
+        DragDropService.SupressRendering = false;
+
         _inTransitId = 0;
     }
 
 
     private void OnDragEnter(int draggableId)
     {
-        // draggables in the same dropzone should swap position
-        if(DragDropService.ActiveItem.SourceDropzoneId == DragDropService.GetDropzoneForDraggableId(draggableId))
-        {
-            DragDropService.Swap(draggableId);
-        }
-        else
-        {
-            DragDropService.DropActiveItem(_dropzoneId, draggableId);
-        }
+        //Debug.WriteLine($"OnDragEnter {draggableId}");
+
+        //if same item return
+        if (draggableId == DragDropService.ActiveItem.Id) return;
+
+
+        // swap position
+        DragDropService.Swap(draggableId);
+
+
+
+        //var draggedOverDropzoneId = DragDropService.GetDropzoneForDraggableId(draggableId);
+
+        //if(DragDropService.ActiveItem.DropzoneId != draggedOverDropzoneId)
+        //{
+        //    DragDropService.AssignNewDropzoneToActiveItem(draggedOverDropzoneId, draggableId);
+        //}
+
+
     }
 
     protected override void OnInitialized()
     {
-        _dropzoneId = DragDropService.GetId();
+        _dropzoneId = DragDropService.GetDropzoneId();
 
         DragDropService.RegisterDropzone(_dropzoneId);
 
@@ -95,9 +111,17 @@
 
     }
 
-    public void RegisterDraggable(DataItem dataItem)
+    public void RegisterDraggable(DraggableItem dataItem)
     {
-        DragDropService.RegisterDraggableForDropzone(_dropzoneId, dataItem);
+        dataItem.DropzoneId = _dropzoneId;
+
+        DragDropService.RegisterDraggableForDropzone(dataItem);
+    }
+
+    protected override bool ShouldRender()
+    {
+        //Debug.WriteLine($"Should Render {!DragDropService.IsTransitInProgess}");
+        return !DragDropService.SupressRendering;
     }
 
 }

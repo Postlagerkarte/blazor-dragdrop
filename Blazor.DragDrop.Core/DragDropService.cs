@@ -9,49 +9,73 @@ namespace Blazor.DragDrop.Core
 {
     public class DragDropService
     {
-        private readonly List<int> _dropzones = new List<int>();
+        private readonly Dictionary<int, List<DraggableItem>> _dic = new Dictionary<int, List<DraggableItem>>();
 
-        private readonly Dictionary<int, List<DataItem>> _dic = new Dictionary<int, List<DataItem>>();
+        private int _idDropzoneCounter = 0;
 
-        public ActiveItem ActiveItem { get; set; }
+        private int _idDraggableCounter = 0;
+
+        public DraggableItem ActiveItem { get; set; }
+        
+        public bool SupressRendering { get; set; }
 
         public event Action StateHasChanged;
+ 
 
-        private int _idCounter = 0;
-
-        public int GetId()
+        public int GetDropzoneId()
         {
-            _idCounter++;
-            Debug.WriteLine($"GetId: {_idCounter}");
-            return _idCounter;
+            _idDropzoneCounter++;
+            return _idDropzoneCounter;
+        }
+
+        public int GetDraggableId()
+        {
+            _idDraggableCounter++;
+            return _idDraggableCounter;
         }
 
         public void DropActiveItem(int targetDropzoneId, int? otherDraggableId)
         { 
-            Debug.WriteLine($"DropActiveItem: target {targetDropzoneId} , source: {ActiveItem.SourceDropzoneId} , draggable-id: {ActiveItem.DraggableId}");
+            Debug.WriteLine($"DropActiveItem: target {targetDropzoneId} , source: {ActiveItem.DropzoneId} , draggable-id: {ActiveItem.Id}");
 
-            //if same dropzone - do nothing;
-            if (targetDropzoneId == ActiveItem.SourceDropzoneId) return;
+            //if same dropzone - do nothing - we already swapped the items;
+            if (targetDropzoneId == ActiveItem.DropzoneId) return;
 
             //remove from sourcedropzone and add to target dropzone:
-            var activeDataItem = _dic[ActiveItem.SourceDropzoneId].Single(x => x.DraggableId == ActiveItem.DraggableId);
-            _dic[ActiveItem.SourceDropzoneId].Remove(activeDataItem);
-            var index = otherDraggableId == null ? 0 : _dic[targetDropzoneId].FindIndex(x => x.DraggableId == otherDraggableId);
+            var activeDataItem = _dic[ActiveItem.DropzoneId].Single(x => x.Id == ActiveItem.Id);
+            _dic[ActiveItem.DropzoneId].Remove(activeDataItem);
+            var index = otherDraggableId == null ? 0 : _dic[targetDropzoneId].FindIndex(x => x.Id == otherDraggableId);
             _dic[targetDropzoneId].Insert(index, (activeDataItem));
 
             StateHasChanged?.Invoke();
         }
 
-        public void SetActiveItem(int sourceId, int draggableId)
+        public void SetActiveItem(int dropzoneId, int draggableId)
         {
-            var activeItem = new ActiveItem() { SourceDropzoneId = sourceId, DraggableId = draggableId };
-            Debug.WriteLine($"SetActiveItem: SourceId: {sourceId}, DraggableId: {draggableId}");
-            ActiveItem = activeItem;
+            ActiveItem = _dic[dropzoneId].Single(x => x.Id == draggableId);
+
+            Debug.WriteLine($"Set item with {ActiveItem.Id} as active - item belongs to dropzone {ActiveItem.DropzoneId}");
+           
         }
 
         public int GetDropzoneForDraggableId(int draggableId)
         {
-            return _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.DraggableId == draggableId)).Key;
+            return _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggableId)).Key;
+        }
+
+        public void AssignNewDropzoneToActiveItem(int targetDropzoneId, int? otherDraggableId)
+        {
+            Debug.WriteLine($"Assign new Dropzone to Active Item");
+
+
+            //remove from sourcedropzone and add to target dropzone:
+            var activeDataItem = _dic[ActiveItem.DropzoneId].Single(x => x.Id == ActiveItem.Id);
+            _dic[ActiveItem.DropzoneId].Remove(activeDataItem);
+            var index = otherDraggableId == null ? 0 : _dic[targetDropzoneId].FindIndex(x => x.Id == otherDraggableId);
+            _dic[targetDropzoneId].Insert(index, (activeDataItem));
+
+            StateHasChanged?.Invoke();
+
         }
 
         public void Swap(int draggableId)
@@ -59,81 +83,61 @@ namespace Blazor.DragDrop.Core
             Debug.WriteLine($"Swap Request: draggedover id: {draggableId}");
 
             //find bucket
-            var bucket = _dic.Where(v=>v.Value != null).Single(x => x.Value.Any(y => y.DraggableId == draggableId)).Value;
+            var bucket = _dic.Where(v=>v.Value != null).Single(x => x.Value.Any(y => y.Id == draggableId)).Value;
 
             //swap
-            var dataItemForDraggedOverItem = bucket.Single(x=>x.DraggableId == draggableId);
+            var dataItemForDraggedOverItem = bucket.Single(x=>x.Id == draggableId);
             var indexForDraggedOverItem = bucket.IndexOf(dataItemForDraggedOverItem);
 
-            var dataItemForActiveItem = bucket.Single(x => x.DraggableId == ActiveItem.DraggableId);
+            var dataItemForActiveItem = bucket.Single(x => x.Id == ActiveItem.Id);
             var indexForActiveItem = bucket.IndexOf(dataItemForActiveItem);
 
             bucket[indexForDraggedOverItem] = dataItemForActiveItem;
             bucket[indexForActiveItem] = dataItemForDraggedOverItem;
 
+
+            SupressRendering = false;
+
             StateHasChanged?.Invoke();
+
+            SupressRendering = true;
+
+
         }
 
         public void RegisterDropzone(int dropzoneId)
         {
-            if (_dic.ContainsKey(dropzoneId))
-            {
-                return;
-            }
-            else
-            {
-                Debug.WriteLine($"Register: dropzone {dropzoneId}");
-                _dic.Add(dropzoneId, new List<DataItem>());
-                _dropzones.Add(dropzoneId);
-            }
+            Debug.WriteLine($"Register dropzone {dropzoneId}");
+
+            _dic.Add(dropzoneId, new List<DraggableItem>());
         }
 
-        public void RegisterDraggableForDropzone(int dropzoneId, DataItem dataItem)
+        public void RegisterDraggableForDropzone(DraggableItem dataItem)
         {
-            //if(_dic[dropzoneId] == null)
-            //{
-            //    _dic[dropzoneId] = new List<DataItem>();
-            //}
+            Debug.WriteLine($"Register draggable {dataItem.Id} for dropzone {dataItem.DropzoneId}");
 
-            _dic[dropzoneId].Add(dataItem);
+            _dic[dataItem.DropzoneId].Add(dataItem);
 
             StateHasChanged?.Invoke();
         }
 
-         public void RegisterDraggable(int draggableId, DataItem dataItem)
-        {
 
-            if (dataItem == null)
-            {
-                if (_dic.ContainsKey(draggableId)) throw new InvalidOperationException("registering draggable twice - will  clear list");
-                Debug.WriteLine($"Register: Init {draggableId} - Null DataItem");
-                _dic.Add(draggableId, new List<DataItem>());
-            }
-            else
-            {
-                if (_dic.ContainsKey(draggableId))
-                {
-                    return;
-                }
-                else
-                {
-                    Debug.WriteLine($"Register: DataItem {dataItem.DraggableId} to belong to element {draggableId}");
-                    _dic.Add(draggableId, new List<DataItem>() { dataItem });
-                }
-            }
-        }
-
-        public bool HasDraggablesForElement(int elementId)
+        public bool HasDraggablesForDropzone(int dropzoneId)
         {
-            var result = _dic.ContainsKey(elementId) && _dic[elementId]?.Count > 0;
-            Debug.WriteLine($"ShouldRenderDraggable for {elementId} -> {result}");
+            var result = _dic.ContainsKey(dropzoneId) && _dic[dropzoneId]?.Count > 0;
+            
+            Debug.WriteLine($"HasDraggablesForDropzone {dropzoneId} returns {result} with draggable count: {_dic[dropzoneId]?.Count}");
+
             return result;
         }
 
-        public List<DataItem> GetRenderFragments(int id)
+        public List<DraggableItem> GetDraggablesForDropzone(int id)
         {
-            Debug.WriteLine($"GetRenderFragments for {id}");
-            return _dic[id];
+            var draggables = _dic[id];
+
+            Debug.WriteLine($"GetDraggablesForDropzone {id} returned {draggables.Count} items");
+            
+            return draggables;
         }
     }
 }

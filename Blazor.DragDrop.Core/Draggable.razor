@@ -2,35 +2,20 @@
 @using System.Diagnostics
 
 
-
-@{
-    @if (DragDropService.HasDraggablesForElement(_draggableId))
-    {
-        <div draggable="true" ondragover="event.preventDefault();" @ondragstart="Ondragstart" @ondragend="OndragEnd" class="draggable @IsInTransit?'draggable-intransit':''" @ondragenter="Ondragenter">
-            @ChildContent
-        </div>
-    }
-}
-
-
 @code {
 
-    private int _draggableId { get; set; }
+    private int _id { get; set; }
+
+    private bool _IsInTransit;
 
     protected override void OnInitialized()
     {
-        _draggableId = DragDropService.GetId();
+        _id = DragDropService.GetDraggableId();
 
-        var dataItem = new DataItem() { DraggableId = _draggableId, RenderFragement = ChildContent };
+        var dataItem = new DraggableItem() { Id = _id, RenderFragement = ChildContent };
 
-        if(Dropzone != null)
-        {
-            Dropzone.RegisterDraggable(dataItem);
-        }
-        else
-        {
-            DragDropService.RegisterDraggable(_draggableId, dataItem);
-        }
+
+        Dropzone.RegisterDraggable(dataItem);
 
 
         DragDropService.StateHasChanged += async () =>
@@ -40,29 +25,11 @@
 
     }
 
-    private bool IsInTransit { get; set; }
-
-    private void OndragEnd()
-    {
-        IsInTransit = false;
-    }
-
-
-    private void Ondragstart()
-    {
-        IsInTransit = true;
-        DragDropService.SetActiveItem(_draggableId, _draggableId);
-    }
-
-    private void Ondragenter()
-    {
-        DragDropService.Swap(_draggableId);
-    }
-
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     [CascadingParameter] Dropzone Dropzone { get; set; }
+
 
 }

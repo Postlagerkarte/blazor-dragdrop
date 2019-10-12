@@ -5,10 +5,12 @@ using System.Text;
 
 namespace Blazor.DragDrop.Core
 {
-    public class DataItem
+    public class DraggableItem
     {
         public RenderFragment RenderFragement { get; set; }
 
-        public int DraggableId { get; set; }
+        public int Id { get; set; }
+
+        public int DropzoneId { get; set; }
     }
 }
