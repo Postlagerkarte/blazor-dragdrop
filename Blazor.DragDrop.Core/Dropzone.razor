@@ -2,22 +2,28 @@
 @using System.Diagnostics;
 
 
-<div ondragover="event.preventDefault();" ondragenter="event.preventDefault();"   @ondrop="Ondrop" class="dropzone">
+<div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" @ondrop="Ondrop" class="dropzone">
     <CascadingValue Value="this">
         @ChildContent
     </CascadingValue>
     @{
         if (DragDropService.HasDraggablesForDropzone(_dropzoneId))
         {
-            <p>render draggable(s) inside dropzone @_dropzoneId</p>
+            @if (DragDropService.EnableDebug)
+            {
+                <p>render draggable(s) inside dropzone @_dropzoneId</p>
+            }
 
             foreach (var frag in DragDropService.GetDraggablesForDropzone(_dropzoneId))
             {
-                <div draggable="true" @ondragstart="()=>OnDragStart(frag.Id)" @ondragover="OnDragOver" 
-                     @ondragenter="()=>OnDragEnter(frag.Id)" 
-                     @ondragend="() =>OnDragEnd(frag.Id)" 
+                <div draggable="true" @ondragstart="()=>OnDragStart(frag.Id)" @ondragover="OnDragOver"
+                     @ondragenter="()=>OnDragEnter(frag.Id)"
+                     @ondragend="() =>OnDragEnd(frag.Id)"
                      class=@GetClasses(frag.Id)>
+                    @if (DragDropService.EnableDebug)
+                    {
                     <p>@frag.Id</p>
+                    }
                     @frag.RenderFragement
                 </div>
             }
@@ -25,7 +31,6 @@
     }
 
 </div>
-
 
 
 @code {
@@ -38,12 +43,12 @@
 
     private string GetClasses(int draggableId)
     {
-        if(DragDropService.ActiveItem?.Id == draggableId)
+        if (DragDropService.ActiveItem?.Id == draggableId)
         {
             return $"draggable{draggableId} draggable-intransit";
         }
 
-        return "draggable"+draggableId;
+        return "draggable" + draggableId;
     }
 
     private void OnDragStart(int draggableId)
@@ -122,7 +127,7 @@
     protected override bool ShouldRender()
     {
         //Debug.WriteLine($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem}");
-        
+
         return !DragDropService.SupressRendering;
     }
 
