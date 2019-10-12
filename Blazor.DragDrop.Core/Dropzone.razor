@@ -1,7 +1,7 @@
 ﻿@inject DragDropService DragDropService;
 
 
-<div ondragover="event.preventDefault();" @ondrop="Ondrop" class="dropzone">
+<div ondragover="event.preventDefault();" ondragenter="event.preventDefault();"   @ondrop="Ondrop" class="dropzone">
     <CascadingValue Value="this">
         @ChildContent
     </CascadingValue>
@@ -16,6 +16,7 @@
                      @ondragenter="()=>OnDragEnter(frag.DraggableId)" 
                      @ondragend="() =>OnDragEnd(frag.DraggableId)" 
                      class=@GetClasses(frag.DraggableId)>
+                    <p>@frag.DraggableId</p>
                     @frag.RenderFragement
                 </div>
             }
@@ -61,7 +62,15 @@
 
     private void OnDragEnter(int draggableId)
     {
-        DragDropService.Swap(draggableId);
+        // draggables in the same dropzone should swap position
+        if(DragDropService.ActiveItem.SourceDropzoneId == DragDropService.GetDropzoneForDraggableId(draggableId))
+        {
+            DragDropService.Swap(draggableId);
+        }
+        else
+        {
+            DragDropService.DropActiveItem(_dropzoneId, draggableId);
+        }
     }
 
     protected override void OnInitialized()
@@ -78,7 +87,7 @@
 
     private void Ondrop()
     {
-        DragDropService.DropActiveItem(_dropzoneId);
+        DragDropService.DropActiveItem(_dropzoneId, null);
     }
 
     private void OnDragOver()

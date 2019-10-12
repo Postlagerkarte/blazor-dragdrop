@@ -13,7 +13,7 @@ namespace Blazor.DragDrop.Core
 
         private readonly Dictionary<int, List<DataItem>> _dic = new Dictionary<int, List<DataItem>>();
 
-        private ActiveItem _activeItem;
+        public ActiveItem ActiveItem { get; set; }
 
         public event Action StateHasChanged;
 
@@ -26,17 +26,18 @@ namespace Blazor.DragDrop.Core
             return _idCounter;
         }
 
-        public void DropActiveItem(int targetId)
+        public void DropActiveItem(int targetDropzoneId, int? otherDraggableId)
         { 
-            Debug.WriteLine($"DropActiveItem: target {targetId} , source: {_activeItem.SourceDropzoneId} , draggable-id: {_activeItem.DraggableId}");
+            Debug.WriteLine($"DropActiveItem: target {targetDropzoneId} , source: {ActiveItem.SourceDropzoneId} , draggable-id: {ActiveItem.DraggableId}");
 
             //if same dropzone - do nothing;
-            if (targetId == _activeItem.SourceDropzoneId) return;
+            if (targetDropzoneId == ActiveItem.SourceDropzoneId) return;
 
             //remove from sourcedropzone and add to target dropzone:
-            var activeDataItem = _dic[_activeItem.SourceDropzoneId].Single(x => x.DraggableId == _activeItem.DraggableId);
-            _dic[_activeItem.SourceDropzoneId].Remove(activeDataItem);
-            _dic[targetId].Add(activeDataItem);
+            var activeDataItem = _dic[ActiveItem.SourceDropzoneId].Single(x => x.DraggableId == ActiveItem.DraggableId);
+            _dic[ActiveItem.SourceDropzoneId].Remove(activeDataItem);
+            var index = otherDraggableId == null ? 0 : _dic[targetDropzoneId].FindIndex(x => x.DraggableId == otherDraggableId);
+            _dic[targetDropzoneId].Insert(index, (activeDataItem));
 
             StateHasChanged?.Invoke();
         }
@@ -45,7 +46,12 @@ namespace Blazor.DragDrop.Core
         {
             var activeItem = new ActiveItem() { SourceDropzoneId = sourceId, DraggableId = draggableId };
             Debug.WriteLine($"SetActiveItem: SourceId: {sourceId}, DraggableId: {draggableId}");
-            _activeItem = activeItem;
+            ActiveItem = activeItem;
+        }
+
+        public int GetDropzoneForDraggableId(int draggableId)
+        {
+            return _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.DraggableId == draggableId)).Key;
         }
 
         public void Swap(int draggableId)
@@ -59,7 +65,7 @@ namespace Blazor.DragDrop.Core
             var dataItemForDraggedOverItem = bucket.Single(x=>x.DraggableId == draggableId);
             var indexForDraggedOverItem = bucket.IndexOf(dataItemForDraggedOverItem);
 
-            var dataItemForActiveItem = bucket.Single(x => x.DraggableId == _activeItem.DraggableId);
+            var dataItemForActiveItem = bucket.Single(x => x.DraggableId == ActiveItem.DraggableId);
             var indexForActiveItem = bucket.IndexOf(dataItemForActiveItem);
 
             bucket[indexForDraggedOverItem] = dataItemForActiveItem;
