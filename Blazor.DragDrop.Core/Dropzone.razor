@@ -30,8 +30,6 @@
 
 @code {
 
-    private int _inTransitId;
-
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
@@ -40,7 +38,7 @@
 
     private string GetClasses(int draggableId)
     {
-        if(_inTransitId == draggableId)
+        if(DragDropService.ActiveItem?.Id == draggableId)
         {
             return $"draggable{draggableId} draggable-intransit";
         }
@@ -55,14 +53,17 @@
 
         DragDropService.SetActiveItem(_dropzoneId, draggableId);
 
-        _inTransitId = draggableId;
+        Debug.WriteLine($"{draggableId} is in transit");
     }
 
     private void OnDragEnd(int draggableId)
     {
         DragDropService.SupressRendering = false;
 
-        _inTransitId = 0;
+        DragDropService.ActiveItem = null;
+
+        Debug.WriteLine($"{draggableId} not in transit anymore");
+
     }
 
 
@@ -120,7 +121,8 @@
 
     protected override bool ShouldRender()
     {
-        //Debug.WriteLine($"Should Render {!DragDropService.IsTransitInProgess}");
+        //Debug.WriteLine($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem}");
+        
         return !DragDropService.SupressRendering;
     }
 
