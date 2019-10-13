@@ -9,12 +9,6 @@ namespace Blazor.DragDrop.Test
         [Fact]
         public void Test1()
         {
-            var dr1 = new Draggable();
-
-            
-
-            
-
         }
     }
 }
