@@ -1,4 +1,4 @@
-﻿@inject DragDropService DragDropService;
+﻿
 @using System.Diagnostics;
 
 
@@ -35,6 +35,11 @@
 
 @code {
 
+
+    [Inject]
+    public DragDropServiceFactory DragDropServiceFactory { get; set; }
+
+    public DragDropService DragDropService => DragDropServiceFactory.Get();
 
     [Parameter]
     public int? MaxItems { get; set; }

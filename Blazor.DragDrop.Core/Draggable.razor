@@ -1,8 +1,13 @@
-﻿@inject DragDropService DragDropService
+﻿
 @using System.Diagnostics
 
 
 @code {
+
+    [Inject]
+    public DragDropServiceFactory DragDropServiceFactory { get; set; }
+
+    public DragDropService DragDropService => DragDropServiceFactory.Get();
 
     private int _id { get; set; }
 
