@@ -12,5 +12,7 @@ namespace Blazor.DragDrop.Core
         public int Id { get; set; }
 
         public int DropzoneId { get; set; }
+
+        public dynamic Foo { get; set; }
     }
 }

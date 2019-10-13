@@ -1,0 +1,68 @@
+﻿@page "/malefemale"
+@using Blazor.DragDrop.Core;
+
+    <div class="row">
+
+        <div class="col">
+
+            <div class="row m-4">
+
+                <Dropzone>
+                    <Draggable Foo='new { Gender = "Male", Age = 13 }'>
+                        <h4 class="badge-success mt-4">Erik, Age 13</h4>
+                    </Draggable>
+
+                    <Draggable Foo='new { Gender = "Female" , Age = 22}'>
+                        <h4 class="badge-success mt-4">Susanne, Age 22</h4>
+                    </Draggable>
+
+                    <Draggable Foo='new { Gender = "Male" , Age = 40}'>
+                        <h4 class="badge-success mt-4">Lewis , Age 40</h4>
+                    </Draggable>
+                </Dropzone>
+
+
+
+            </div>
+
+        </div>
+
+        <div class="col ml-4">
+            For boys only
+            <div class="row male mt-1">
+
+                <Dropzone Accepts='(d) => d.Gender == "Male"'>
+
+                </Dropzone>
+
+            </div>
+
+            For girls only
+            <div class="row female mt-1">
+                <Dropzone Accepts='(d) => d.Gender == "Female"'>
+
+                </Dropzone>
+            </div>
+
+            For adults only
+            <div class="row adults mt-1">
+                <Dropzone Accepts=AcceptedOnDropzone>
+
+                </Dropzone>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+@code {
+
+    public Func<dynamic, bool> AcceptedOnDropzone = (d) =>
+    {
+        return d.Age > 21;
+        
+    };
+
+}

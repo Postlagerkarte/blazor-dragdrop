@@ -16,7 +16,7 @@
 
             foreach (var frag in DragDropService.GetDraggablesForDropzone(_dropzoneId))
             {
-                <div draggable="true" @ondragstart="()=>OnDragStart(frag.Id)" @ondragover="OnDragOver"
+                <div draggable="true" @ondragstart="()=>OnDragStart(frag.Id)"
                      @ondragenter="()=>OnDragEnter(frag.Id)"
                      @ondragend="() =>OnDragEnd(frag.Id)"
                      class=@GetClasses(frag.Id)>
@@ -35,6 +35,9 @@
 
 @code {
 
+
+    [Parameter]
+    public Func<dynamic,bool> Accepts { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
@@ -81,7 +84,7 @@
 
 
         // swap position
-        DragDropService.SwapOrInsert(draggableId);
+        DragDropService.SwapOrInsert(draggableId, Accepts);
 
     }
 
@@ -99,7 +102,11 @@
 
     private void Ondrop()
     {
-        DragDropService.DropActiveItem(_dropzoneId, null);
+        //dynamic foo = new { test = 123 };
+
+        //Debug.WriteLine(acceptResult);
+
+        DragDropService.DropActiveItem(_dropzoneId, null, Accepts);
     }
 
     public void RegisterDraggable(DraggableItem dataItem)
