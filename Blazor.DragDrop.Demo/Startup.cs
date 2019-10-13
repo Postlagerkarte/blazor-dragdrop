@@ -28,7 +28,7 @@ namespace Blazor.DragDrop.Demo
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<DragDropService>();
+            services.AddScoped<DragDropServiceFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
