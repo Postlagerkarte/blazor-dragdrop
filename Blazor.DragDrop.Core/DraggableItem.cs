@@ -13,6 +13,6 @@ namespace Blazor.DragDrop.Core
 
         public int DropzoneId { get; set; }
 
-        public dynamic Foo { get; set; }
+        public dynamic Tag { get; set; }
     }
 }

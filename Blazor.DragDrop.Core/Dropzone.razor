@@ -37,6 +37,9 @@
 
 
     [Parameter]
+    public int? MaxItems { get; set; }
+
+    [Parameter]
     public Func<dynamic,bool> Accepts { get; set; }
 
     [Parameter]
@@ -83,8 +86,7 @@
         if (draggableId == DragDropService.ActiveItem.Id) return;
 
 
-        // swap position
-        DragDropService.SwapOrInsert(draggableId, Accepts);
+        DragDropService.SwapOrInsert(draggableId);
 
     }
 
@@ -92,7 +94,13 @@
     {
         _dropzoneId = DragDropService.GetDropzoneId();
 
-        DragDropService.RegisterDropzone(_dropzoneId);
+        var options = new DropzoneOptions()
+        {
+            Accepts = Accepts,
+            MaxItems = MaxItems
+        };
+
+        DragDropService.RegisterDropzone(_dropzoneId, options);
 
         DragDropService.StateHasChanged += async () =>
         {
@@ -102,11 +110,7 @@
 
     private void Ondrop()
     {
-        //dynamic foo = new { test = 123 };
-
-        //Debug.WriteLine(acceptResult);
-
-        DragDropService.DropActiveItem(_dropzoneId, null, Accepts);
+        DragDropService.DropActiveItem(_dropzoneId);
     }
 
     public void RegisterDraggable(DraggableItem dataItem)

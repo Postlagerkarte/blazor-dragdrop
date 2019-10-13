@@ -8,15 +8,15 @@
             <div class="row m-4">
 
                 <Dropzone>
-                    <Draggable Foo='new { Gender = "Male", Age = 13 }'>
+                    <Draggable Tag='new { Gender = "Male", Age = 13 }'>
                         <h4 class="badge-success mt-4">Erik, Age 13</h4>
                     </Draggable>
 
-                    <Draggable Foo='new { Gender = "Female" , Age = 22}'>
+                    <Draggable Tag='new { Gender = "Female" , Age = 22}'>
                         <h4 class="badge-success mt-4">Susanne, Age 22</h4>
                     </Draggable>
 
-                    <Draggable Foo='new { Gender = "Male" , Age = 40}'>
+                    <Draggable Tag='new { Gender = "Male" , Age = 40}'>
                         <h4 class="badge-success mt-4">Lewis , Age 40</h4>
                     </Draggable>
                 </Dropzone>
@@ -47,6 +47,13 @@
             For adults only
             <div class="row adults mt-1">
                 <Dropzone Accepts=AcceptedOnDropzone>
+
+                </Dropzone>
+            </div>
+
+            Max 2 Items
+            <div class="row adults mt-1">
+                <Dropzone>
 
                 </Dropzone>
             </div>
