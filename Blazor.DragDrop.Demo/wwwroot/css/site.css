@@ -155,5 +155,29 @@ app {
 }
 
 .dropzone {
-    min-height:100%;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.row {
+    min-height: 200px;
+    min-width: 200px;
+}
+
+.male {
+    background-color: lightblue;
+}
+
+
+.female {
+    background-color: mistyrose;
+
+}
+
+.mixed {
+    background-color: lightgreen;
+}
+
+.adults {
+    background-color: burlywood;
 }

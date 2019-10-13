@@ -9,12 +9,30 @@ namespace Blazor.DragDrop.Core
 {
     public class DragDropService
     {
-        private readonly Dictionary<int, List<DraggableItem>> _dic = new Dictionary<int, List<DraggableItem>>();
+        private Dictionary<int, List<DraggableItem>> _dic = new Dictionary<int, List<DraggableItem>>();
 
         private int _idDropzoneCounter = 0;
 
         private int _idDraggableCounter = 0;
         private DraggableItem _activeItem;
+
+
+        private bool AcceptsElement(Func<dynamic, bool> acceptFunc)
+        {
+            bool acceptsElement = true;
+
+            if (acceptFunc != null && ActiveItem.Foo != null)
+            {
+                acceptsElement = (bool)acceptFunc(ActiveItem.Foo);
+            }
+
+            return acceptsElement;
+        }
+
+        public DragDropService()
+        {
+
+        }
 
         public bool EnableDebug => false;
 
@@ -58,12 +76,16 @@ namespace Blazor.DragDrop.Core
             return _idDraggableCounter;
         }
 
-        public void DropActiveItem(int targetDropzoneId, int? otherDraggableId)
+        public void DropActiveItem(int targetDropzoneId, int? otherDraggableId, Func<dynamic, bool> acceptsFunc)
         {
+            bool acceptsDrop = AcceptsElement(acceptsFunc);
+
+            Debug.WriteLine($"Accept drop func returns {acceptsDrop}");
+
             Debug.WriteLine($"DropActiveItem {ActiveItem.Id} on dropzone {targetDropzoneId} - sourcedropzone: {ActiveItem.DropzoneId}");
 
             //if same dropzone - do nothing - we already swapped the items;
-            if (targetDropzoneId == ActiveItem.DropzoneId)
+            if (targetDropzoneId == ActiveItem.DropzoneId || !acceptsDrop)
             {
                 ActiveItem = null;
                 return;
@@ -73,7 +95,7 @@ namespace Blazor.DragDrop.Core
             _dic[ActiveItem.DropzoneId].Remove(ActiveItem);
 
             //insert into new dropzone
-            var index = otherDraggableId == null ? 0 : _dic[targetDropzoneId].FindIndex(x => x.Id == otherDraggableId);
+            var index = otherDraggableId == null ? _dic[targetDropzoneId].Count() : _dic[targetDropzoneId].FindIndex(x => x.Id == otherDraggableId);
             _dic[targetDropzoneId].Insert(index, ActiveItem);
 
             //assign new dropzone
@@ -88,15 +110,22 @@ namespace Blazor.DragDrop.Core
             ActiveItem = _dic[dropzoneId].Single(x => x.Id == draggableId);
         }
 
-        public void SwapOrInsert(int draggableId)
+        public void SwapOrInsert(int draggedOverId, Func<dynamic, bool> acceptsFunc)
         {
-            Debug.WriteLine($"Swap Request: draggedover id: {draggableId}");
+
+            bool acceptsElement = AcceptsElement(acceptsFunc);
+
+            Debug.WriteLine($"Accept element func returns {acceptsElement}");
+
+            Debug.WriteLine($"Swap Request - Active item was dragged over item with i {draggedOverId}");
+
+            if (!acceptsElement) return;
 
             //find dropzone
-            var dropzone = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggableId)).Value;
+            var dropzone = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Value;
 
             //get dragged over item
-            var draggedOverItem = dropzone.Single(x => x.Id == draggableId);
+            var draggedOverItem = dropzone.Single(x => x.Id == draggedOverId);
 
             var indexForDraggedOverItem = dropzone.IndexOf(draggedOverItem);
 
@@ -121,13 +150,11 @@ namespace Blazor.DragDrop.Core
 
             }
 
-
             SupressRendering = false;
 
             StateHasChanged?.Invoke();
 
             SupressRendering = true;
-
 
         }
 
