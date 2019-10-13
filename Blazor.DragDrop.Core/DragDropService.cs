@@ -85,8 +85,10 @@ namespace Blazor.DragDrop.Core
 
             Debug.WriteLine($"DropActiveItem {ActiveItem.Id} on dropzone {targetDropzoneId} - sourcedropzone: {ActiveItem.DropzoneId}");
 
-            //if same dropzone - do nothing - we already swapped the items;
-            if (targetDropzoneId == ActiveItem.DropzoneId || !acceptsDrop)
+            //if same dropzone // no drop accept // max-item limit
+            if (targetDropzoneId == ActiveItem.DropzoneId ||
+                !acceptsDrop ||   
+                _dic[targetDropzoneId].Count >= _options[targetDropzoneId].MaxItems)
             {
                 ActiveItem = null;
                 return;
@@ -120,7 +122,12 @@ namespace Blazor.DragDrop.Core
 
             Debug.WriteLine($"Swap Request - Active item was dragged over item with i {draggedOverId}");
 
-            if (!AcceptsElement(dropzoneId)) return;
+            // accept-element? // max-items?
+            if (!AcceptsElement(dropzoneId) ||
+                _dic[dropzoneId].Count >= _options[dropzoneId].MaxItems)
+            {
+                return;
+            }
 
             //find dropzone
             var dropzone = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Value;
