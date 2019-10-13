@@ -12,7 +12,7 @@
     {
         _id = DragDropService.GetDraggableId();
 
-        var dataItem = new DraggableItem() { Id = _id, RenderFragement = ChildContent , Foo = Foo};
+        var dataItem = new DraggableItem() { Id = _id, RenderFragement = ChildContent , Tag = Tag};
 
 
         Dropzone.RegisterDraggable(dataItem);
@@ -32,7 +32,7 @@
     [CascadingParameter] Dropzone Dropzone { get; set; }
 
     [Parameter]
-    public dynamic Foo { get; set; }
+    public dynamic Tag { get; set; }
 
 
 }
