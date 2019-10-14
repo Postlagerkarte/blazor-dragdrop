@@ -89,12 +89,53 @@
     }
 
 
+    private int _oldDraggedOverId;
+    private double _oldY;
+    private string _oldDirection;
+
     private void OnDragEnter(int draggedOverId, DragEventArgs e)
     {
         Debug.WriteLine($"OnDragEnter raised  by element with id {draggedOverId} - X: {e.ScreenX} Y: {e.ScreenY}");
 
         //if same item return
         if (draggedOverId == DragDropService.ActiveItem.Id) return;
+
+        //if same id raising event - ignore it
+        if (draggedOverId == _oldDraggedOverId)
+        {
+            if(_oldY < e.ScreenY)
+            {
+                Debug.WriteLine($"Moving Down! OldDirection: {_oldDirection} OldX: {_oldY}, CurX: {e.ScreenY}");
+
+                if(_oldDirection == "up")
+                {
+                    Debug.WriteLine($"DirectionChanged");
+                    _oldDraggedOverId = 0;
+                }
+
+                _oldDirection = "down";
+                
+            }
+            else
+            {
+                Debug.WriteLine($"Moving Up! OldDirection: {_oldDirection} OldX: {_oldY}, CurX: {e.ScreenY}");
+
+                if(_oldDirection == "down")
+                {
+                    Debug.WriteLine($"DirectionChanged");
+                    _oldDraggedOverId = 0;
+                }
+
+                _oldDirection = "up";
+            }
+
+
+            _oldY = e.ScreenY;
+            return;
+        }
+
+        _oldDraggedOverId = draggedOverId;
+        _oldY = e.ScreenX;
 
         DragDropService.SwapOrInsert(draggedOverId);
 
@@ -120,6 +161,8 @@
 
     private void Ondrop()
     {
+        _oldDraggedOverId = 0;
+
         DragDropService.DropActiveItem(_dropzoneId);
     }
 
@@ -132,7 +175,7 @@
 
     protected override bool ShouldRender()
     {
-        Debug.WriteLine($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem}");
+        Debug.WriteLine($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem?.Id}");
 
         return !DragDropService.SupressRendering;
     }
