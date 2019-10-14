@@ -120,7 +120,7 @@ namespace Blazor.DragDrop.Core
 
             Debug.WriteLine($"Accept element func returns {AcceptsElement(dropzoneId)}");
 
-            Debug.WriteLine($"Swap Request - Active item was dragged over item with i {draggedOverId}");
+            Debug.WriteLine($"Swap Request - Active item {ActiveItem.Id} was dragged over item with id {draggedOverId}");
 
             // accept-element? // max-items?
             if (!AcceptsElement(dropzoneId) ||

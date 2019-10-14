@@ -17,7 +17,7 @@
             foreach (var frag in DragDropService.GetDraggablesForDropzone(_dropzoneId))
             {
                 <div draggable="true" @ondragstart="()=>OnDragStart(frag.Id)"
-                     @ondragenter="()=>OnDragEnter(frag.Id)"
+                     @ondragenter="(e)=>OnDragEnter(frag.Id,e)"
                      @ondragend="() =>OnDragEnd(frag.Id)"
                      class=@GetClasses(frag.Id)>
                     @if (DragDropService.EnableDebug)
@@ -83,15 +83,20 @@
     }
 
 
-    private void OnDragEnter(int draggableId)
+    private bool IsWithin(double value, double minimum, double maximum)
     {
-        //Debug.WriteLine($"OnDragEnter {draggableId}");
+        return value >= minimum && value <= maximum;
+    }
+
+
+    private void OnDragEnter(int draggedOverId, DragEventArgs e)
+    {
+        Debug.WriteLine($"OnDragEnter raised  by element with id {draggedOverId} - X: {e.ScreenX} Y: {e.ScreenY}");
 
         //if same item return
-        if (draggableId == DragDropService.ActiveItem.Id) return;
+        if (draggedOverId == DragDropService.ActiveItem.Id) return;
 
-
-        DragDropService.SwapOrInsert(draggableId);
+        DragDropService.SwapOrInsert(draggedOverId);
 
     }
 
@@ -127,7 +132,7 @@
 
     protected override bool ShouldRender()
     {
-        //Debug.WriteLine($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem}");
+        Debug.WriteLine($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem}");
 
         return !DragDropService.SupressRendering;
     }
