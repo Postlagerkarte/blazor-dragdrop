@@ -158,13 +158,14 @@ namespace Blazor.DragDrop.Core
 
             }
 
-            SupressRendering = false;
+                SupressRendering = false;
 
-            StateHasChanged?.Invoke();
+                StateHasChanged?.Invoke();
 
-            SupressRendering = true;
-
+                SupressRendering = true;
         }
+
+
 
         public void RegisterDropzone(int dropzoneId, DropzoneOptions options)
         {
