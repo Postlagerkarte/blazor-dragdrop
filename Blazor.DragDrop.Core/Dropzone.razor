@@ -2,7 +2,7 @@
 @using System.Diagnostics;
 
 
-<div ondragover="event.preventDefault();"  ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="dropzone">
+<div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="dropzone">
     <CascadingValue Value="this">
         @ChildContent
     </CascadingValue>
@@ -18,13 +18,16 @@
             {
                 <div draggable="true" @ondragstart="()=>OnDragStart(frag.Id)"
                      @ondragenter="(e)=>OnDragEnter(frag.Id,e)"
+                     @ondragleave="(e)=>OnDragLeave(frag.Id,e)"
                      @ondragend="() =>OnDragEnd(frag.Id)"
                      class=@GetClasses(frag.Id)>
                     @if (DragDropService.EnableDebug)
                     {
-                    <p>@frag.Id</p>
+                        <p>@frag.Id</p>
                     }
-                    @frag.RenderFragement
+                    <div class="@GetNoPointerClass(frag.Id)">
+                        @frag.RenderFragement
+                    </div>
                 </div>
             }
         }
@@ -45,12 +48,24 @@
     public int? MaxItems { get; set; }
 
     [Parameter]
-    public Func<dynamic,bool> Accepts { get; set; }
+    public Func<dynamic, bool> Accepts { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
     private int _dropzoneId { get; set; }
+
+    private string GetNoPointerClass(int draggableId)
+    {
+        if (_currentDraggedOverId == draggableId)
+        {
+            return "dd-no-pointer-events";
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
 
     private string GetClasses(int draggableId)
     {
@@ -89,9 +104,16 @@
     }
 
 
-    private int _oldDraggedOverId;
-    private double _oldY;
-    private string _oldDirection;
+    private void OnDragLeave(int draggedOverId, DragEventArgs e)
+    {
+        if (draggedOverId == _currentDraggedOverId)
+        {
+            _currentDraggedOverId = 0;
+        }
+    }
+
+
+    private int _currentDraggedOverId;
 
     private void OnDragEnter(int draggedOverId, DragEventArgs e)
     {
@@ -100,42 +122,7 @@
         //if same item return
         if (draggedOverId == DragDropService.ActiveItem.Id) return;
 
-        //if same id raising event - ignore it
-        if (draggedOverId == _oldDraggedOverId)
-        {
-            if(_oldY < e.ScreenY)
-            {
-                Debug.WriteLine($"Moving Down! OldDirection: {_oldDirection} OldX: {_oldY}, CurX: {e.ScreenY}");
-
-                if(_oldDirection == "up")
-                {
-                    Debug.WriteLine($"DirectionChanged");
-                    _oldDraggedOverId = 0;
-                }
-
-                _oldDirection = "down";
-                
-            }
-            else
-            {
-                Debug.WriteLine($"Moving Up! OldDirection: {_oldDirection} OldX: {_oldY}, CurX: {e.ScreenY}");
-
-                if(_oldDirection == "down")
-                {
-                    Debug.WriteLine($"DirectionChanged");
-                    _oldDraggedOverId = 0;
-                }
-
-                _oldDirection = "up";
-            }
-
-
-            _oldY = e.ScreenY;
-            return;
-        }
-
-        _oldDraggedOverId = draggedOverId;
-        _oldY = e.ScreenX;
+        _currentDraggedOverId = draggedOverId;
 
         DragDropService.SwapOrInsert(draggedOverId);
 
@@ -161,8 +148,7 @@
 
     private void Ondrop()
     {
-        _oldDraggedOverId = 0;
-
+        _currentDraggedOverId = 0;
         DragDropService.DropActiveItem(_dropzoneId);
     }
 
