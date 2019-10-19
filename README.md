@@ -1,6 +1,8 @@
 # blazor-dragdrop
 Drag and Drop Library for Blazor
 
+[![Build Status](https://postlagerkarte.visualstudio.com/DragDrop/_apis/build/status/Postlagerkarte.blazor-dragdrop?branchName=master)](https://postlagerkarte.visualstudio.com/DragDrop/_build/latest?definitionId=2&branchName=master)
+
 Demo:
 
 https://blazordragdrop.azurewebsites.net/
