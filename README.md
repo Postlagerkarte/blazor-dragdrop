@@ -7,8 +7,24 @@ Demo:
 
 https://blazordragdrop.azurewebsites.net/
 
-Create a draggable list:
+Install:
 
+Install-Package blazor-dragdrop -Version 1.0.0-alpha
+
+Usage:
+
+Add DragDropServiceFactory to your StartUp.cs under ConfigureServices
+
+```csharp
+services.AddScoped<DragDropServiceFactory>();
+```
+
+Use the Dropzone and Draggable components in your code.
+
+Example:
+
+Create a draggable list:
+```html
     <Dropzone>
         <ul class="list-group">
             <Draggable>
@@ -28,3 +44,4 @@ Create a draggable list:
             </Draggable>
         </ul>
     </Dropzone>
+```
