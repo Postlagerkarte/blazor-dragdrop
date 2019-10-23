@@ -19,7 +19,7 @@ Add DragDropServiceFactory to your StartUp.cs under ConfigureServices
 services.AddScoped<DragDropServiceFactory>();
 ```
 
-Use the Dropzone and Draggable components in your code.
+Use the <Dropzone> and <Draggable> components in your code.
 
 Example:
 
