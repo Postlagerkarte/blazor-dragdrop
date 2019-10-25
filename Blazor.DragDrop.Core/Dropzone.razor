@@ -16,7 +16,7 @@
 
             foreach (var frag in DragDropService.GetDraggablesForDropzone(_dropzoneId))
             {
-                <div draggable="true" @ondragstart="()=>OnDragStart(frag.Id)"
+                <div @key="frag" draggable="true" @ondragstart="()=>OnDragStart(frag.Id)"
                      @ondragenter="(e)=>OnDragEnter(frag.Id,e)"
                      @ondragleave="(e)=>OnDragLeave(frag.Id,e)"
                      @ondragend="() =>OnDragEnd(frag.Id)"
