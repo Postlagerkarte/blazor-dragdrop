@@ -30,6 +30,14 @@ Simple Dropzone:  (accepts all Draggables)
 </Dropzone>
 ```
 
+Only allow limited itmes in a Dropzone: (executes the give accept func before accepting the draggable)
+
+```html
+<Dropzone MaxItems="2">
+
+</Dropzone>
+```
+
 Restricted Dropzone: (executes the give accept func before accepting the draggable)
 
 ```html
