@@ -21,7 +21,38 @@ services.AddScoped<DragDropServiceFactory>();
 
 Use the ```<Dropzone>``` and ```<Draggable>``` components in your code.
 
-Example:
+------
+Simple Dropzone:  (accepts all Draggables)
+
+```html
+<Dropzone>
+
+</Dropzone>
+```
+
+Restricted Dropzone: (executes the give accept func before accepting the draggable)
+
+```html
+<Dropzone Accepts='(d) => d.Gender == "Male"'>
+
+</Dropzone>
+```
+
+Create a draggable element: (all draggable element need to be inside a dropzone)
+```html
+<Draggable>
+<li class="list-group-item">Cras justo odio</li>
+</Draggable>
+```
+
+Attach information to the draggable which is usable by the dropzone:
+```html
+<Draggable Tag='new { Gender = "Female" , Age = 22}'>
+<li class="list-group-item">Cras justo odio</li>
+</Draggable>
+```
+------
+Examples:
 
 Create a draggable list:
 ```html
@@ -46,6 +77,7 @@ Create a draggable list:
     </Dropzone>
 ```
 
+------
 Mobile Devices:
 
 The HTML 5 drag'n'drop API allows to implement drag'n'drop on most desktop browsers.
