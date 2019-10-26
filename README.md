@@ -46,7 +46,7 @@ Restricted Dropzone: (executes the give accept func before accepting the draggab
 </Dropzone>
 ```
 
-Create a draggable element: (all draggable element need to be inside a dropzone)
+Create a draggable element: (all draggable elements need to be inside a dropzone)
 ```html
 <Draggable>
 <li class="list-group-item">Cras justo odio</li>
