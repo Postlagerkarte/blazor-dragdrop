@@ -45,3 +45,26 @@ Create a draggable list:
         </ul>
     </Dropzone>
 ```
+
+Mobile Devices:
+
+The HTML 5 drag'n'drop API allows to implement drag'n'drop on most desktop browsers.
+
+Unfortunately, most mobile browsers don't support it. 
+
+You need to make use of a polyfill library, e.g. mobile-drag-drop
+
+Add this to your _host.html:
+
+```html
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+
+    <script>
+        // options are optional ;)
+        MobileDragDrop.polyfill({
+            // use this to make use of the scroll behaviour
+            dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
+        });
+    </script>
+```
