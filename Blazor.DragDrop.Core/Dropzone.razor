@@ -1,8 +1,6 @@
-﻿
-@using System.Diagnostics;
+﻿@using System.Diagnostics;
 
-
-<div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="dropzone">
+<div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="@_DropzoneClass">
     <CascadingValue Value="this">
         @ChildContent
     </CascadingValue>
@@ -25,9 +23,11 @@
                     {
                         <p>@frag.Id</p>
                     }
-                    <div class="@GetNoPointerClass(frag.Id)">
+                <div class="@GetNoPointerClass(frag.Id)">
+                    <CascadingValue Value="frag">
                         @frag.RenderFragement
-                    </div>
+                    </CascadingValue>
+                </div>
                 </div>
             }
         }
@@ -38,22 +38,78 @@
 
 @code {
 
+    private int _dropzoneId { get; set; }
+
+    private int _currentDraggedOverId;
 
     [Inject]
-    public DragDropServiceFactory DragDropServiceFactory { get; set; }
+    private DragDropServiceFactory _dragDropServiceFactory { get; set; }
 
-    public DragDropService DragDropService => DragDropServiceFactory.Get();
+    private DragDropService DragDropService => _dragDropServiceFactory.Get();
 
+    /// <summary>
+    /// Maximum Number of items which can be dropped in this dropzone. Defaults to null which means unlimited.
+    /// </summary>
     [Parameter]
     public int? MaxItems { get; set; }
 
+    /// <summary>
+    /// Indicates if dropzone item can be swapped with an item from another dropzone once MaxItem has been reached.
+    /// </summary>
+    [Parameter]
+    public bool AllowSwap { get; set; }
+
+
+    /// <summary>
+    /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted
+    /// </summary>
     [Parameter]
     public Func<dynamic, bool> Accepts { get; set; }
+
+
+    /// <summary>
+    /// Gets or set css parameters for this component
+    /// </summary>
+    [Parameter]
+    public string Class { get; set; } = "";
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    private int _dropzoneId { get; set; }
+
+    public int Id { get => _dropzoneId; }
+
+
+    /// <summary>
+    /// Registers a new draggable item for this dropzone
+    /// </summary>
+    public void RegisterDraggable(DraggableItem dataItem)
+    {
+        dataItem.DropzoneId = _dropzoneId;
+
+        DragDropService.RegisterDraggableForDropzone(dataItem);
+    }
+
+    /// <summary>
+    /// Get all draggable items for this dropzone
+    /// </summary>
+    /// <returns>List of Draggable Items</returns>
+    public List<DraggableItem> GetDraggables()
+    {
+        return DragDropService.GetDraggablesForDropzone(_dropzoneId);
+    }
+
+
+    private string fixedDropzoneClass = "dropzone";
+
+    private string _DropzoneClass
+    {
+        get
+        {
+            return $"{fixedDropzoneClass} {Class}";
+        }
+    }
+
 
     private string GetNoPointerClass(int draggableId)
     {
@@ -71,10 +127,15 @@
     {
         if (DragDropService.ActiveItem?.Id == draggableId)
         {
-            return $"draggable{draggableId} draggable-intransit";
+            return $"draggable draggable-intransit";
         }
 
-        return "draggable" + draggableId;
+        if (draggableId == _currentDraggedOverId)
+        {
+            return $"draggable draggable-over";
+        }
+
+        return "draggable";
     }
 
     private void OnDragStart(int draggableId)
@@ -97,13 +158,6 @@
 
     }
 
-
-    private bool IsWithin(double value, double minimum, double maximum)
-    {
-        return value >= minimum && value <= maximum;
-    }
-
-
     private void OnDragLeave(int draggedOverId, DragEventArgs e)
     {
         if (draggedOverId == _currentDraggedOverId)
@@ -111,9 +165,6 @@
             _currentDraggedOverId = 0;
         }
     }
-
-
-    private int _currentDraggedOverId;
 
     private void OnDragEnter(int draggedOverId, DragEventArgs e)
     {
@@ -135,7 +186,8 @@
         var options = new DropzoneOptions()
         {
             Accepts = Accepts,
-            MaxItems = MaxItems
+            MaxItems = MaxItems,
+            AllowSwap = AllowSwap
         };
 
         DragDropService.RegisterDropzone(_dropzoneId, options);
@@ -152,12 +204,6 @@
         DragDropService.DropActiveItem(_dropzoneId);
     }
 
-    public void RegisterDraggable(DraggableItem dataItem)
-    {
-        dataItem.DropzoneId = _dropzoneId;
-
-        DragDropService.RegisterDraggableForDropzone(dataItem);
-    }
 
     protected override bool ShouldRender()
     {

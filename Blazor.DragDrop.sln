@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.DragDrop.Demo", "Bla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.DragDrop.Core", "Blazor.DragDrop.Core\Blazor.DragDrop.Core.csproj", "{12A2DA4C-970D-434A-81E8-63C951849663}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.DragDrop.Test", "Blazor.DragDrop.Test\Blazor.DragDrop.Test.csproj", "{57A06C8E-BF76-4ED3-A2D7-6BB099519005}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,18 +41,6 @@ Global
 		{12A2DA4C-970D-434A-81E8-63C951849663}.Release|x64.Build.0 = Release|Any CPU
 		{12A2DA4C-970D-434A-81E8-63C951849663}.Release|x86.ActiveCfg = Release|Any CPU
 		{12A2DA4C-970D-434A-81E8-63C951849663}.Release|x86.Build.0 = Release|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Debug|x64.Build.0 = Debug|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Debug|x86.Build.0 = Debug|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Release|x64.ActiveCfg = Release|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Release|x64.Build.0 = Release|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Release|x86.ActiveCfg = Release|Any CPU
-		{57A06C8E-BF76-4ED3-A2D7-6BB099519005}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
