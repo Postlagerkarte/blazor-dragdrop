@@ -21,7 +21,46 @@ services.AddScoped<DragDropServiceFactory>();
 
 Use the ```<Dropzone>``` and ```<Draggable>``` components in your code.
 
-Example:
+------
+Simple Dropzone:  (accepts all Draggables)
+
+```html
+<Dropzone>
+
+</Dropzone>
+```
+
+Only allow limited items in a Dropzone: (executes the give accept func before accepting the draggable)
+
+```html
+<Dropzone MaxItems="2">
+
+</Dropzone>
+```
+
+Restricted Dropzone: (executes the give accept func before accepting the draggable)
+
+```html
+<Dropzone Accepts='(d) => d.Gender == "Male"'>
+
+</Dropzone>
+```
+
+Create a draggable element: (all draggable elements need to be inside a dropzone)
+```html
+<Draggable>
+<li class="list-group-item">Cras justo odio</li>
+</Draggable>
+```
+
+Attach information to the draggable which is usable by the dropzone:
+```html
+<Draggable Tag='new { Gender = "Female" , Age = 22}'>
+<li class="list-group-item">Cras justo odio</li>
+</Draggable>
+```
+------
+Examples:
 
 Create a draggable list:
 ```html
@@ -44,4 +83,28 @@ Create a draggable list:
             </Draggable>
         </ul>
     </Dropzone>
+```
+
+------
+Mobile Devices:
+
+The HTML 5 drag'n'drop API allows to implement drag'n'drop on most desktop browsers.
+
+Unfortunately, most mobile browsers don't support it. 
+
+You need to make use of a polyfill library, e.g. mobile-drag-drop
+
+Add this to your _host.html:
+
+```html
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
+    <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+
+    <script>
+        // options are optional ;)
+        MobileDragDrop.polyfill({
+            // use this to make use of the scroll behaviour
+            dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
+        });
+    </script>
 ```
