@@ -94,10 +94,10 @@ namespace Blazor.DragDrop.Core
                 return;
             }
 
-            //remove from sourcedropzone 
+            //remove active item from sourcedropzone 
             _dic[ActiveItem.DropzoneId].Remove(ActiveItem);
 
-            //insert into new dropzone
+            //insert active into new dropzone
             var index = _dic[targetDropzoneId].Count();
             _dic[targetDropzoneId].Insert(index, ActiveItem);
 
@@ -106,6 +106,13 @@ namespace Blazor.DragDrop.Core
 
             ActiveItem = null;
 
+        }
+
+
+        public int GetOrderPosition(int dropzoneId, int draggableId)
+        {
+            var item = _dic[dropzoneId].Single(x => x.Id == draggableId);
+            return _dic[dropzoneId].IndexOf(item);
         }
 
         public void SetActiveItem(int dropzoneId, int draggableId)
@@ -150,6 +157,7 @@ namespace Blazor.DragDrop.Core
                 var indexForActiveItem = dropzone.IndexOf(ActiveItem);
 
                 dropzone[indexForDraggedOverItem] = ActiveItem;
+
                 dropzone[indexForActiveItem] = draggedOverItem;
             }
             else // different dropzone

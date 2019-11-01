@@ -1,0 +1,13 @@
+﻿@inject IJSRuntime JSRuntime;
+<pre><code class="html">@ChildContent</code></pre>
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeAsync<object>("Highlight");
+    }
+}

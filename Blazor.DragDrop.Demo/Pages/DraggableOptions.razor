@@ -1,0 +1,108 @@
+﻿@page "/DraggableOptions"
+@using Blazor.DragDrop.Core
+
+
+
+<div class="text-center">
+    <div class="badge-light">made with ❤️ and <a href="https://github.com/Postlagerkarte/blazor-dragdrop">blazor-dragdrop library</a> </div>
+</div>
+<hr />
+
+<div id="main" class="container-fluid">
+
+    <h5>Allow dragging: </h5>
+    <EditForm Model="this">
+
+        <div class="row">
+            <ol>
+                <li>
+                    Item <InputCheckbox @bind-Value="Item1"></InputCheckbox>
+                </li>
+                <li>
+                    Item <InputCheckbox @bind-Value="Item2"></InputCheckbox>
+                </li>
+                <li>
+                    Item <InputCheckbox @bind-Value="Item3"></InputCheckbox>
+                </li>
+                <li>
+                    Item <InputCheckbox @bind-Value="Item4"></InputCheckbox>
+                </li>
+            </ol>
+        </div>
+
+    </EditForm>
+
+    <Dropzone class="row">
+        <Draggable Name="Item1" AllowDrag="(d) => AllowDrag(d)">
+            <div class="m-2 col column-style">
+                Item 1
+            </div>
+        </Draggable>
+        <Draggable  Name="Item2" AllowDrag="(d) => AllowDrag(d)">
+            <div class="m-2 col column-style">
+                Item 2
+            </div>
+        </Draggable>
+        <Draggable Name="Item3" AllowDrag="(d) => AllowDrag(d)">
+            <div class="m-2 col column-style">
+                Item 3
+            </div>
+        </Draggable>
+        <Draggable Name="Item4" AllowDrag="(d) => AllowDrag(d)">
+            <div class="m-2 col column-style">
+                Item 4
+            </div>
+        </Draggable>
+    </Dropzone>
+
+    <hr />
+    <h5>Code:</h5>
+
+    <DisplayCode>&lt;Dropzone class=&quot;row&quot;&gt;<br />    &lt;Draggable Name=&quot;Item1&quot; AllowDrag=&quot;(d) =&gt; AllowDrag(d)&quot;&gt;<br />        &lt;div class=&quot;m-2 col column-style&quot;&gt;<br />            Item 1<br />        &lt;/div&gt;<br />    &lt;/Draggable&gt;<br />    &lt;Draggable  Name=&quot;Item2&quot; AllowDrag=&quot;(d) =&gt; AllowDrag(d)&quot;&gt;<br />        &lt;div class=&quot;m-2 col column-style&quot;&gt;<br />            Item 2<br />        &lt;/div&gt;<br />    &lt;/Draggable&gt;<br />    &lt;Draggable Name=&quot;Item3&quot; AllowDrag=&quot;(d) =&gt; AllowDrag(d)&quot;&gt;<br />        &lt;div class=&quot;m-2 col column-style&quot;&gt;<br />            Item 3<br />        &lt;/div&gt;<br />    &lt;/Draggable&gt;<br />    &lt;Draggable Name=&quot;Item4&quot; AllowDrag=&quot;(d) =&gt; AllowDrag(d)&quot;&gt;<br />        &lt;div class=&quot;m-2 col column-style&quot;&gt;<br />            Item 4<br />        &lt;/div&gt;<br />    &lt;/Draggable&gt;<br />&lt;/Dropzone&gt;</DisplayCode>
+
+    <DisplayCode>@@code{<br /><br />    private Dictionary&lt;string, bool&gt; _allowed =<br />            new Dictionary&lt;string, bool&gt;() { { &quot;Item1&quot;, true }, { &quot;Item2&quot;, true }, { &quot;Item3&quot;, true }, { &quot;Item4&quot;, true } };<br /><br />    public bool AllowDrag(DraggableItem item)<br />    {<br />        if (item == null) return true;<br /><br />        return _allowed[item.Name];<br />    }<br />}</DisplayCode>
+    
+</div>
+
+@code{
+
+    private Dictionary<string, bool> _allowed =
+            new Dictionary<string, bool>() { { "Item1", true }, { "Item2", true }, { "Item3", true }, { "Item4", true } };
+
+    public bool AllowDrag(DraggableItem item)
+    {
+        if (item == null) return true;
+
+        return _allowed[item.Name];
+    }
+
+    private void SetAllowed(string name, bool value)
+    {
+        _allowed[name] = value;
+        StateHasChanged();
+    }
+
+    public bool Item1
+    {
+        get => _allowed["Item1"];
+        set => SetAllowed("Item1", value);
+    }
+
+    public bool Item2
+    {
+        get => _allowed["Item2"];
+        set => SetAllowed("Item2", value);
+    }
+
+    public bool Item3
+    {
+        get => _allowed["Item3"];
+        set => SetAllowed("Item3", value);
+    }
+
+    public bool Item4
+    {
+        get => _allowed["Item4"];
+        set => SetAllowed("Item4", value);
+    }
+}

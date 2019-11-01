@@ -1,39 +1,50 @@
 ﻿@using System.Diagnostics;
 
-<div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="@_DropzoneClass">
-    <CascadingValue Value="this">
-        @ChildContent
-    </CascadingValue>
-    @{
-        if (DragDropService.HasDraggablesForDropzone(_dropzoneId))
-        {
-            @if (DragDropService.EnableDebug)
+    <div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="@_DropzoneClass">
+        <CascadingValue Value="this">
+            @ChildContent
+        </CascadingValue>
+        @{
+            if (DragDropService.HasDraggablesForDropzone(_dropzoneId))
             {
-                <p>render draggable(s) inside dropzone @_dropzoneId</p>
-            }
+                @if (DragDropService.EnableDebug)
+                {
+                    <p>render draggable(s) inside dropzone @_dropzoneId</p>
+                }
 
-            foreach (var frag in DragDropService.GetDraggablesForDropzone(_dropzoneId))
-            {
-                <div @key="frag" draggable="true" @ondragstart="()=>OnDragStart(frag.Id)"
-                     @ondragenter="(e)=>OnDragEnter(frag.Id,e)"
-                     @ondragleave="(e)=>OnDragLeave(frag.Id,e)"
-                     @ondragend="() =>OnDragEnd(frag.Id)"
-                     class=@GetClasses(frag.Id)>
-                    @if (DragDropService.EnableDebug)
+                foreach (var frag in DragDropService.GetDraggablesForDropzone(_dropzoneId))
+                {
+                    if (AllowDrag(frag.Id)) // allow dragging
                     {
-                        <p>@frag.Id</p>
+                        <div @key="frag" draggable="true" @ondragstart="()=>OnDragStart(frag.Id)"
+                             @ondragenter="(e)=>OnDragEnter(frag.Id,e)"
+                             @ondragleave="(e)=>OnDragLeave(frag.Id,e)"
+                             @ondragend="() =>OnDragEnd(frag.Id)"
+                             class=@GetClasses(frag.Id)>
+                            @if (DragDropService.EnableDebug)
+                            {
+                                <p>@frag.Id</p>
+                            }
+                            <div class="@GetNoPointerClass(frag.Id)">
+                                <CascadingValue Value="frag">
+                                    @frag.RenderFragement(frag)
+                                </CascadingValue>
+                            </div>
+                        </div>
                     }
-                <div class="@GetNoPointerClass(frag.Id)">
-                    <CascadingValue Value="frag">
-                        @frag.RenderFragement
-                    </CascadingValue>
-                </div>
-                </div>
+                    else // not allowing dragging
+                    {
+                        <div class=@GetClasses(frag.Id)>
+                            <CascadingValue Value="frag">
+                                @frag.RenderFragement(frag)
+                            </CascadingValue>
+                        </div>
+                    }
+                }
             }
         }
-    }
 
-</div>
+    </div>
 
 
 @code {
@@ -110,6 +121,21 @@
         }
     }
 
+    private bool AllowDrag(int draggableId)
+    {
+        var draggedItem = DragDropService.GetDraggablesForDropzone(_dropzoneId).Single(x => x.Id == draggableId);
+
+        if(draggedItem.AllowDrag != null)
+        {
+            return draggedItem.AllowDrag(draggedItem);
+        }
+        else
+        {
+            return true;
+        }
+
+    }
+
 
     private string GetNoPointerClass(int draggableId)
     {
@@ -135,11 +161,20 @@
             return $"draggable draggable-over";
         }
 
+        if (!AllowDrag(draggableId))
+        {
+            return $"draggable draggable-disabled";
+        }
+
         return "draggable";
     }
 
     private void OnDragStart(int draggableId)
     {
+
+        var dragedItem = DragDropService.GetDraggablesForDropzone(_dropzoneId).Single(x=> x.Id == draggableId);
+
+        if (dragedItem.AllowDrag != null && !dragedItem.AllowDrag(dragedItem.Tag)) return;
 
         DragDropService.SupressRendering = true;
 
@@ -150,9 +185,10 @@
 
     private void OnDragEnd(int draggableId)
     {
-        DragDropService.SupressRendering = false;
 
         DragDropService.ActiveItem = null;
+
+        DragDropService.SupressRendering = false;
 
         Debug.WriteLine($"{draggableId} not in transit anymore");
 
@@ -169,6 +205,9 @@
     private void OnDragEnter(int draggedOverId, DragEventArgs e)
     {
         Debug.WriteLine($"OnDragEnter raised  by element with id {draggedOverId} - X: {e.ScreenX} Y: {e.ScreenY}");
+
+        //no active item - probably something was dragged is not a draggable 
+        if (DragDropService.ActiveItem == null) return;
 
         //if same item return
         if (draggedOverId == DragDropService.ActiveItem.Id) return;
@@ -201,6 +240,10 @@
     private void Ondrop()
     {
         _currentDraggedOverId = 0;
+        
+        //no active item - probably something was dragged is not a draggable 
+        if (DragDropService.ActiveItem == null) return;
+
         DragDropService.DropActiveItem(_dropzoneId);
     }
 

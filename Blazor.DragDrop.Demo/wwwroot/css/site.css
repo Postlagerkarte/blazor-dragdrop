@@ -149,9 +149,12 @@ app {
     }
 }
 
+.draggable-disabled{
+    border: 1px dashed;
+}
 
-.draggable-intransit{
-    opacity:0.2;
+.draggable-intransit {
+    opacity: 0.2;
 }
 
 .dropzone {
