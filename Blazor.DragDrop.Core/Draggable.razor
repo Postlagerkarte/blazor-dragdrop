@@ -1,6 +1,4 @@
-﻿
-@using System.Diagnostics
-
+﻿@using System.Diagnostics
 
 @code {
 
@@ -20,7 +18,14 @@
 
         _id = DragDropService.GetDraggableId();
 
-        var dataItem = new DraggableItem() { Id = _id, RenderFragement = ChildContent , Tag = Tag};
+        var dataItem = new DraggableItem(DragDropService)
+        { 
+            Id = _id,
+            RenderFragement = ChildContent,
+            Tag = Tag,
+            AllowDrag = AllowDrag,
+            Name = Name
+        };
 
         Dropzone.RegisterDraggable(dataItem);
 
@@ -33,12 +38,23 @@
 
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment<DraggableItem> ChildContent { get; set; }
 
     [CascadingParameter] Dropzone Dropzone { get; set; }
 
     [Parameter]
     public dynamic Tag { get; set; }
 
+    /// <summary>
+    /// Allows to pass a delegate which determines if element can be dragged
+    /// </summary>
+    [Parameter]
+    public Func<DraggableItem, bool> AllowDrag { get; set; }
+
+    /// <summary>
+    /// Get or sets a name for this draggable
+    /// </summary>
+    [Parameter]
+    public string Name { get; set; }
 
 }

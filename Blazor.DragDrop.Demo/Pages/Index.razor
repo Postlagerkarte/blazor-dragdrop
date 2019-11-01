@@ -1,58 +1,33 @@
 ﻿@page "/"
-@using Blazor.DragDrop.Core
-@using System.Dynamic;
-@inject IJSRuntime JSRuntime;
-
+@using Blazor.DragDrop.Core;
 
 <div class="text-center">
-    <h1 class="display-4">Drag Drop Demo</h1>
     <div class="badge-light">made with ❤️ and <a href="https://github.com/Postlagerkarte/blazor-dragdrop">blazor-dragdrop library</a> </div>
-
 </div>
 <hr />
 
 <div id="main" class="container-fluid">
-
-    <Dropzone class="row">
-        <Draggable>
-            <div class="m-2 col column-style">
-                Drag 1
-            </div>
-        </Draggable>
-        <Draggable>
-            <div class="m-2 col column-style">
-                Drag 2
-            </div>
-        </Draggable>
-        <Draggable>
-            <div class="m-2 col column-style">
-                Drag 3
-            </div>
-        </Draggable>
-        <Draggable>
-            <div class="m-2 col column-style">
-                Drag 4
-            </div>
-        </Draggable>
-    </Dropzone>
-
-    <hr />
-
-    <div class="text-left">
-        <pre>
-        <code class="html">
-&lt;Dropzone&nbsp;class=&quot;row&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;class=&quot;m-2&nbsp;col&nbsp;column-style&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag&nbsp;1<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;class=&quot;m-2&nbsp;col&nbsp;column-style&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag&nbsp;2<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;class=&quot;m-2&nbsp;col&nbsp;column-style&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag&nbsp;3<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;class=&quot;m-2&nbsp;col&nbsp;column-style&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag&nbsp;4<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Draggable&gt;<br />&lt;/Dropzone&gt;</code></pre>
-        <pre><code class="css">
-                <br />.draggable-intransit{<br />&nbsp;&nbsp;&nbsp;&nbsp;opacity:0.2;<br />}<br /><br />.dropzone&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;min-height:&nbsp;100%;<br />&nbsp;&nbsp;&nbsp;&nbsp;min-width:&nbsp;100%;<br />}<br /><br />.column-style&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;height:&nbsp;150px;<br />&nbsp;&nbsp;&nbsp;&nbsp;width:&nbsp;150px;<br />&nbsp;&nbsp;&nbsp;&nbsp;border:&nbsp;2px&nbsp;solid&nbsp;#666666;<br />&nbsp;&nbsp;&nbsp;&nbsp;background-color:&nbsp;#ccc;<br />}
-            </code>
-        </pre>
-    </div>
-
+    <p>Drag the list items:</p>
+    <ul>
+        <Dropzone>
+            <Draggable>
+                <li class="list-group-item">Cras justo odio (order-pos: @context.OrderPosition)</li>
+            </Draggable>
+            <Draggable>
+                <li class="list-group-item">Dapibus ac facilisis in (order-pos: @context.OrderPosition)</li>
+            </Draggable>
+            <Draggable>
+                <li class="list-group-item">Morbi leo risus (order-pos: @context.OrderPosition)</li>
+            </Draggable>
+            <Draggable>
+                <li class="list-group-item">Porta ac consectetur ac (order-pos: @context.OrderPosition)</li>
+            </Draggable>
+            <Draggable>
+                <li class="list-group-item">Vestibulum at eros (order-pos: @context.OrderPosition)</li>
+            </Draggable>
+        </Dropzone>
+    </ul>
 </div>
-
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await JSRuntime.InvokeAsync<object>("Highlight");
-    }
-}
+<hr />
+<h5>Code:</h5>
+<DisplayCode>&lt;ul&gt;<br />    &lt;Dropzone&gt;<br />        &lt;Draggable&gt;<br />            &lt;li class=&quot;list-group-item&quot;&gt;Cras justo odio (order-pos: @@context.OrderPosition)&lt;/li&gt;<br />        &lt;/Draggable&gt;<br />        &lt;Draggable&gt;<br />            &lt;li class=&quot;list-group-item&quot;&gt;Dapibus ac facilisis in (order-pos: @@context.OrderPosition)&lt;/li&gt;<br />        &lt;/Draggable&gt;<br />        &lt;Draggable&gt;<br />            &lt;li class=&quot;list-group-item&quot;&gt;Morbi leo risus (order-pos: @@context.OrderPosition)&lt;/li&gt;<br />        &lt;/Draggable&gt;<br />        &lt;Draggable&gt;<br />            &lt;li class=&quot;list-group-item&quot;&gt;Porta ac consectetur ac (order-pos: @@context.OrderPosition)&lt;/li&gt;<br />        &lt;/Draggable&gt;<br />        &lt;Draggable&gt;<br />            &lt;li class=&quot;list-group-item&quot;&gt;Vestibulum at eros (order-pos: @@context.OrderPosition)&lt;/li&gt;<br />        &lt;/Draggable&gt;<br />    &lt;/Dropzone&gt;<br />&lt;/ul&gt;</DisplayCode>
