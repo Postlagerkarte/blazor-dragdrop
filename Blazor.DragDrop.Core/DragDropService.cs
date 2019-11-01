@@ -9,7 +9,7 @@ namespace Blazor.DragDrop.Core
 {
     public class DragDropService
     {
-        private Dictionary<int, DropzoneOptions> _options = new Dictionary<int, DropzoneOptions>();
+        private Dictionary<int, DropzoneOptions> _dropzoneOptions = new Dictionary<int, DropzoneOptions>();
         private Dictionary<int, List<DraggableItem>> _dic = new Dictionary<int, List<DraggableItem>>();
 
         private int _idDropzoneCounter = 0;
@@ -22,9 +22,9 @@ namespace Blazor.DragDrop.Core
         {
             bool acceptsElement = true;
 
-            if (_options[dropzoneId].Accepts != null && ActiveItem.Tag != null)
+            if (_dropzoneOptions[dropzoneId].Accepts != null && ActiveItem.Tag != null)
             {
-                acceptsElement = (bool)_options[dropzoneId].Accepts(ActiveItem.Tag);
+                acceptsElement = (bool)_dropzoneOptions[dropzoneId].Accepts(ActiveItem.Tag);
             }
 
             return acceptsElement;
@@ -88,7 +88,7 @@ namespace Blazor.DragDrop.Core
             //if same dropzone // no drop accept // max-item limit
             if (targetDropzoneId == ActiveItem.DropzoneId ||
                 !acceptsDrop ||   
-                _dic[targetDropzoneId].Count >= _options[targetDropzoneId].MaxItems)
+                _dic[targetDropzoneId].Count >= _dropzoneOptions[targetDropzoneId].MaxItems)
             {
                 ActiveItem = null;
                 return;
@@ -122,12 +122,19 @@ namespace Blazor.DragDrop.Core
 
             Debug.WriteLine($"Swap Request - Active item {ActiveItem.Id} was dragged over item with id {draggedOverId}");
 
-            // accept-element? // max-items?
-            if (!AcceptsElement(dropzoneId) ||
-                _dic[dropzoneId].Count >= _options[dropzoneId].MaxItems)
+            // execute accept delegate 
+            if (!AcceptsElement(dropzoneId))
             {
                 return;
             }
+
+            //check if max items
+            if (_dic[dropzoneId].Count >= _dropzoneOptions[dropzoneId].MaxItems && 
+                !_dropzoneOptions[dropzoneId].AllowSwap)
+            {
+                return;
+            }
+
 
             //find dropzone
             var dropzone = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Value;
@@ -147,14 +154,28 @@ namespace Blazor.DragDrop.Core
             }
             else // different dropzone
             {
+                var activeItemDropzone = ActiveItem.DropzoneId;
+
                 //remove from old dropzone
-                _dic[ActiveItem.DropzoneId].Remove(ActiveItem);
+                _dic[activeItemDropzone].Remove(ActiveItem);
 
                 //assign correct dropzone
                 ActiveItem.DropzoneId = draggedOverItem.DropzoneId;
 
                 //insert into new dropzone
                 _dic[ActiveItem.DropzoneId].Insert(indexForDraggedOverItem, ActiveItem);
+
+                if(_dropzoneOptions[dropzoneId].AllowSwap)
+                {
+                    //remove draggedover item from old dropzone
+                    _dic[draggedOverItem.DropzoneId].Remove(draggedOverItem);
+
+                    //assign new dropzone to dragged over item
+                    draggedOverItem.DropzoneId = activeItemDropzone;
+
+                    //insert into other dropzone
+                    _dic[activeItemDropzone].Insert(0, draggedOverItem);
+                }
 
             }
 
@@ -172,7 +193,7 @@ namespace Blazor.DragDrop.Core
             Debug.WriteLine($"Register dropzone {dropzoneId}");
 
             _dic.Add(dropzoneId, new List<DraggableItem>());
-            _options.Add(dropzoneId, options);
+            _dropzoneOptions.Add(dropzoneId, options);
         }
 
         public void RegisterDraggableForDropzone(DraggableItem dataItem)

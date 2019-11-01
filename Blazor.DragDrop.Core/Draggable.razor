@@ -15,13 +15,14 @@
 
     protected override void OnInitialized()
     {
+
+        if (Dropzone == null) throw new InvalidOperationException("Draggables must be inside a dropzone. Put a <dropzone> </dropzone> tag around them.");
+
         _id = DragDropService.GetDraggableId();
 
         var dataItem = new DraggableItem() { Id = _id, RenderFragement = ChildContent , Tag = Tag};
 
-
         Dropzone.RegisterDraggable(dataItem);
-
 
         DragDropService.StateHasChanged += async () =>
         {

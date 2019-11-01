@@ -13,8 +13,16 @@
     <link href="css/site.css" rel="stylesheet" />
     <link href="_content/Blazor.DragDrop.Core/dragdrop.css" rel="stylesheet" />
 
+    @*mobile drag and drop*@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/default.css">
     <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
+
+
+    @*Highlight JS*@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/github-gist.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+    
 
     <script>
         // options are optional ;)
@@ -22,6 +30,13 @@
             // use this to make use of the scroll behaviour
             dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
         });
+
+        window.Highlight = function () {
+                  document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+          });
+        }
+
     </script>
 
 

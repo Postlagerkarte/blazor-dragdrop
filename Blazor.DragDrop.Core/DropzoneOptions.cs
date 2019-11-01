@@ -8,6 +8,10 @@ namespace Blazor.DragDrop.Core
     {
         public int? MaxItems { get; set; }
 
+        public bool AllowSwap { get; set; }
+
         public Func<dynamic, bool> Accepts { get; set; }
+
+        
     }
 }

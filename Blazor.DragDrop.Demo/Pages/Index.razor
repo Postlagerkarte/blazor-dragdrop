@@ -1,72 +1,58 @@
 ﻿@page "/"
 @using Blazor.DragDrop.Core
 @using System.Dynamic;
+@inject IJSRuntime JSRuntime;
 
-<h1>Hello, welcome to the Blazor Easy Drog Drop Demo!</h1>
 
+<div class="text-center">
+    <h1 class="display-4">Drag Drop Demo</h1>
+    <div class="badge-light">made with ❤️ and <a href="https://github.com/Postlagerkarte/blazor-dragdrop">blazor-dragdrop library</a> </div>
+
+</div>
 <hr />
 
-<div class="container">
+<div id="main" class="container-fluid">
 
-    <div class="row">
-        <div class="col" style="min-width:200px;min-height:200px;background-color: #ff8c00">
+    <Dropzone class="row">
+        <Draggable>
+            <div class="m-2 col column-style">
+                Drag 1
+            </div>
+        </Draggable>
+        <Draggable>
+            <div class="m-2 col column-style">
+                Drag 2
+            </div>
+        </Draggable>
+        <Draggable>
+            <div class="m-2 col column-style">
+                Drag 3
+            </div>
+        </Draggable>
+        <Draggable>
+            <div class="m-2 col column-style">
+                Drag 4
+            </div>
+        </Draggable>
+    </Dropzone>
 
-            <Dropzone>
-                <div class="cards-list">
-                    <Draggable>
-                        <div class="card 1">
-                            <div class="card_image"> <img src="https://i.redd.it/b3esnz5ra34y.jpg" /> </div>
-                            <div class="card_title title-white">
-                                <p>Blazor Rocks</p>
-                            </div>
-                        </div>
-                    </Draggable>
+    <hr />
 
-                    <Draggable>
-                        <div class="card 2">
-                            <div class="card_image">
-                                <img src="https://cdn.blackmilkclothing.com/media/wysiwyg/Wallpapers/PhoneWallpapers_FloralCoral.jpg" />
-                            </div>
-                            <div class="card_title title-white">
-                                <p>Drag and Drop</p>
-                            </div>
-                        </div>
-                    </Draggable>
-
-                </div>
-
-            </Dropzone>
-
-        </div>
-
-        <div class="col m-4 cards-list" style="min-width:200px;min-height:200px;background-color: lightblue">
-
-            <Dropzone>
-                <Draggable>
-                    <div class="card 3">
-                        <div class="card_image">
-                            <img src="https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif" />
-                        </div>
-                        <div class="card_title">
-                            <p>Have fun!</p>
-                        </div>
-                    </div>
-                </Draggable>
-
-                <Draggable>
-                    <div class="card 4">
-                        <div class="card_image">
-                            <img src="https://media.giphy.com/media/LwIyvaNcnzsD6/giphy.gif" />
-                        </div>
-                        <div class="card_title title-black">
-                            <p>Postlagerkarte</p>
-                        </div>
-                    </div>
-                </Draggable>
-            </Dropzone>
-
-        </div>
-
+    <div class="text-left">
+        <pre>
+        <code class="html">
+&lt;Dropzone&nbsp;class=&quot;row&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;class=&quot;m-2&nbsp;col&nbsp;column-style&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag&nbsp;1<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;class=&quot;m-2&nbsp;col&nbsp;column-style&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag&nbsp;2<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;class=&quot;m-2&nbsp;col&nbsp;column-style&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag&nbsp;3<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;Draggable&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;div&nbsp;class=&quot;m-2&nbsp;col&nbsp;column-style&quot;&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag&nbsp;4<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/div&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Draggable&gt;<br />&lt;/Dropzone&gt;</code></pre>
+        <pre><code class="css">
+                <br />.draggable-intransit{<br />&nbsp;&nbsp;&nbsp;&nbsp;opacity:0.2;<br />}<br /><br />.dropzone&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;min-height:&nbsp;100%;<br />&nbsp;&nbsp;&nbsp;&nbsp;min-width:&nbsp;100%;<br />}<br /><br />.column-style&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;height:&nbsp;150px;<br />&nbsp;&nbsp;&nbsp;&nbsp;width:&nbsp;150px;<br />&nbsp;&nbsp;&nbsp;&nbsp;border:&nbsp;2px&nbsp;solid&nbsp;#666666;<br />&nbsp;&nbsp;&nbsp;&nbsp;background-color:&nbsp;#ccc;<br />}
+            </code>
+        </pre>
     </div>
 
 </div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeAsync<object>("Highlight");
+    }
+}
