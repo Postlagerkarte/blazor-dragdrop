@@ -104,5 +104,26 @@ namespace Blazor.DragDrop.Test
 
         }
 
+        [TestMethod]
+        public void Should_Execute_AcceptFuncOfDropzone_AcceptTest()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { });
+
+            service.RegisterDropzone(2, new DropzoneOptions() { Accepts = (d) => d.Name == "Testme" });
+
+            var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1, Tag = new { Name = "Testme" } };
+
+            service.RegisterDraggableForDropzone(draggable1);
+
+            service.ActiveItem = draggable1;
+            service.DropActiveItem(2);
+
+            var result = service.GetDraggablesForDropzone(2);
+
+            Assert.AreEqual(1, result.Count);
+
+        }
     }
 }
