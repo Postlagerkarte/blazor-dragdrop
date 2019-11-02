@@ -3,15 +3,17 @@ Drag and Drop Library for Blazor
 
 [![Build Status](https://dev.azure.com/postlagerkarte/blazor-dragdrop/_apis/build/status/Postlagerkarte.blazor-dragdrop?branchName=master)](https://dev.azure.com/postlagerkarte/blazor-dragdrop/_build/latest?definitionId=3&branchName=master)
 
-Demo:
+#### Demo:
 
 https://blazordragdrop.azurewebsites.net/
 
-Install:
+#### Install:
 
-Install-Package blazor-dragdrop -Version 1.0.0-alpha
+Install-Package blazor-dragdrop
 
-Usage:
+[![NuGet version (blazor-dragdrop)](https://img.shields.io/nuget/v/blazor-dragdrop.svg?style=flat-square)](https://www.nuget.org/packages/blazor-dragdrop)
+
+### Usage:
 
 Add DragDropServiceFactory to your StartUp.cs under ConfigureServices
 
