@@ -1,0 +1,83 @@
+﻿@page "/dropzoneoptions"
+@using Blazor.DragDrop.Core;
+
+<div class="text-center">
+    <div class="badge-light">made with ❤️ and <a href="https://github.com/Postlagerkarte/blazor-dragdrop">blazor-dragdrop library</a> </div>
+</div>
+<hr />
+
+<div class="row">
+    <div class="col">
+        <div class="row m-4">
+            <Dropzone>
+                <Draggable Tag='new { Gender = "Male", Age = 13 }'>
+                    <h4 class="badge-success mt-4 person">Erik, Age 13 (drag me)</h4>
+                </Draggable>
+
+                <Draggable Tag='new { Gender = "Female" , Age = 22}'>
+                    <h4 class="badge-success mt-4 person">Susanne, Age 22 (drag me)</h4>
+                </Draggable>
+
+                <Draggable Tag='new { Gender = "Male" , Age = 40}'>
+                    <h4 class="badge-success mt-4 person">Lewis , Age 40 (drag me)</h4>
+                </Draggable>
+            </Dropzone>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col">
+                <h5>Dropzone:</h5>
+                <DisplayCode>&lt;Dropzone&gt;<br />    &lt;Draggable Tag='new { Gender = &quot;Male&quot;, Age = 13 }'&gt;<br />        &lt;h4 class=&quot;badge-success mt-4 person&quot;&gt;Erik, Age 13 (drag me)&lt;/h4&gt;<br />    &lt;/Draggable&gt;<br /><br />    &lt;Draggable Tag='new { Gender = &quot;Female&quot; , Age = 22}'&gt;<br />        &lt;h4 class=&quot;badge-success mt-4 person&quot;&gt;Susanne, Age 22 (drag me)&lt;/h4&gt;<br />    &lt;/Draggable&gt;<br /><br />    &lt;Draggable Tag='new { Gender = &quot;Male&quot; , Age = 40}'&gt;<br />        &lt;h4 class=&quot;badge-success mt-4 person&quot;&gt;Lewis , Age 40 (drag me)&lt;/h4&gt;<br />    &lt;/Draggable&gt;<br />&lt;/Dropzone&gt;</DisplayCode>
+                <h5>Dropzones with accept rules:</h5>
+                <DisplayCode>&lt;h5&gt;Drag Items here (accepts only males)&lt;/h5&gt;<br />&lt;div class=&quot;row row-200px male mt-1&quot;&gt;<br /><br />    &lt;Dropzone Accepts='(d) =&gt; d.Gender == &quot;Male&quot;'&gt;<br /><br />    &lt;/Dropzone&gt;<br /><br />&lt;/div&gt;<br /><br />&lt;h5&gt;Drag Items here (accepts only females)&lt;/h5&gt;<br />&lt;div class=&quot;row row-200px female mt-1&quot;&gt;<br />    &lt;Dropzone Accepts='(d) =&gt; d.Gender == &quot;Female&quot;'&gt;<br /><br />    &lt;/Dropzone&gt;<br />&lt;/div&gt;<br /><br />&lt;h5&gt;Drag Items here (accepts only Persons &gt;= 18 years)&lt;/h5&gt;<br />&lt;div class=&quot;row row-200px adults mt-1&quot;&gt;<br />    &lt;Dropzone Accepts=AcceptedOnDropzone&gt;<br /><br />    &lt;/Dropzone&gt;<br />&lt;/div&gt;<br /><br />&lt;h5&gt;Drag Items here (can contain max 2 items)&lt;/h5&gt;<br />&lt;div class=&quot;row row-200px adults mt-1&quot;&gt;<br />    &lt;Dropzone MaxItems=&quot;2&quot;&gt;<br /><br />    &lt;/Dropzone&gt;<br />&lt;/div&gt;</DisplayCode>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col ml-4">
+        <h5>Drag Items here (accepts only males)</h5>
+        <div class="row row-200px male mt-1">
+
+            <Dropzone Accepts='(d) => d.Gender == "Male"'>
+
+            </Dropzone>
+
+        </div>
+
+        <h5>Drag Items here (accepts only females)</h5>
+        <div class="row row-200px female mt-1">
+            <Dropzone Accepts='(d) => d.Gender == "Female"'>
+
+            </Dropzone>
+        </div>
+
+        <h5>Drag Items here (accepts only Persons >= 18 years)</h5>
+        <div class="row row-200px adults mt-1">
+            <Dropzone Accepts=AcceptedOnDropzone>
+
+            </Dropzone>
+        </div>
+
+        <h5>Drag Items here (can contain max 2 items)</h5>
+        <div class="row row-200px adults mt-1">
+            <Dropzone MaxItems="2">
+
+            </Dropzone>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+@code {
+
+    public Func<dynamic, bool> AcceptedOnDropzone = (d) =>
+    {
+        return d.Age >= 18;
+
+    };
+
+}

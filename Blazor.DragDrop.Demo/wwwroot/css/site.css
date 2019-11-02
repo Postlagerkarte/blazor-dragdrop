@@ -172,6 +172,11 @@ app {
 .row-200px {
     min-height: 200px;
     min-width: 200px;
+    border: 1px solid;
+}
+
+.person{
+    border: 1px dashed;
 }
 
 .male {
