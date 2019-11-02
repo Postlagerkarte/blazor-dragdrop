@@ -13,24 +13,41 @@ Install-Package blazor-dragdrop
 
 [![NuGet version (blazor-dragdrop)](https://img.shields.io/nuget/v/blazor-dragdrop.svg?style=flat-square)](https://www.nuget.org/packages/blazor-dragdrop)
 
-### Usage:
+#### Usage:
 
-Add DragDropServiceFactory to your StartUp.cs under ConfigureServices
+1) Add DragDropServiceFactory to your Startup.cs
 
 ```csharp
 services.AddScoped<DragDropServiceFactory>();
 ```
 
-Use the ```<Dropzone>``` and ```<Draggable>``` components in your code.
+2)  Add the css to your _host.cshtml
+
+```html
+<link href="_content/Blazor.DragDrop.Core/dragdrop.css" rel="stylesheet" />
+```
 
 ------
-Simple Dropzone:  (accepts all Draggables)
+
+#### Make element draggable:
+
+```html
+<Dropzone>
+    <Draggable>
+        <li class="list-group-item">Cras justo odio</li>
+    </Draggable>
+<Dropzone>
+```
+
+#### Create a dropzone:
 
 ```html
 <Dropzone>
 
 </Dropzone>
 ```
+
+#### Features:
 
 Only allow limited number of items in a Dropzone: 
 
@@ -48,21 +65,15 @@ Restricted Dropzone: (executes the give accept func before accepting the draggab
 </Dropzone>
 ```
 
-Create a draggable element: (all draggable elements need to be inside a dropzone)
-```html
-<Draggable>
-<li class="list-group-item">Cras justo odio</li>
-</Draggable>
-```
-
-Attach information to the draggable which is usable by the dropzone:
+Attach data to draggables:
 ```html
 <Draggable Tag='new { Gender = "Female" , Age = 22}'>
 <li class="list-group-item">Cras justo odio</li>
 </Draggable>
 ```
 ------
-Examples:
+
+#### Examples:
 
 Create a draggable list:
 ```html
@@ -88,7 +99,7 @@ Create a draggable list:
 ```
 
 ------
-Mobile Devices:
+#### Mobile Devices:
 
 The HTML 5 drag'n'drop API allows to implement drag'n'drop on most desktop browsers.
 
