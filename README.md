@@ -71,6 +71,15 @@ Attach data to draggables:
 <li class="list-group-item">Cras justo odio</li>
 </Draggable>
 ```
+
+Control if an element is draggable:
+
+```html
+<Draggable AllowDrag="(d)=>MyFunc(d)">
+<li class="list-group-item">Cras justo odio</li>
+</Draggable>
+```
+
 ------
 
 #### Examples:
