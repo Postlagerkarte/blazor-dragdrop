@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,30 +10,20 @@ namespace Blazor.DragDrop.Core
 {
     public class DragDropService
     {
+        private readonly ILogger<DragDropService> _logger;
+
         private Dictionary<int, DropzoneOptions> _dropzoneOptions = new Dictionary<int, DropzoneOptions>();
         private Dictionary<int, List<DraggableItem>> _dic = new Dictionary<int, List<DraggableItem>>();
 
         private int _idDropzoneCounter = 0;
-
         private int _idDraggableCounter = 0;
+        
         private DraggableItem _activeItem;
+        
 
-
-        private bool AcceptsElement(int dropzoneId)
+        public DragDropService(ILogger<DragDropService> logger)
         {
-            bool acceptsElement = true;
-
-            if (_dropzoneOptions[dropzoneId].Accepts != null && ActiveItem.Tag != null)
-            {
-                acceptsElement = (bool)_dropzoneOptions[dropzoneId].Accepts(ActiveItem.Tag);
-            }
-
-            return acceptsElement;
-        }
-
-        public DragDropService()
-        {
-
+            _logger = logger;
         }
 
         public bool EnableDebug => false;
@@ -41,15 +32,8 @@ namespace Blazor.DragDrop.Core
             get => _activeItem;
             set
             {
-                if(value != null)
-                {
-                    Debug.WriteLine($"Set item with {value.Id} as active - item belongs to dropzone {value.DropzoneId}");
-                }
-                else
-                {
-                    Debug.WriteLine($"Clearing active item");
-                }
-                
+                _logger.LogTrace(value == null ? "Clearing active item" : $"Set draggable {value.Id} as active - item belongs to dropzone {value.DropzoneId}");
+               
                 SupressRendering = false;
 
                 _activeItem = value;
@@ -79,20 +63,25 @@ namespace Blazor.DragDrop.Core
 
         public void DropActiveItem(int targetDropzoneId)
         {
+            _logger.LogTrace($"Trying to Drop ActiveItem {ActiveItem.Id} from Dropzone {ActiveItem.DropzoneId} at Dropzone {targetDropzoneId}");
+
             bool acceptsDrop = AcceptsElement(targetDropzoneId);
 
-            Debug.WriteLine($"Accept drop func returns {acceptsDrop}");
+            bool maxItemLimitReached = _dic[targetDropzoneId].Count >= _dropzoneOptions[targetDropzoneId].MaxItems;
 
-            Debug.WriteLine($"DropActiveItem {ActiveItem.Id} on dropzone {targetDropzoneId} - sourcedropzone: {ActiveItem.DropzoneId}");
 
             //if same dropzone // no drop accept // max-item limit
             if (targetDropzoneId == ActiveItem.DropzoneId ||
-                !acceptsDrop ||   
-                _dic[targetDropzoneId].Count >= _dropzoneOptions[targetDropzoneId].MaxItems)
+                !acceptsDrop ||
+                maxItemLimitReached)
             {
+                _logger.LogTrace($"Drop rejected. Accept Func: {acceptsDrop} , Max-Item-Limit: {maxItemLimitReached}");
+
                 ActiveItem = null;
                 return;
             }
+
+            _logger.LogTrace($"Drop accepted");
 
             //remove active item from sourcedropzone 
             _dic[ActiveItem.DropzoneId].Remove(ActiveItem);
@@ -104,10 +93,9 @@ namespace Blazor.DragDrop.Core
             //assign new dropzone
             ActiveItem.DropzoneId = targetDropzoneId;
 
+            //Clear active item
             ActiveItem = null;
-
         }
-
 
         public int GetOrderPosition(int dropzoneId, int draggableId)
         {
@@ -122,26 +110,23 @@ namespace Blazor.DragDrop.Core
 
         public void SwapOrInsert(int draggedOverId)
         {
+            var targetDropzoneId = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Key;
 
-            var dropzoneId = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Key;
+            _logger.LogTrace($"Trying to SwapOrInsert draggable {ActiveItem.Id} with dragged over item {draggedOverId} in dropzone {targetDropzoneId}");
 
-            Debug.WriteLine($"Accept element func returns {AcceptsElement(dropzoneId)}");
+            bool acceptsDrop = AcceptsElement(targetDropzoneId);
 
-            Debug.WriteLine($"Swap Request - Active item {ActiveItem.Id} was dragged over item with id {draggedOverId}");
+            bool maxItemLimitReached = _dic[targetDropzoneId].Count >= _dropzoneOptions[targetDropzoneId].MaxItems;
 
-            // execute accept delegate 
-            if (!AcceptsElement(dropzoneId))
+            //if same dropzone // no drop accept // max-item limit
+            if (!acceptsDrop || maxItemLimitReached)
             {
+                _logger.LogTrace($"SwapOrInsert rejected. Accept Func: {acceptsDrop} , Max-Item-Limit: {maxItemLimitReached}");
+  
                 return;
             }
 
-            //check if max items
-            if (_dic[dropzoneId].Count >= _dropzoneOptions[dropzoneId].MaxItems && 
-                !_dropzoneOptions[dropzoneId].AllowSwap)
-            {
-                return;
-            }
-
+            _logger.LogTrace("SwapOrInsert accepted");
 
             //find dropzone
             var dropzone = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Value;
@@ -173,7 +158,7 @@ namespace Blazor.DragDrop.Core
                 //insert into new dropzone
                 _dic[ActiveItem.DropzoneId].Insert(indexForDraggedOverItem, ActiveItem);
 
-                if(_dropzoneOptions[dropzoneId].AllowSwap)
+                if(_dropzoneOptions[targetDropzoneId].AllowSwap)
                 {
                     //remove draggedover item from old dropzone
                     _dic[draggedOverItem.DropzoneId].Remove(draggedOverItem);
@@ -198,15 +183,16 @@ namespace Blazor.DragDrop.Core
 
         public void RegisterDropzone(int dropzoneId, DropzoneOptions options)
         {
-            Debug.WriteLine($"Register dropzone {dropzoneId}");
+            _logger.LogTrace($"Register dropzone {dropzoneId}");
 
             _dic.Add(dropzoneId, new List<DraggableItem>());
+            
             _dropzoneOptions.Add(dropzoneId, options);
         }
 
         public void RegisterDraggableForDropzone(DraggableItem dataItem)
         {
-            Debug.WriteLine($"Register draggable {dataItem.Id} for dropzone {dataItem.DropzoneId}");
+            _logger.LogTrace($"Register draggable {dataItem.Id} for dropzone {dataItem.DropzoneId}");
 
             _dic[dataItem.DropzoneId].Add(dataItem);
 
@@ -218,7 +204,7 @@ namespace Blazor.DragDrop.Core
         {
             var result = _dic.ContainsKey(dropzoneId) && _dic[dropzoneId]?.Count > 0;
 
-            Debug.WriteLine($"HasDraggablesForDropzone {dropzoneId} returns {result} with draggable count: {_dic[dropzoneId]?.Count}");
+            _logger.LogTrace($"HasDraggablesForDropzone {dropzoneId} returns {result} with draggable count: {_dic[dropzoneId]?.Count}");
 
             return result;
         }
@@ -227,9 +213,22 @@ namespace Blazor.DragDrop.Core
         {
             var draggables = _dic[id];
 
-            Debug.WriteLine($"GetDraggablesForDropzone {id} returned {draggables.Count} items");
+            _logger.LogTrace($"GetDraggablesForDropzone {id} returned {draggables.Count} items");
 
             return draggables;
+        }
+
+
+        private bool AcceptsElement(int dropzoneId)
+        {
+            bool acceptsElement = true;
+
+            if (_dropzoneOptions[dropzoneId].Accepts != null && ActiveItem.Tag != null)
+            {
+                acceptsElement = (bool)_dropzoneOptions[dropzoneId].Accepts(ActiveItem.Tag);
+            }
+
+            return acceptsElement;
         }
     }
 }

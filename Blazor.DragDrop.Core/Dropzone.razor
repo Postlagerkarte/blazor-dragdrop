@@ -1,4 +1,6 @@
 ﻿@using System.Diagnostics;
+@using Microsoft.Extensions.Logging;
+@inject ILogger<Dropzone> Logger;
 
     <div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="@_DropzoneClass">
         <CascadingValue Value="this">
@@ -180,7 +182,8 @@
 
         DragDropService.SetActiveItem(_dropzoneId, draggableId);
 
-        Debug.WriteLine($"{draggableId} is in transit");
+        Logger.LogTrace($"{draggableId} is in transit (OnDragStart)");
+
     }
 
     private void OnDragEnd(int draggableId)
@@ -190,7 +193,7 @@
 
         DragDropService.SupressRendering = false;
 
-        Debug.WriteLine($"{draggableId} not in transit anymore");
+        Logger.LogTrace($"{draggableId} not in in transit (OnDragEnd)");
 
     }
 
@@ -204,7 +207,7 @@
 
     private void OnDragEnter(int draggedOverId, DragEventArgs e)
     {
-        Debug.WriteLine($"OnDragEnter raised  by element with id {draggedOverId} - X: {e.ScreenX} Y: {e.ScreenY}");
+        Logger.LogTrace($"OnDragEnter raised  by element with id {draggedOverId} - X: {e.ScreenX} Y: {e.ScreenY}");
 
         //no active item - probably something was dragged is not a draggable 
         if (DragDropService.ActiveItem == null) return;
@@ -250,7 +253,7 @@
 
     protected override bool ShouldRender()
     {
-        Debug.WriteLine($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem?.Id}");
+        Logger.LogTrace($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem?.Id}");
 
         return !DragDropService.SupressRendering;
     }
