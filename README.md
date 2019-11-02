@@ -24,7 +24,7 @@ services.AddScoped<DragDropServiceFactory>();
 2)  Add the css to your _host.cshtml
 
 ```html
-<link href="_content/Blazor.DragDrop.Core/dragdrop.css" rel="stylesheet" />
+<link href="_content/blazor-dragdrop/dragdrop.css" rel="stylesheet" />
 ```
 
 ------
