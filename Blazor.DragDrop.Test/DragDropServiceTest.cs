@@ -125,5 +125,28 @@ namespace Blazor.DragDrop.Test
             Assert.AreEqual(1, result.Count);
 
         }
+
+        [TestMethod]
+        public void Should_GetDropzoneByName()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { Name = "Dropzone1" });
+
+            service.RegisterDropzone(2, new DropzoneOptions() { Name = "Dropzone2" });
+
+            var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1 };
+
+            service.RegisterDraggableForDropzone(draggable1);
+
+            service.ActiveItem = draggable1;
+            service.DropActiveItem(2);
+
+            var result = service.GetDraggablesForDropzone("Dropzone2");
+
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(result[0].Id, 1);
+
+        }
     }
 }
