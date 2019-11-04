@@ -29,12 +29,15 @@ services.AddScoped<DragDropServiceFactory>();
 
 ------
 
-#### Make element draggable:
+#### Make elements draggable:
 
 ```html
 <Dropzone>
     <Draggable>
         <li class="list-group-item">Cras justo odio</li>
+    </Draggable>
+      <Draggable>
+        <li class="list-group-item">Morbi leo risus</li>
     </Draggable>
 <Dropzone>
 ```
