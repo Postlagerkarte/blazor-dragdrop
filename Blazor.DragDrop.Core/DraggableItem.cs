@@ -22,6 +22,8 @@ namespace Blazor.DragDrop.Core
 
         public int DropzoneId { get; set; }
 
+        public int OriginDropzoneId { get; set; }
+
         public dynamic Tag { get; set; }
 
         public Func<DraggableItem, bool> AllowDrag { get; set; }
