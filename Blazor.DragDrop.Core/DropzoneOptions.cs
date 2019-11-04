@@ -12,6 +12,8 @@ namespace Blazor.DragDrop.Core
 
         public Func<dynamic, bool> Accepts { get; set; }
 
+        public string Name { get; set; }
+
         
     }
 }

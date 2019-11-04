@@ -86,6 +86,12 @@
     [Parameter]
     public string Class { get; set; } = "";
 
+    /// <summary>
+    /// Gets or set the name of this Dropzone
+    /// </summary>
+    [Parameter]
+    public string Name { get; set; } = "";
+
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
@@ -229,7 +235,8 @@
         {
             Accepts = Accepts,
             MaxItems = MaxItems,
-            AllowSwap = AllowSwap
+            AllowSwap = AllowSwap,
+            Name = Name
         };
 
         DragDropService.RegisterDropzone(_dropzoneId, options);
