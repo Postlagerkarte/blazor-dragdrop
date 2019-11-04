@@ -186,6 +186,8 @@
 
         DragDropService.SupressRendering = true;
 
+        dragedItem.OriginDropzoneId = _dropzoneId;
+
         DragDropService.SetActiveItem(_dropzoneId, draggableId);
 
         Logger.LogTrace($"{draggableId} is in transit (OnDragStart)");

@@ -62,19 +62,20 @@ namespace Blazor.DragDrop.Core
             return _idDraggableCounter;
         }
 
+        private DraggableItem _lastDraggedOverItem;
+
         public void DropActiveItem(int targetDropzoneId)
         {
             _logger?.LogTrace($"Trying to Drop ActiveItem {ActiveItem.Id} from Dropzone {ActiveItem.DropzoneId} at Dropzone {targetDropzoneId}");
 
             bool acceptsDrop = AcceptsElement(targetDropzoneId);
-
             bool maxItemLimitReached = _dic[targetDropzoneId].Count >= _dropzoneOptions[targetDropzoneId].MaxItems;
-
+            bool allowSwap = _dropzoneOptions[targetDropzoneId].AllowSwap;
 
             //if same dropzone // no drop accept // max-item limit
             if (targetDropzoneId == ActiveItem.DropzoneId ||
                 !acceptsDrop ||
-                maxItemLimitReached)
+                maxItemLimitReached && !allowSwap)
             {
                 _logger?.LogTrace($"Drop rejected. Accept Func: {acceptsDrop} , Max-Item-Limit: {maxItemLimitReached}");
 
@@ -83,6 +84,13 @@ namespace Blazor.DragDrop.Core
             }
 
             _logger?.LogTrace($"Drop accepted");
+
+            if (maxItemLimitReached && allowSwap && _lastDraggedOverItem != null)
+            {
+                MoveItem(_lastDraggedOverItem, _lastDraggedOverItem.DropzoneId, newDropzoneId: ActiveItem.OriginDropzoneId);
+                _lastDraggedOverItem = null;
+            }
+
 
             //remove active item from sourcedropzone 
             _dic[ActiveItem.DropzoneId].Remove(ActiveItem);
@@ -93,6 +101,8 @@ namespace Blazor.DragDrop.Core
 
             //assign new dropzone
             ActiveItem.DropzoneId = targetDropzoneId;
+
+      
 
             //Clear active item
             ActiveItem = null;
@@ -109,22 +119,27 @@ namespace Blazor.DragDrop.Core
             ActiveItem = _dic[dropzoneId].Single(x => x.Id == draggableId);
         }
 
+
         public void SwapOrInsert(int draggedOverId)
         {
-
             var targetDropzoneId = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Key;
-
  
             _logger?.LogTrace($"Trying to SwapOrInsert draggable {ActiveItem.Id} with dragged over item {draggedOverId} in dropzone {targetDropzoneId}");
 
             bool acceptsDrop = AcceptsElement(targetDropzoneId);
-
             bool maxItemLimitReached = _dic[targetDropzoneId].Count >= _dropzoneOptions[targetDropzoneId].MaxItems;
-
             bool allowSwap = _dropzoneOptions[targetDropzoneId].AllowSwap;
 
+            //find dropzone
+            var dropzone = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Value;
+
+            //get dragged over item
+            var draggedOverItem = dropzone.Single(x => x.Id == draggedOverId);
+
+            _lastDraggedOverItem = draggedOverItem;
+
             //if same dropzone // no drop accept // max-item limit
-            if (!acceptsDrop || (maxItemLimitReached && !allowSwap))
+            if (!acceptsDrop || maxItemLimitReached)
             {
                 _logger?.LogTrace($"SwapOrInsert rejected. Accept Func: {acceptsDrop} , Max-Item-Limit: {maxItemLimitReached}");
 
@@ -133,49 +148,24 @@ namespace Blazor.DragDrop.Core
 
             _logger?.LogTrace("SwapOrInsert accepted");
 
-            //find dropzone
-            var dropzone = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Value;
+  
 
-            //get dragged over item
-            var draggedOverItem = dropzone.Single(x => x.Id == draggedOverId);
-
-            var indexForDraggedOverItem = dropzone.IndexOf(draggedOverItem);
 
             // if same dropzone -> swap
             if (ActiveItem.DropzoneId == draggedOverItem.DropzoneId)
             {
-                var indexForActiveItem = dropzone.IndexOf(ActiveItem);
-
-                dropzone[indexForDraggedOverItem] = ActiveItem;
-
-                dropzone[indexForActiveItem] = draggedOverItem;
+                SwapWithActiveItem(draggedOverItem);
             }
-            else // different dropzone
+            else // different dropzone -> move item over
             {
-                var activeItemDropzone = ActiveItem.DropzoneId;
+                var activeItemDropzoneId = ActiveItem.DropzoneId;
 
-                //remove from old dropzone
-                _dic[activeItemDropzone].Remove(ActiveItem);
+                MoveActiveItem(targetDropzoneId: draggedOverItem.DropzoneId, index: draggedOverItem.OrderPosition);
 
-                //assign correct dropzone
-                ActiveItem.DropzoneId = draggedOverItem.DropzoneId;
-
-                //insert into new dropzone
-                _dic[ActiveItem.DropzoneId].Insert(indexForDraggedOverItem, ActiveItem);
-
-                if (allowSwap)
+                if (maxItemLimitReached && allowSwap)
                 {
-                    //remove draggedover item from old dropzone
-                    _dic[draggedOverItem.DropzoneId].Remove(draggedOverItem);
-
-                    //assign new dropzone to dragged over item
-                    draggedOverItem.DropzoneId = activeItemDropzone;
-
-                    //insert into other dropzone
-                    _dic[activeItemDropzone].Insert(0, draggedOverItem);
-
+                     MoveItem(draggedOverItem, draggedOverItem.DropzoneId, newDropzoneId: activeItemDropzoneId);
                 }
-
             }
 
             SupressRendering = false;
@@ -185,7 +175,49 @@ namespace Blazor.DragDrop.Core
             SupressRendering = true;
         }
 
+        internal DraggableItem MoveItem(DraggableItem item, int oldDropzoneId, int newDropzoneId)
+        {
+            item.OriginDropzoneId = oldDropzoneId;
 
+            //remove draggedover item from old dropzone
+            _dic[item.DropzoneId].Remove(item);
+
+            //assign new dropzone to dragged over item
+            item.DropzoneId = newDropzoneId;
+
+            //insert into other dropzone
+            _dic[newDropzoneId].Insert(0, item);
+
+            return item;
+        }
+
+        internal void SwapWithActiveItem(DraggableItem draggedOverItem)
+        {
+            var activeItemPosition = ActiveItem.OrderPosition;
+            var draggedOverItemPosition = draggedOverItem.OrderPosition;
+
+            var dropzone = _dic[draggedOverItem.DropzoneId];
+
+            dropzone[draggedOverItemPosition] = ActiveItem;
+
+            dropzone[activeItemPosition] = draggedOverItem;
+        }
+
+
+        internal void MoveActiveItem(int targetDropzoneId, int index)
+        {
+            var activeItemDropzoneId = ActiveItem.DropzoneId;
+
+            //remove from old dropzone
+            _dic[activeItemDropzoneId].Remove(ActiveItem);
+
+            //assign correct dropzone
+            ActiveItem.DropzoneId = targetDropzoneId;
+
+            //insert into new dropzone
+            _dic[ActiveItem.DropzoneId].Insert(index, ActiveItem);
+
+        }
 
         public void RegisterDropzone(int dropzoneId, DropzoneOptions options)
         {
