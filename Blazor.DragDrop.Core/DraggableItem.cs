@@ -22,6 +22,14 @@ namespace Blazor.DragDrop.Core
 
         public int DropzoneId { get; set; }
 
+        public string DropzoneName
+        {
+            get
+            {
+                return dragDropService.GetDropzoneOptionsById(DropzoneId).Name;
+            }
+        }
+
         public int OriginDropzoneId { get; set; }
 
         public dynamic Tag { get; set; }
