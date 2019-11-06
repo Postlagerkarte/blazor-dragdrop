@@ -7,7 +7,7 @@
             @ChildContent
         </CascadingValue>
         @{
-            if (DragDropService.HasDraggablesForDropzone(_dropzoneId))
+            if (DragDropService.HasDropzoneDraggables(_dropzoneId))
             {
                 @if (DragDropService.EnableDebug)
                 {
