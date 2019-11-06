@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <PackageId>blazor-dragdrop</PackageId>
     <Authors>Postlagerkarte</Authors>
     <Product>Blazor Drag Drop Library</Product>
@@ -10,6 +10,7 @@
     <RepositoryUrl>https://github.com/Postlagerkarte/blazor-dragdrop</RepositoryUrl>
     <PackageTags>dragdrop blazor draggable drop</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Easy-to-use and feature rich Drag and drop library for Blazor</Description>
   </PropertyGroup>
 
 
