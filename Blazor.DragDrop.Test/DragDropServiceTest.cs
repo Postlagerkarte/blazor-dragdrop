@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Blazor.DragDrop.Core;
 using System.Linq;
+using System;
 
 namespace Blazor.DragDrop.Test
 {
@@ -148,5 +149,72 @@ namespace Blazor.DragDrop.Test
             Assert.AreEqual(result[0].Id, 1);
 
         }
+
+
+        [TestMethod]
+        public void Should_ReturnTrue_HasDropzoneDraggables()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { Name = "Dropzone1" });
+
+            service.RegisterDropzone(2, new DropzoneOptions() { Name = "Dropzone2" });
+
+            var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1 };
+
+            service.RegisterDraggableForDropzone(draggable1);
+
+            service.ActiveItem = draggable1;
+            service.DropActiveItem(2);
+
+            var result = service.HasDropzoneDraggables("Dropzone2");
+
+            Assert.AreEqual(true, result);
+
+        }
+
+        [TestMethod]
+        public void Should_ReturnFalse_HasDropzoneDraggables()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { Name = "Dropzone1" });
+
+            service.RegisterDropzone(2, new DropzoneOptions() { Name = "Dropzone2" });
+
+            var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1 };
+
+            service.RegisterDraggableForDropzone(draggable1);
+
+            service.ActiveItem = draggable1;
+            service.DropActiveItem(2);
+
+            var result = service.HasDropzoneDraggables("Dropzone1");
+
+            Assert.AreEqual(false, result);
+
+        }
+
+        [TestMethod]
+        public void Should_ReturnFalse_HasDropzoneDraggables_GivenInvalidName()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { Name = "Dropzone1" });
+
+            service.RegisterDropzone(2, new DropzoneOptions() { Name = "Dropzone2" });
+
+            var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1 };
+
+            service.RegisterDraggableForDropzone(draggable1);
+
+            service.ActiveItem = draggable1;
+            service.DropActiveItem(2);
+
+            Assert.ThrowsException<ArgumentException>(()=>service.HasDropzoneDraggables("Dropzone3"));
+
+        }
+
+
     }
 }

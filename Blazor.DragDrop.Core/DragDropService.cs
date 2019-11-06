@@ -15,8 +15,8 @@ namespace Blazor.DragDrop.Core
         private Dictionary<int, DropzoneOptions> _dropzoneOptions = new Dictionary<int, DropzoneOptions>();
         private Dictionary<int, List<DraggableItem>> _dic = new Dictionary<int, List<DraggableItem>>();
 
-        private int _idDropzoneCounter = 0;
-        private int _idDraggableCounter = 0;
+        private int _idDropzoneCounter = 1;
+        private int _idDraggableCounter = 1;
 
         private DraggableItem _activeItem;
 
@@ -238,7 +238,7 @@ namespace Blazor.DragDrop.Core
         }
 
 
-        public bool HasDraggablesForDropzone(int dropzoneId)
+        public bool HasDropzoneDraggables(int dropzoneId)
         {
             var result = _dic.ContainsKey(dropzoneId) && _dic[dropzoneId]?.Count > 0;
 
@@ -247,10 +247,13 @@ namespace Blazor.DragDrop.Core
             return result;
         }
 
-        public bool HasDraggablesForDropzone(string dropzoneName)
+        public bool HasDropzoneDraggables(string dropzoneName)
         {
-            var id = _dropzoneOptions.Single(x => x.Value.Name == dropzoneName).Key;
-            return HasDraggablesForDropzone(id);
+            var hit = _dropzoneOptions.SingleOrDefault(x => x.Value.Name == dropzoneName);
+
+            if(hit.Key == 0) throw new ArgumentException($"dropzone name {dropzoneName} does not exist");
+
+            return HasDropzoneDraggables(hit.Key);
         }
 
 
