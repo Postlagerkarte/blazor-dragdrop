@@ -34,6 +34,8 @@ namespace Blazor.DragDrop.Core
 
         public dynamic Tag { get; set; }
 
+        public Action<dynamic> OnDrop { get; set; }
+
         public Func<DraggableItem, bool> AllowDrag { get; set; }
 
         public int OrderPosition
