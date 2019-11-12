@@ -102,7 +102,8 @@ namespace Blazor.DragDrop.Core
             //assign new dropzone
             ActiveItem.DropzoneId = targetDropzoneId;
 
-      
+            //inform about the drop
+            ActiveItem.OnDrop?.Invoke(ActiveItem.Tag);
 
             //Clear active item
             ActiveItem = null;
