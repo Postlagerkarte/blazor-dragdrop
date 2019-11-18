@@ -14,7 +14,7 @@ namespace Blazor.DragDrop.Core
             this.dragDropService = dragDropService;
         }
 
-        public RenderFragment<DraggableItem> RenderFragement { get; set; }
+        public RenderFragment<DraggableItem> RenderFragment { get; set; }
 
         public int Id { get; set; }
 
@@ -33,6 +33,8 @@ namespace Blazor.DragDrop.Core
         public int OriginDropzoneId { get; set; }
 
         public dynamic Tag { get; set; }
+
+        public Action<dynamic> OnDrop { get; set; }
 
         public Func<DraggableItem, bool> AllowDrag { get; set; }
 
