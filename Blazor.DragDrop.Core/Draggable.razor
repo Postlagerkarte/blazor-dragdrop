@@ -21,10 +21,11 @@
         var dataItem = new DraggableItem(DragDropService)
         { 
             Id = _id,
-            RenderFragement = ChildContent,
+            RenderFragment = ChildContent,
             Tag = Tag,
             AllowDrag = AllowDrag,
-            Name = Name
+            Name = Name,
+            OnDrop = OnDrop
         };
 
         Dropzone.RegisterDraggable(dataItem);
@@ -44,6 +45,10 @@
 
     [Parameter]
     public dynamic Tag { get; set; }
+
+    
+    [Parameter]
+    public Action<dynamic> OnDrop { get; set; }
 
     /// <summary>
     /// Allows to pass a delegate which determines if element can be dragged
