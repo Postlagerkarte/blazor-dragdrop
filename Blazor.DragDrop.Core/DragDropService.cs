@@ -252,7 +252,7 @@ namespace Blazor.DragDrop.Core
         {
             var hit = _dropzoneOptions.SingleOrDefault(x => x.Value.Name == dropzoneName);
 
-            if(hit.Key == 0) throw new ArgumentException($"dropzone name {dropzoneName} does not exist");
+            if(hit.Key == 0) return false;
 
             return HasDropzoneDraggables(hit.Key);
         }
