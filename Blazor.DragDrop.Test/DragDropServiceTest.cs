@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Blazor.DragDrop.Core;
 using System.Linq;
 using System;
+using System.Xml.Serialization;
 
 namespace Blazor.DragDrop.Test
 {
@@ -67,6 +68,61 @@ namespace Blazor.DragDrop.Test
 
             var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1 };
             var draggable2 = new DraggableItem(service) { Id = 2, DropzoneId = 1 };
+
+            service.RegisterDraggableForDropzone(draggable1);
+            service.RegisterDraggableForDropzone(draggable2);
+
+            service.ActiveItem = draggable1;
+            service.DropActiveItem(2);
+
+            service.ActiveItem = draggable2;
+            service.DropActiveItem(2);
+
+            var result = service.GetDraggablesForDropzone(2).Single();
+
+            Assert.AreEqual(draggable1.Id, result.Id);
+
+        }
+
+
+        [TestMethod]
+        public void Should_Limit_Dropzone_To_MaxItems_AllowSwap()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { });
+            service.RegisterDropzone(2, new DropzoneOptions() { MaxItems = 1, AllowSwap = true });
+
+            var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1, OriginDropzoneId = 1 };
+            var draggable2 = new DraggableItem(service) { Id = 2, DropzoneId = 1, OriginDropzoneId = 1 };
+
+            service.RegisterDraggableForDropzone(draggable1);
+            service.RegisterDraggableForDropzone(draggable2);
+
+            service.ActiveItem = draggable1;
+            service.DropActiveItem(2);
+
+            service._lastDraggedOverItem = draggable1;
+
+            service.ActiveItem = draggable2;
+            service.DropActiveItem(2);
+
+            var result = service.GetDraggablesForDropzone(2).Single();
+
+            Assert.AreEqual(draggable2.Id, result.Id);
+
+        }
+
+        [TestMethod]
+        public void Should_Limit_Dropzone_To_MaxItems_AllowSwap_NoDraggedOverItem()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { });
+            service.RegisterDropzone(2, new DropzoneOptions() { MaxItems = 1, AllowSwap = true });
+
+            var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1, OriginDropzoneId = 1 };
+            var draggable2 = new DraggableItem(service) { Id = 2, DropzoneId = 1, OriginDropzoneId = 1 };
 
             service.RegisterDraggableForDropzone(draggable1);
             service.RegisterDraggableForDropzone(draggable2);
@@ -209,9 +265,10 @@ namespace Blazor.DragDrop.Test
             service.RegisterDraggableForDropzone(draggable1);
 
             service.ActiveItem = draggable1;
+
             service.DropActiveItem(2);
 
-            Assert.ThrowsException<ArgumentException>(()=>service.HasDropzoneDraggables("Dropzone3"));
+            Assert.IsFalse(service.HasDropzoneDraggables("Dropzone3"));
 
         }
 
