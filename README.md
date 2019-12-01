@@ -15,10 +15,10 @@ Install-Package blazor-dragdrop
 
 #### Usage:
 
-1) Add DragDropServiceFactory to your Startup.cs
+1) Add BlazorDragDrop to your Startup.cs
 
 ```csharp
-services.AddScoped<DragDropServiceFactory>();
+services.AddBlazorDragDrop();
 ```
 
 2)  Add the css to your _host.cshtml
