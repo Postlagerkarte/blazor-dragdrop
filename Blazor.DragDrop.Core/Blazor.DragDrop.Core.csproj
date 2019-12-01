@@ -11,6 +11,7 @@
     <PackageTags>dragdrop blazor draggable drop</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Easy-to-use and feature rich Drag and drop library for Blazor</Description>
+    <AssemblyVersion>1.0.7.0</AssemblyVersion>
   </PropertyGroup>
 
 

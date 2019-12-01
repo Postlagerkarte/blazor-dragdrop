@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
+[assembly: InternalsVisibleTo("Blazor.DragDrop.Test")]
 namespace Blazor.DragDrop.Core
 {
     public class DragDropService
@@ -62,7 +64,7 @@ namespace Blazor.DragDrop.Core
             return _idDraggableCounter;
         }
 
-        private DraggableItem _lastDraggedOverItem;
+        internal DraggableItem _lastDraggedOverItem;
 
         public void DropActiveItem(int targetDropzoneId)
         {
@@ -85,9 +87,15 @@ namespace Blazor.DragDrop.Core
 
             _logger?.LogTrace($"Drop accepted");
 
-            if (maxItemLimitReached && allowSwap && _lastDraggedOverItem != null)
+            if (maxItemLimitReached && allowSwap)
             {
+                if ( _lastDraggedOverItem == null)
+                {
+                   return;
+                }
+
                 MoveItem(_lastDraggedOverItem, _lastDraggedOverItem.DropzoneId, newDropzoneId: ActiveItem.OriginDropzoneId);
+
                 _lastDraggedOverItem = null;
             }
 
