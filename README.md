@@ -21,7 +21,7 @@ Install-Package blazor-dragdrop
 services.AddBlazorDragDrop();
 ```
 
-2)  Add the css to your _host.cshtml
+2)  Include relevant stylesheet either in your _host.cshtml (server-side blazor) or index.html (client-side blazor) 
 
 ```html
 <link href="_content/blazor-dragdrop/dragdrop.css" rel="stylesheet" />
