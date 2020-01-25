@@ -9,7 +9,7 @@ namespace Blazor.DragDrop.Core
     {
         public static IServiceCollection AddBlazorDragDrop(this IServiceCollection services)
         {
-            return services.AddScoped<DragDropServiceFactory>();
+            return services.AddScoped<DragDropService>();
         }
     }
 }
