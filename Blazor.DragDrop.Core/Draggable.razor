@@ -1,11 +1,10 @@
 ﻿@using System.Diagnostics
+@implements IDisposable;
 
 @code {
 
     [Inject]
-    public DragDropServiceFactory DragDropServiceFactory { get; set; }
-
-    public DragDropService DragDropService => DragDropServiceFactory.Get();
+    public DragDropService DragDropService { get; set; }
 
     private int _id { get; set; }
 
@@ -19,7 +18,7 @@
         _id = DragDropService.GetDraggableId();
 
         var dataItem = new DraggableItem(DragDropService)
-        { 
+        {
             Id = _id,
             RenderFragment = ChildContent,
             Tag = Tag,
@@ -30,11 +29,13 @@
 
         Dropzone.RegisterDraggable(dataItem);
 
-        DragDropService.StateHasChanged += async () =>
-        {
-            await InvokeAsync(() => StateHasChanged());
-        };
+        DragDropService.StateHasChanged += StateHasChangedHandler;
 
+    }
+
+    private async void StateHasChangedHandler()
+    {
+        await InvokeAsync(() => StateHasChanged());
     }
 
 
@@ -46,7 +47,7 @@
     [Parameter]
     public dynamic Tag { get; set; }
 
-    
+
     [Parameter]
     public Action<dynamic> OnDrop { get; set; }
 
@@ -61,5 +62,10 @@
     /// </summary>
     [Parameter]
     public string Name { get; set; }
+
+    public void Dispose()
+    {
+        DragDropService.StateHasChanged -= StateHasChangedHandler;
+    }
 
 }

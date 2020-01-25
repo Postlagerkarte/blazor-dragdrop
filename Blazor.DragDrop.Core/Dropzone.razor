@@ -1,6 +1,7 @@
 ﻿@using System.Diagnostics;
 @using Microsoft.Extensions.Logging;
 @inject ILogger<Dropzone> Logger;
+@implements IDisposable;
 
     <div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="@_DropzoneClass">
         <CascadingValue Value="this">
@@ -56,9 +57,7 @@
     private int _currentDraggedOverId;
 
     [Inject]
-    private DragDropServiceFactory _dragDropServiceFactory { get; set; }
-
-    private DragDropService DragDropService => _dragDropServiceFactory.Get();
+    private DragDropService DragDropService { get; set; }
 
     /// <summary>
     /// Maximum Number of items which can be dropped in this dropzone. Defaults to null which means unlimited.
@@ -243,16 +242,19 @@
 
         DragDropService.RegisterDropzone(_dropzoneId, options);
 
-        DragDropService.StateHasChanged += async () =>
-        {
-            await InvokeAsync(() => StateHasChanged());
-        };
+        DragDropService.StateHasChanged += StateHasChangedHandler;
     }
+
+    private async void StateHasChangedHandler()
+    {
+        await InvokeAsync(() => StateHasChanged());
+    }
+
 
     private void Ondrop()
     {
         _currentDraggedOverId = 0;
-        
+
         //no active item - probably something was dragged is not a draggable 
         if (DragDropService.ActiveItem == null) return;
 
@@ -265,6 +267,12 @@
         Logger.LogTrace($"Should Render {!DragDropService.SupressRendering} ActiveItem: {DragDropService.ActiveItem?.Id}");
 
         return !DragDropService.SupressRendering;
+    }
+
+    public void Dispose()
+    {
+        DragDropService.StateHasChanged -= StateHasChangedHandler;
+        DragDropService.UnregisterDropzone(_dropzoneId);
     }
 
 }

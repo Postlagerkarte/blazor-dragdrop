@@ -22,6 +22,7 @@ namespace Blazor.DragDrop.Core
 
         private DraggableItem _activeItem;
 
+        internal DraggableItem _lastDraggedOverItem;
 
         public DragDropService(ILogger<DragDropService> logger)
         {
@@ -51,7 +52,6 @@ namespace Blazor.DragDrop.Core
 
         public event Action StateHasChanged;
 
-
         public int GetDropzoneId()
         {
             _idDropzoneCounter++;
@@ -64,7 +64,6 @@ namespace Blazor.DragDrop.Core
             return _idDraggableCounter;
         }
 
-        internal DraggableItem _lastDraggedOverItem;
 
         public void DropActiveItem(int targetDropzoneId)
         {
@@ -128,7 +127,6 @@ namespace Blazor.DragDrop.Core
             ActiveItem = _dic[dropzoneId].Single(x => x.Id == draggableId);
         }
 
-
         public void SwapOrInsert(int draggedOverId)
         {
             var targetDropzoneId = _dic.Where(v => v.Value != null).Single(x => x.Value.Any(y => y.Id == draggedOverId)).Key;
@@ -156,9 +154,6 @@ namespace Blazor.DragDrop.Core
             }
 
             _logger?.LogTrace("SwapOrInsert accepted");
-
-  
-
 
             // if same dropzone -> swap
             if (ActiveItem.DropzoneId == draggedOverItem.DropzoneId)
@@ -237,6 +232,20 @@ namespace Blazor.DragDrop.Core
             _dropzoneOptions.Add(dropzoneId, options);
         }
 
+        public void UnregisterDropzone(int dropzoneId)
+        {
+            _logger?.LogTrace($"Unregister dropzone {dropzoneId}");
+
+            _idDropzoneCounter--;
+
+            _idDraggableCounter -= _dic[dropzoneId].Count;
+
+            _dic.Remove(dropzoneId);
+
+            _dropzoneOptions.Remove(dropzoneId);
+
+        }
+
         public void RegisterDraggableForDropzone(DraggableItem dataItem)
         {
             _logger?.LogTrace($"Register draggable {dataItem.Id} for dropzone {dataItem.DropzoneId}");
@@ -290,7 +299,6 @@ namespace Blazor.DragDrop.Core
         {
             return _dropzoneOptions.Single(x => x.Value.Name == dropzoneName).Value;
         }
-
 
         private bool AcceptsElement(int dropzoneId)
         {
