@@ -273,7 +273,7 @@ namespace Blazor.DragDrop.Test
         }
 
         [TestMethod]
-        public void Should_DropActiveItemAndCallOnDrop()
+        public void Should_DropActiveItemAndCallOnDrop_DifferentDropzones()
         {
             var service = new DragDropService(null);
 
@@ -299,6 +299,33 @@ namespace Blazor.DragDrop.Test
             var result = service.GetDraggablesForDropzone(2).Single();
 
             Assert.AreEqual(draggable.Id, result.Id);
+
+            Assert.AreEqual("OnDropTagTest", isDelegateCalled.Test);
+
+        }
+
+        [TestMethod]
+        public void Should_DropActiveItemAndCallOnDrop_SameDropzones()
+        {
+            var service = new DragDropService(null);
+
+            dynamic isDelegateCalled = new { };
+
+            service.RegisterDropzone(1, new DropzoneOptions() { });
+
+            var draggable = new DraggableItem(service)
+            {
+                Id = 1,
+                DropzoneId = 1,
+                Tag = new { Test = "OnDropTagTest" },
+                OnDrop = (d) => isDelegateCalled = d
+            };
+
+            service.RegisterDraggableForDropzone(draggable);
+
+            service.ActiveItem = draggable;
+
+            service.DropActiveItem(1);
 
             Assert.AreEqual("OnDropTagTest", isDelegateCalled.Test);
 

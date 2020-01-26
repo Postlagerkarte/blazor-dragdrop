@@ -73,10 +73,18 @@ namespace Blazor.DragDrop.Core
             bool maxItemLimitReached = _dic[targetDropzoneId].Count >= _dropzoneOptions[targetDropzoneId].MaxItems;
             bool allowSwap = _dropzoneOptions[targetDropzoneId].AllowSwap;
 
-            //if same dropzone // no drop accept // max-item limit
-            if (targetDropzoneId == ActiveItem.DropzoneId ||
-                !acceptsDrop ||
-                maxItemLimitReached && !allowSwap)
+            if(targetDropzoneId == ActiveItem.DropzoneId)
+            {
+                //inform about the drop
+                ActiveItem.OnDrop?.Invoke(ActiveItem.Tag);
+                //early exit
+                _logger?.LogTrace($"Droped in same dropzone.");
+                return;
+            }
+             
+
+            //no drop accept // max-item limit
+            if (!acceptsDrop || maxItemLimitReached && !allowSwap)
             {
                 _logger?.LogTrace($"Drop rejected. Accept Func: {acceptsDrop} , Max-Item-Limit: {maxItemLimitReached}");
 
