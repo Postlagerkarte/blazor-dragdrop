@@ -29,7 +29,19 @@ namespace Blazor.DragDrop.Core
             _logger = logger;
         }
 
-        public bool EnableDebug => false;
+        public void RemoveDraggableItem(int dropzoneId, string name)
+        {
+            var element = _dic[dropzoneId].Single(x => x.Name == name);
+
+            _dic[dropzoneId].Remove(element);
+        }
+
+        public void RemoveDraggableItem(DraggableItem item)
+        {
+            _dic[item.DropzoneId].Remove(item);
+        }
+
+        public bool EnableDebug { get; set; }
 
         public DraggableItem ActiveItem
         {

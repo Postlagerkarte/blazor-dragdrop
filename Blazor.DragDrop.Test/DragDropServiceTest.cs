@@ -331,5 +331,32 @@ namespace Blazor.DragDrop.Test
 
         }
 
+        [TestMethod]
+        public void Should_RemoveDraggableItem()
+        {
+            var service = new DragDropService(null);
+
+            dynamic isDelegateCalled = new { };
+
+            service.RegisterDropzone(1, new DropzoneOptions() { });
+
+            var draggable = new DraggableItem(service)
+            {
+                Id = 1,
+                DropzoneId = 1,
+                Tag = new { Test = "OnDropTagTest" },
+                OnDrop = (d) => isDelegateCalled = d
+            };
+
+            service.RegisterDraggableForDropzone(draggable);
+
+            Assert.IsTrue(service.HasDropzoneDraggables(1));
+
+            service.RemoveDraggableItem(draggable);
+
+            Assert.IsFalse(service.HasDropzoneDraggables(1));
+
+        }
+
     }
 }

@@ -14,6 +14,8 @@ namespace Blazor.DragDrop.Core
 
         public string Name { get; set; }
 
+        public int DropzoneId { get; set; }
+
         
     }
 }
