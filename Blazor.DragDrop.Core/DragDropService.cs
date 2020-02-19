@@ -89,6 +89,8 @@ namespace Blazor.DragDrop.Core
             {
                 //inform about the drop
                 ActiveItem.OnDrop?.Invoke(ActiveItem.Tag);
+                //Clear active item
+                ActiveItem = null;
                 //early exit
                 _logger?.LogTrace($"Droped in same dropzone.");
                 return;
@@ -263,6 +265,8 @@ namespace Blazor.DragDrop.Core
             _dic.Remove(dropzoneId);
 
             _dropzoneOptions.Remove(dropzoneId);
+
+            SupressRendering = false;
 
         }
 
