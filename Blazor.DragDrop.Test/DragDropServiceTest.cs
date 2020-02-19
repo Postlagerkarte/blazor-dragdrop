@@ -358,5 +358,34 @@ namespace Blazor.DragDrop.Test
 
         }
 
+        [TestMethod]
+        public void Should_ClearActiveItemUponDropInSameDropzone()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { });
+
+            service.RegisterDropzone(2, new DropzoneOptions() { });
+
+            var draggable1 = new DraggableItem(service)
+            {
+                Id = 1,
+                DropzoneId = 2,
+            };
+
+            var draggable2 = new DraggableItem(service)
+            {
+                Id = 2,
+                DropzoneId = 2,
+            };
+
+            service.ActiveItem = draggable1;
+
+            service.DropActiveItem(2);
+
+            Assert.IsTrue(service.ActiveItem == null);
+            
+        }
+
     }
 }
