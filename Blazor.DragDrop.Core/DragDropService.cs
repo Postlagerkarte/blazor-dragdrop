@@ -90,7 +90,7 @@ namespace Blazor.DragDrop.Core
             {
 
                 //inform about the drop
-                ActiveItem.OnDrop?.Invoke(ActiveItem.Tag);
+                ActiveItem.OnDrop?.Invoke(ActiveItem.Tag, orderPosition);
                 //Clear active item
                 ActiveItem = null;
                 //early exit

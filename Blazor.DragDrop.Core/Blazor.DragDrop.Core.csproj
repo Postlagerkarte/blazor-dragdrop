@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <PackageId>blazor-dragdrop</PackageId>
     <Authors>Postlagerkarte</Authors>
     <Product>Blazor Drag Drop Library</Product>
@@ -12,8 +12,8 @@
     <PackageTags>dragdrop blazor draggable drop</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Easy-to-use and feature rich Drag and drop library for Blazor</Description>
-    <AssemblyVersion>1.1.1.0</AssemblyVersion>
-    <FileVersion>1.1.1.0</FileVersion>
+    <AssemblyVersion>1.1.2.0</AssemblyVersion>
+    <FileVersion>1.1.2.0</FileVersion>
   </PropertyGroup>
 
 
