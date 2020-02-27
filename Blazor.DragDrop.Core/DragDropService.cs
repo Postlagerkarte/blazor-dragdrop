@@ -84,11 +84,13 @@ namespace Blazor.DragDrop.Core
             bool acceptsDrop = AcceptsElement(targetDropzoneId);
             bool maxItemLimitReached = _dic[targetDropzoneId].Count >= _dropzoneOptions[targetDropzoneId].MaxItems;
             bool allowSwap = _dropzoneOptions[targetDropzoneId].AllowSwap;
+            var orderPosition = GetOrderPosition(targetDropzoneId, ActiveItem.Id);
 
-            if(targetDropzoneId == ActiveItem.DropzoneId)
+            if (targetDropzoneId == ActiveItem.DropzoneId)
             {
+
                 //inform about the drop
-                ActiveItem.OnDrop?.Invoke(ActiveItem.Tag);
+                ActiveItem.OnDrop?.Invoke(ActiveItem.Tag, orderPosition);
                 //early exit
                 _logger?.LogTrace($"Droped in same dropzone.");
                 return;
@@ -130,7 +132,7 @@ namespace Blazor.DragDrop.Core
             ActiveItem.DropzoneId = targetDropzoneId;
 
             //inform about the drop
-            ActiveItem.OnDrop?.Invoke(ActiveItem.Tag);
+            ActiveItem.OnDrop?.Invoke(ActiveItem.Tag, orderPosition);
 
             //Clear active item
             ActiveItem = null;
