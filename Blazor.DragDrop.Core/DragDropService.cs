@@ -142,8 +142,17 @@ namespace Blazor.DragDrop.Core
 
         public int GetOrderPosition(int dropzoneId, int draggableId)
         {
-            var item = _dic[dropzoneId].Single(x => x.Id == draggableId);
-            return _dic[dropzoneId].IndexOf(item);
+            var item = _dic[dropzoneId].SingleOrDefault(x => x.Id == draggableId);
+
+            if(item != null)
+            {
+                return _dic[dropzoneId].IndexOf(item);
+            }
+            else
+            {
+                return 0;
+            }
+           
         }
 
         public void SetActiveItem(int dropzoneId, int draggableId)
