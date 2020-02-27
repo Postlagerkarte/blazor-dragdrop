@@ -287,7 +287,7 @@ namespace Blazor.DragDrop.Test
                 Id = 1,
                 DropzoneId = 1,
                 Tag = new { Test = "OnDropTagTest"},
-                OnDrop = (d) => isDelegateCalled = d
+                OnDrop = (d,i) => isDelegateCalled = d
             };
 
             service.RegisterDraggableForDropzone(draggable);
@@ -318,7 +318,7 @@ namespace Blazor.DragDrop.Test
                 Id = 1,
                 DropzoneId = 1,
                 Tag = new { Test = "OnDropTagTest" },
-                OnDrop = (d) => isDelegateCalled = d
+                OnDrop = (d,i) => isDelegateCalled = d
             };
 
             service.RegisterDraggableForDropzone(draggable);
@@ -345,7 +345,7 @@ namespace Blazor.DragDrop.Test
                 Id = 1,
                 DropzoneId = 1,
                 Tag = new { Test = "OnDropTagTest" },
-                OnDrop = (d) => isDelegateCalled = d
+                OnDrop = (d,i) => isDelegateCalled = d
             };
 
             service.RegisterDraggableForDropzone(draggable);
