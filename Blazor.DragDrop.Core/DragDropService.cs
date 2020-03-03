@@ -178,23 +178,29 @@ namespace Blazor.DragDrop.Core
 
             _lastDraggedOverItem = draggedOverItem;
 
-            //if same dropzone // no drop accept // max-item limit
-            if (!acceptsDrop || maxItemLimitReached)
+            //drop not accepted due to delegate 
+            if (!acceptsDrop)
             {
-                _logger?.LogTrace($"SwapOrInsert rejected. Accept Func: {acceptsDrop} , Max-Item-Limit: {maxItemLimitReached}");
-
+                _logger?.LogTrace($"SwapOrInsert rejected. Accept Func: {acceptsDrop}");
                 return;
             }
-
-            _logger?.LogTrace("SwapOrInsert accepted");
 
             // if same dropzone -> swap
             if (ActiveItem.DropzoneId == draggedOverItem.DropzoneId)
             {
+                _logger?.LogTrace("SwapOrInsert accepted");
                 SwapWithActiveItem(draggedOverItem);
             }
             else // different dropzone -> move item over
             {
+                if(maxItemLimitReached)
+                {
+                    _logger?.LogTrace($"SwapOrInsert rejected. MaxItemLimitReached");
+                    return;
+                }
+
+                _logger?.LogTrace("SwapOrInsert accepted");
+
                 var activeItemDropzoneId = ActiveItem.DropzoneId;
 
                 MoveActiveItem(targetDropzoneId: draggedOverItem.DropzoneId, index: draggedOverItem.OrderPosition);
