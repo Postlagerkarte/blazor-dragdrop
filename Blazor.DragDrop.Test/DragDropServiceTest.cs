@@ -86,6 +86,33 @@ namespace Blazor.DragDrop.Test
 
 
         [TestMethod]
+        public void Should_AllowSwappingInSameDropzone_And_MaxItems()
+        {
+            var service = new DragDropService(null);
+
+            service.RegisterDropzone(1, new DropzoneOptions() { MaxItems = 2 });
+
+            var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1 };
+            var draggable2 = new DraggableItem(service) { Id = 2, DropzoneId = 1 };
+
+         
+            service.RegisterDraggableForDropzone(draggable1);
+            service.RegisterDraggableForDropzone(draggable2);
+
+            Assert.AreEqual(0, draggable1.OrderPosition);
+            Assert.AreEqual(1, draggable2.OrderPosition);
+
+
+            service.ActiveItem = draggable1;
+            service.SwapOrInsert(2);
+
+            Assert.AreEqual(0, draggable2.OrderPosition);
+            Assert.AreEqual(1, draggable1.OrderPosition);
+
+        }
+
+
+        [TestMethod]
         public void Should_Limit_Dropzone_To_MaxItems_AllowSwap()
         {
             var service = new DragDropService(null);
