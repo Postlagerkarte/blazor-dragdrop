@@ -181,7 +181,7 @@
 
         var dragedItem = DragDropService.GetDraggablesForDropzone(_dropzoneId).Single(x=> x.Id == draggableId);
 
-        if (dragedItem.AllowDrag != null && !dragedItem.AllowDrag(dragedItem.Tag)) return;
+        if (!DragDropService.IsDraggable(dragedItem)) return;
 
         DragDropService.SupressRendering = true;
 
