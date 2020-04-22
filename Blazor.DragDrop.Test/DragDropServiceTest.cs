@@ -64,7 +64,7 @@ namespace Blazor.DragDrop.Test
             var service = new DragDropService(null);
 
             service.RegisterDropzone(1, new DropzoneOptions() { });
-            service.RegisterDropzone(2, new DropzoneOptions() {MaxItems = 1 });
+            service.RegisterDropzone(2, new DropzoneOptions() { MaxItems = 1 });
 
             var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1 };
             var draggable2 = new DraggableItem(service) { Id = 2, DropzoneId = 1 };
@@ -95,7 +95,7 @@ namespace Blazor.DragDrop.Test
             var draggable1 = new DraggableItem(service) { Id = 1, DropzoneId = 1 };
             var draggable2 = new DraggableItem(service) { Id = 2, DropzoneId = 1 };
 
-         
+
             service.RegisterDraggableForDropzone(draggable1);
             service.RegisterDraggableForDropzone(draggable2);
 
@@ -309,12 +309,12 @@ namespace Blazor.DragDrop.Test
             service.RegisterDropzone(1, new DropzoneOptions() { });
             service.RegisterDropzone(2, new DropzoneOptions() { });
 
-            var draggable = new DraggableItem(service) 
-            { 
+            var draggable = new DraggableItem(service)
+            {
                 Id = 1,
                 DropzoneId = 1,
-                Tag = new { Test = "OnDropTagTest"},
-                OnDrop = (d,i) => isDelegateCalled = d
+                Tag = new { Test = "OnDropTagTest" },
+                OnDrop = (d, i) => isDelegateCalled = d
             };
 
             service.RegisterDraggableForDropzone(draggable);
@@ -345,7 +345,7 @@ namespace Blazor.DragDrop.Test
                 Id = 1,
                 DropzoneId = 1,
                 Tag = new { Test = "OnDropTagTest" },
-                OnDrop = (d,i) => isDelegateCalled = d
+                OnDrop = (d, i) => isDelegateCalled = d
             };
 
             service.RegisterDraggableForDropzone(draggable);
@@ -372,7 +372,7 @@ namespace Blazor.DragDrop.Test
                 Id = 1,
                 DropzoneId = 1,
                 Tag = new { Test = "OnDropTagTest" },
-                OnDrop = (d,i) => isDelegateCalled = d
+                OnDrop = (d, i) => isDelegateCalled = d
             };
 
             service.RegisterDraggableForDropzone(draggable);
@@ -411,7 +411,44 @@ namespace Blazor.DragDrop.Test
             service.DropActiveItem(2);
 
             Assert.IsTrue(service.ActiveItem == null);
-            
+
+        }
+
+
+        [TestMethod]
+        public void Should_CheckAllowDrag_True()
+        {
+            var service = new DragDropService(null);
+
+            var draggable1 = new DraggableItem(service)
+            {
+                Id = 1,
+                DropzoneId = 1,
+                Tag = new { Test = true },
+                AllowDrag = (d) => d.Tag.Test
+            };
+
+            var isDragable = service.IsDraggable(draggable1);
+
+            Assert.AreEqual(true, isDragable);
+        }
+
+        [TestMethod]
+        public void Should_CheckAllowDrag_False()
+        {
+            var service = new DragDropService(null);
+
+            var draggable1 = new DraggableItem(service)
+            {
+                Id = 1,
+                DropzoneId = 1,
+                Tag = new { Test = false },
+                AllowDrag = (d) => d.Tag.Test
+            };
+
+            var isDragable = service.IsDraggable(draggable1);
+
+            Assert.AreEqual(false, isDragable);
         }
 
     }

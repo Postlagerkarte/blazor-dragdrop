@@ -331,6 +331,11 @@ namespace Blazor.DragDrop.Core
             return draggables;
         }
 
+        public bool IsDraggable(DraggableItem draggable)
+        {
+            return draggable.AllowDrag == null || draggable.AllowDrag(draggable);
+        }
+
         public DropzoneOptions GetDropzoneOptionsById(int dropzoneId)
         {
             return _dropzoneOptions[dropzoneId];
