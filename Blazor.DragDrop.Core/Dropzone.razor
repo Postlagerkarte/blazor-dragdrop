@@ -23,7 +23,8 @@
                              @ondragenter="(e)=>OnDragEnter(frag.Id,e)"
                              @ondragleave="(e)=>OnDragLeave(frag.Id,e)"
                              @ondragend="() =>OnDragEnd(frag.Id)"
-                             class=@GetClasses(frag.Id)>
+                             @attributes="frag.OtherAttributes"
+                             class=@GetClasses(frag)>
                             @if (DragDropService.EnableDebug)
                             {
                                 <p>@frag.Id</p>
@@ -37,7 +38,7 @@
                     }
                     else // not allowing dragging
                     {
-                        <div class=@GetClasses(frag.Id)>
+                        <div @attributes="frag.OtherAttributes" class=@GetClasses(frag)>
                             <CascadingValue Value="frag">
                                 @frag.RenderFragment(frag)
                             </CascadingValue>
@@ -156,24 +157,41 @@
         }
     }
 
-    private string GetClasses(int draggableId)
+    private string GetClasses(DraggableItem draggableItem)
     {
+        var draggableId = draggableItem.Id;
+
+        string cssPart = string.Empty;
+
         if (DragDropService.ActiveItem?.Id == draggableId)
         {
-            return $"draggable draggable-intransit";
+            cssPart = "draggable-intransit";
         }
 
         if (draggableId == _currentDraggedOverId)
         {
-            return $"draggable draggable-over";
+            cssPart = "draggable-over";
         }
 
         if (!AllowDrag(draggableId))
         {
-            return $"draggable draggable-disabled";
+            cssPart = "draggable-disabled";
         }
 
-        return "draggable";
+        if(draggableItem.OtherAttributes != null && draggableItem.OtherAttributes.ContainsKey("class"))
+        {
+            if(String.IsNullOrEmpty(cssPart))
+            {
+                cssPart = draggableItem.OtherAttributes["class"].ToString();
+            }
+            else
+            {
+                cssPart = cssPart + " " + draggableItem.OtherAttributes["class"].ToString();
+            }
+        }
+
+
+        return $"draggable {cssPart}";
     }
 
     private void OnDragStart(int draggableId)

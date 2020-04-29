@@ -14,6 +14,8 @@ namespace Blazor.DragDrop.Core
             this.dragDropService = dragDropService;
         }
 
+        public Dictionary<string, object> OtherAttributes { get; set; }
+
         public RenderFragment<DraggableItem> RenderFragment { get; set; }
 
         public int Id { get; set; }
