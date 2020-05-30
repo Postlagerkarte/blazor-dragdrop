@@ -75,13 +75,13 @@ namespace Blazor.DragDrop.Core
 
         public event Action StateHasChanged;
 
-        public int GetDropzoneId()
+        internal int GetDropzoneId()
         {
             _idDropzoneCounter++;
             return _idDropzoneCounter;
         }
 
-        public int GetDraggableId()
+        internal int GetDraggableId()
         {
             _idDraggableCounter++;
             return _idDraggableCounter;
@@ -101,7 +101,7 @@ namespace Blazor.DragDrop.Core
             {
 
                 //inform about the drop
-                ActiveItem.OnDrop?.Invoke(ActiveItem.Tag, orderPosition);
+                ActiveItem.OnDrop?.Invoke(ActiveItem);
                 //Clear active item
                 ActiveItem = null;
                 //early exit
@@ -145,7 +145,7 @@ namespace Blazor.DragDrop.Core
             ActiveItem.DropzoneId = targetDropzoneId;
 
             //inform about the drop
-            ActiveItem.OnDrop?.Invoke(ActiveItem.Tag, orderPosition);
+            ActiveItem.OnDrop?.Invoke(ActiveItem);
 
             //Clear active item
             ActiveItem = null;
