@@ -385,6 +385,52 @@ namespace Blazor.DragDrop.Test
 
         }
 
+
+        [TestMethod]
+        public void Should_RemoveAllItemFromDropzone()
+        {
+            var service = new DragDropService(null);
+
+            dynamic isDelegateCalled = new { };
+
+            service.RegisterDropzone(1, new DropzoneOptions() { Name = "Testzone" });
+
+            var draggable = new DraggableItem(service)
+            {
+                Id = 1,
+                DropzoneId = 1,
+                Tag = new { Test = "OnDropTagTest" },
+                OnDrop = (d, i) => isDelegateCalled = d
+            };
+
+            var draggable1 = new DraggableItem(service)
+            {
+                Id = 1,
+                DropzoneId = 1,
+                Tag = new { Test = "OnDropTagTest" },
+                OnDrop = (d, i) => isDelegateCalled = d
+            };
+
+            var draggable2 = new DraggableItem(service)
+            {
+                Id = 1,
+                DropzoneId = 1,
+                Tag = new { Test = "OnDropTagTest" },
+                OnDrop = (d, i) => isDelegateCalled = d
+            };
+
+            service.RegisterDraggableForDropzone(draggable);
+            service.RegisterDraggableForDropzone(draggable1);
+            service.RegisterDraggableForDropzone(draggable2);
+
+            Assert.IsTrue(service.HasDropzoneDraggables(1));
+
+            service.ClearDropzone("Testzone");
+
+            Assert.IsFalse(service.HasDropzoneDraggables(1));
+
+        }
+
         [TestMethod]
         public void Should_ClearActiveItemUponDropInSameDropzone()
         {

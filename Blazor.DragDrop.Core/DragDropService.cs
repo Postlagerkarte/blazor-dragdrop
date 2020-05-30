@@ -41,6 +41,17 @@ namespace Blazor.DragDrop.Core
             _dic[item.DropzoneId].Remove(item);
         }
 
+
+        /// <summary>
+        /// Removes all items from a dropzone.
+        /// </summary>
+        /// <param name="dropzoneName">Name of the Dropzone. Assigned via the Name attribute on the dropzone</param>
+        public void ClearDropzone(string dropzoneName)
+        {
+            var dropzoneId = _dropzoneOptions.Single(x => x.Value.Name == dropzoneName).Key;
+            _dic[dropzoneId].Clear();
+        }   
+
         public bool EnableDebug { get; set; }
 
         public DraggableItem ActiveItem
