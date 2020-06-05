@@ -1,6 +1,11 @@
 # blazor-dragdrop
 Drag and Drop Library for Blazor
 
+
+```diff
+!This library is suitable if you need to make a small set of items draggable. It is not suitable to for large lists
+```
+
 [![Build Status](https://dev.azure.com/postlagerkarte/blazor-dragdrop/_apis/build/status/Postlagerkarte.blazor-dragdrop?branchName=master)](https://dev.azure.com/postlagerkarte/blazor-dragdrop/_build/latest?definitionId=3&branchName=master)
 
 #### Demo:
