@@ -3,7 +3,7 @@
 @inject ILogger<Dropzone> Logger;
 @implements IDisposable;
 
-    <div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" class="@_DropzoneClass">
+    <div ondragover="event.preventDefault();" ondragenter="event.preventDefault();" ondragstart="event.dataTransfer.setData('text', event.target.id);" @ondrop="Ondrop" @ondrop:preventDefault class="@_DropzoneClass">
         <CascadingValue Value="this">
             @ChildContent
         </CascadingValue>
