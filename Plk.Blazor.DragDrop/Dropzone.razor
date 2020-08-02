@@ -39,7 +39,7 @@
 
     private bool IsItemAccepted()
     {
-        if (Accepts == null) return false;
+        if (Accepts == null) return true;
 
         return Accepts(DragDropService.ActiveItem);
     }
