@@ -1,0 +1,58 @@
+﻿@page "/twozones"
+@using Plk.Blazor.DragDrop.Demo.Components
+@using Plk.Blazor.DragDrop.Demo.Data
+
+<div class="bg-success">You can drag items from one dropzone to another dropzone.</div>
+
+<hr />
+
+<div class="bg-light">First Dropzone:</div>
+
+<div id="simple-dd">
+    <Dropzone Items="MyFirstList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+        <div class="mt-2" style="border: 2px solid blue">
+            @context.Titel
+        </div>
+    </Dropzone>
+</div>
+
+<hr />
+
+<div class="bg-light">Second Dropzone:</div>
+
+<div id="simple-dd">
+    <Dropzone Items="MySecondList"  TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+        <div class="mt-2" style="border: 2px solid black">
+            @context.Titel
+        </div>
+    </Dropzone>
+</div>
+
+<hr />
+
+<div>Last Dropped Item: @lastdropped?.Titel</div>
+
+
+@code {
+
+    private TodoItem lastdropped { get; set; }
+
+    public List<TodoItem> MyFirstList = new List<TodoItem>()
+    {
+            new TodoItem(){Titel = "Item 1"},
+            new TodoItem(){Titel = "Item 2"},
+            new TodoItem(){Titel = "Item 3"},
+            new TodoItem(){Titel = "Item 4"},
+            new TodoItem(){Titel = "Item 5"},
+    };
+
+    public List<TodoItem> MySecondList = new List<TodoItem>()
+    {
+            new TodoItem(){Titel = "Item 6"},
+            new TodoItem(){Titel = "Item 7"},
+            new TodoItem(){Titel = "Item 8"},
+            new TodoItem(){Titel = "Item 9"},
+            new TodoItem(){Titel = "Item 10"},
+    };
+
+}

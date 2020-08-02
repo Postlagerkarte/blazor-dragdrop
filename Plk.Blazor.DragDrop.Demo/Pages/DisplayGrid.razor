@@ -1,0 +1,26 @@
+﻿@page "/displaygrid"
+
+<hr />
+
+<div id="simple-dd" class="grid-container">
+    <Dropzone Items="Items">
+        <div class="m-2">
+            <div class="grid-item">@context</div>
+        </div>
+    </Dropzone>
+</div>
+
+@code {
+    public List<string> Items = new List<string>()
+{
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+    };
+}

@@ -1,0 +1,46 @@
+﻿@page "/"
+@using Plk.Blazor.DragDrop.Demo.Components
+@using Plk.Blazor.DragDrop.Demo.Data
+
+<div id="main" class="container-fluid">
+
+    <input placeholder="Something todo" @bind="newTodo" />
+    <button @onclick="AddTodo" class="btn btn-success">Add</button>
+
+    <hr />
+
+    <div id="simple-dd">
+        <Dropzone Items="MyToDoList">
+            <Todo OnRemoveClick="(item)=>MyToDoList.Remove(item)" Item="@context"></Todo>
+        </Dropzone>
+    </div>
+
+</div>
+
+@code{
+
+    private string newTodo;
+
+    private void AddTodo()
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            MyToDoList.Add(new TodoItem { Titel = newTodo });
+            newTodo = string.Empty;
+        }
+    }
+
+
+
+    public List<TodoItem> MyToDoList = new List<TodoItem>()
+    {
+            new TodoItem(){Titel = "Drag this item"},
+            new TodoItem(){Titel = "Add another item"},
+            new TodoItem(){Titel = "Remove this item"},
+            new TodoItem(){Titel = "Style this list"},
+            new TodoItem(){Titel = "Fix a bug"},
+            new TodoItem(){Titel = "Build a feature"},
+            new TodoItem(){Titel = "Create a PR"},
+    };
+
+}
