@@ -1,0 +1,59 @@
+﻿@page "/maxitems"
+@using Plk.Blazor.DragDrop.Demo.Components
+@using Plk.Blazor.DragDrop.Demo.Data
+
+<div class="bg-success">You can set an item limit on a dropzone.</div>
+
+<hr />
+
+<div class="bg-light">First Dropzone:</div>
+
+<div id="simple-dd">
+    <Dropzone Items="MyFirstList">
+        <div class="mt-2" style="border: 2px solid blue">
+            @context.Titel
+        </div>
+    </Dropzone>
+</div>
+
+<hr />
+
+<div class="bg-light">Second Dropzone: (max items 2)</div>
+
+<div id="simple-dd">
+    <Dropzone Items="MySecondList" MaxItems="2" TItem="TodoItem" OnItemDropRejectedByMaxItemLimit="@((i)=>lastRejected = i)">
+        <div class="mt-2" style="border: 2px solid black">
+            @context.Titel
+        </div>
+    </Dropzone>
+</div>
+
+<hr />
+
+@if (lastRejected != null)
+{
+<div class="mt-1 bg-warning">Last Rejected: @lastRejected.Titel</div>
+}
+
+
+
+@code {
+
+    private TodoItem lastRejected { get; set; }
+
+    public List<TodoItem> MyFirstList = new List<TodoItem>()
+{
+            new TodoItem(){Titel = "Item 1"},
+            new TodoItem(){Titel = "Item 2"},
+            new TodoItem(){Titel = "Item 3"},
+            new TodoItem(){Titel = "Item 4"},
+            new TodoItem(){Titel = "Item 5"},
+    };
+
+    public List<TodoItem> MySecondList = new List<TodoItem>()
+{
+            new TodoItem(){Titel = "Item 6"},
+            new TodoItem(){Titel = "Item 7"},
+    };
+
+}

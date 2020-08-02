@@ -1,0 +1,58 @@
+﻿@page "/accepts"
+@using Plk.Blazor.DragDrop.Demo.Components
+@using Plk.Blazor.DragDrop.Demo.Data
+
+<div class="bg-success">You can drag items from one dropzone to another dropzone.</div>
+
+<hr />
+
+<div class="bg-light">First Dropzone:</div>
+
+<div id="simple-dd">
+    <Dropzone Items="MyFirstList">
+        <div class="mt-2" style="border: 2px solid blue">
+            @context.Titel
+        </div>
+    </Dropzone>
+</div>
+
+<hr />
+
+<div class="bg-light">Second Dropzone: (only accepts items containing the word 'fun')</div>
+
+<div id="simple-dd">
+    <Dropzone Items="MySecondList" Accepts='(d)=>d.Titel.Contains("fun")' TItem="TodoItem" OnItemDropRejected="@((i)=>lastdropped = i)">
+        <div class="mt-2" style="border: 2px solid black">
+            @context.Titel
+        </div>
+    </Dropzone>
+</div>
+
+<hr />
+
+@if(lastdropped != null)
+{
+    <div class="bg-warning">No place for you here:  @lastdropped?.Titel </div>
+}
+
+
+
+@code {
+
+    private TodoItem lastdropped { get; set; }
+
+    public List<TodoItem> MyFirstList = new List<TodoItem>()
+{
+            new TodoItem(){Titel = "Item 1 - boring"},
+            new TodoItem(){Titel = "Item 2 - angry"},
+            new TodoItem(){Titel = "Item 3 - fun"},
+            new TodoItem(){Titel = "Item 4 - more fun"},
+            new TodoItem(){Titel = "Item 5 - great"},
+    };
+
+    public List<TodoItem> MySecondList = new List<TodoItem>()
+{
+            new TodoItem(){Titel = "Item 6 - the real fun"},
+    };
+
+}

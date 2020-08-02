@@ -1,0 +1,231 @@
+﻿@typeparam TItem
+@inject DragDropService<TItem> DragDropService
+
+<div class="plk-dd-dropzone" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()">
+
+    @foreach (var item in Items)
+    {
+        <div draggable="true"
+             @ondragstart="()=>OnDragStart(item)"
+             @ondragend="()=>OnDragEnd()"
+             @ondragenter="()=>OnDragEnter(item)"
+             @ondragleave="()=>OnDragLeave()"
+             class="@CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
+
+            @{ 
+                if(ChildContent != null)
+                {
+                    @ChildContent(item);
+                }
+            }
+
+        </div>
+    }
+
+</div>
+
+@code {     
+
+    private TItem dragTargetItem;
+
+    bool shouldRender = true;
+
+    private bool IsMaxItemLimitReached()
+    {
+        var activeItem = DragDropService.ActiveItem;
+
+        return (!Items.Contains(activeItem) && MaxItems.HasValue && MaxItems == Items.Count());
+    }
+
+    private bool IsItemAccepted()
+    {
+        if (Accepts == null) return false;
+
+        return Accepts(DragDropService.ActiveItem);
+    }
+
+    private bool IsInvalidItem()
+    {
+        var activeItem = DragDropService.ActiveItem;
+
+        return (activeItem == null); // probably something was dragged that is not a valid draggable
+    }
+
+    protected override bool ShouldRender()
+    {
+        return shouldRender;
+    }
+
+    public string CheckIfDragOperationIsInProgess()
+    {
+        var activeItem = DragDropService.ActiveItem;
+
+        return activeItem == null ? "" : "plk-dd-inprogess";
+    }
+
+    public void OnDragEnd()
+    {
+        DragDropService.ActiveItem = default(TItem);
+
+        shouldRender = true;
+        StateHasChanged();
+    }
+
+    public void OnDragEnter(TItem item)
+    {
+        var activeItem = DragDropService.ActiveItem;
+
+        if (item.Equals(activeItem)) return;
+
+        if (IsInvalidItem()) return;
+
+        if (IsMaxItemLimitReached()) return;
+
+        if (!IsItemAccepted()) return;
+
+        dragTargetItem = item;
+
+        if (InstantReplace)
+        {
+            Swap(dragTargetItem, activeItem);
+        }
+
+        shouldRender = true;
+        StateHasChanged();
+        shouldRender = false;
+    }
+
+    public void OnDragLeave()
+    {
+        dragTargetItem = default(TItem);
+
+        shouldRender = true;
+        StateHasChanged();
+        shouldRender = false;
+    }
+
+    public void OnDragStart(TItem item)
+    {
+        shouldRender = true;
+        DragDropService.ActiveItem = item;
+        DragDropService.Items = Items;
+        StateHasChanged();
+        shouldRender = false;
+    }
+
+    public string CheckIfItemIsInTransit(TItem item)
+    {
+        return item.Equals(DragDropService.ActiveItem) ? "plk-dd-in-transit no-pointer-events" : "";
+    }
+
+    public string CheckIfItemIsDragTarget(TItem item)
+    {
+        if (item.Equals(DragDropService.ActiveItem)) return "";
+
+        return item.Equals(dragTargetItem) ? "plk-dd-dragged-over" : "";
+    }
+
+    /// <summary>
+    /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted
+    /// </summary>
+    [Parameter]
+    public Func<TItem, bool> Accepts { get; set; }
+
+    /// <summary>
+    /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to the given Accept Delegate 
+    /// </summary>
+    [Parameter] public EventCallback<TItem> OnItemDropRejected { get; set; }
+
+    /// <summary>
+    /// Raises a callback with the dropped item as parameter 
+    /// </summary>
+    [Parameter] public EventCallback<TItem> OnItemDrop { get; set; }
+
+    /// <summary>
+    /// If set to true, items will we be swapped/inserted instantly. 
+    /// </summary>
+    [Parameter] public bool InstantReplace { get; set; }
+
+    /// <summary>
+    /// List of items for the dropzone
+    /// </summary>
+    [Parameter] public List<TItem> Items { get; set; }
+
+    /// <summary>
+    /// Maximum Number of items which can be dropped in this dropzone. Defaults to null which means unlimited.
+    /// </summary>
+    [Parameter] public int? MaxItems { get; set; }
+
+    /// <summary>
+    /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to item limit.
+    /// </summary>
+    [Parameter] public EventCallback<TItem> OnItemDropRejectedByMaxItemLimit { get; set; }
+
+    [Parameter] public RenderFragment<TItem> ChildContent { get; set; }
+
+    private void OnDrop()
+    {
+        var activeItem = DragDropService.ActiveItem;
+
+        if (IsInvalidItem()) return;
+
+        if(IsMaxItemLimitReached())
+        {
+            OnItemDropRejectedByMaxItemLimit.InvokeAsync(activeItem);
+            return;
+        }
+
+        if(!IsItemAccepted())
+        {
+            OnItemDropRejected.InvokeAsync(activeItem);
+            return;
+        }
+
+        if (dragTargetItem == null) //no direct drag target
+        {
+            if (!Items.Contains(activeItem)) //if dragged to another dropzone
+            {
+                Items.Insert(Items.Count, activeItem); //insert item to new zone
+                DragDropService.Items.Remove(activeItem); //remove from old zone
+            }
+        }
+        else // we have a direct target
+        {
+            if(!InstantReplace)
+            {
+                Swap(dragTargetItem, activeItem); //swap target with active item
+            }
+        }
+
+
+        DragDropService.ActiveItem = default(TItem);
+        dragTargetItem = default(TItem);
+
+        shouldRender = true;
+        StateHasChanged();
+
+        OnItemDrop.InvokeAsync(activeItem);
+    }
+
+    private void Swap(TItem draggedOverItem, TItem activeItem)
+    {
+        var indexDraggedOverItem = Items.IndexOf((TItem)draggedOverItem);
+        var indexActiveItem = Items.IndexOf((TItem)activeItem);
+
+        if (indexActiveItem == -1) // item is new to the dropzone
+        {
+            //insert into new zone
+            Items.Insert(indexDraggedOverItem+1, activeItem);
+            //remove from old zone
+            DragDropService.Items.Remove(activeItem);
+        }
+        else //swap the items
+        {
+            if (indexDraggedOverItem == indexActiveItem) return;
+            TItem tmp = Items[indexDraggedOverItem];
+            Items[indexDraggedOverItem] = Items[indexActiveItem];
+            Items[indexActiveItem] = tmp;
+        }
+
+    }
+}

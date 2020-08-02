@@ -1,0 +1,24 @@
+﻿@page "/cards"
+@using Plk.Blazor.DragDrop.Demo.Components
+@using Plk.Blazor.DragDrop.Demo.Data
+
+<div id="main" class="container-fluid">
+
+
+    <hr />
+            <Dropzone Items="MyItems" InstantReplace="true">
+                <Card ImageUrl="@context.Item1" Title="@context.Item2"></Card>
+            </Dropzone>
+    </div>
+
+    @code{
+
+
+        public List<Tuple<string, string>> MyItems = new List<Tuple<string, string>>()
+    {
+            new Tuple<string, string>("https://i.redd.it/b3esnz5ra34y.jpg", "Have"),
+            new Tuple<string, string>("https://cdn.blackmilkclothing.com/media/wysiwyg/Wallpapers/PhoneWallpapers_FloralCoral.jpg", "Fun"),
+            new Tuple<string, string>("https://media.giphy.com/media/10SvWCbt1ytWCc/giphy.gif", "Enjoy!"),
+    };
+
+    }
