@@ -92,7 +92,7 @@ By default you get a visual clue for the drop operation. You can activate Instan
 
 Multiple Dropzone:
 
-You can create more than one dropzone and move items betweens them.
+You can create more than one dropzone and move items between them.
 
 #### Styling:
 
