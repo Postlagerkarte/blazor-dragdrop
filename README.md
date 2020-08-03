@@ -79,6 +79,17 @@ Restrict Drop: (executes the give accept func before accepting the draggable)
 ```
 If you drop something and the item is rejected you can get a notification by providing a callback.
 
+Instant Replace: 
+
+By default you get a visual clue for the drop operation. You can activate Instant Replace to instead swap out items on the fly. This option should only be used for small lists.
+
+```html
+<Dropzone InstantReplace="true">
+
+</Dropzone>
+```
+
+
 Multiple Dropzone:
 
 You can create more than one dropzone and move items betweens them.
