@@ -29,6 +29,8 @@ services.AddBlazorDragDrop();
 
 ------
 
+Version 2.x :
+
 #### Create a draggable list for your items
 
 You have to create a dropzone and assign your items to it:
@@ -135,3 +137,7 @@ Add this to your _host.html:
         });
     </script>
 ```
+
+Version 1.x:
+
+Please upgrade to 2.0 - there will be no support/bugfixes for the 1.x version.
