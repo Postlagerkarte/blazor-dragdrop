@@ -59,6 +59,8 @@ You can also use your own component as a render template:
         <MyCompoenent Item="@context"></MyComponent>
     </Dropzone>
 ```
+You access your item via the @context - Alternatively, you can specify the Context attribute on the Dropzone element to assign a different name.
+
 By default the dropzone will use a build-in style for the drag/drop animations. 
 
 If you add or remove items to the underlying list the dropzone will automatically update. 
