@@ -1,0 +1,17 @@
+﻿.plk-dd-inprogess > * {
+    pointer-events: none;
+}
+
+.plk-dd-default-style .plk-dd-dragged-over > div {
+    background-color: lightgray;
+    opacity: 0.6;
+    animation: blinker 1s linear infinite;
+}
+
+.plk-dd-default-style .plk-dd-in-transit > div {
+    background-color: aqua;
+}
+
+.blink_me {
+    animation: blinker 1s linear infinite;
+}

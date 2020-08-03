@@ -8,25 +8,24 @@
 
 <div class="bg-light">First Dropzone:</div>
 
-<div id="simple-dd">
+
     <Dropzone Items="MyFirstList">
         <div class="mt-2" style="border: 2px solid blue">
             @context.Titel
         </div>
     </Dropzone>
-</div>
+
 
 <hr />
 
 <div class="bg-light">Second Dropzone: (only accepts items containing the word 'fun')</div>
 
-<div id="simple-dd">
+
     <Dropzone Items="MySecondList" Accepts='(d)=>d.Titel.Contains("fun")' TItem="TodoItem" OnItemDropRejected="@((i)=>lastdropped = i)">
         <div class="mt-2" style="border: 2px solid black">
             @context.Titel
         </div>
     </Dropzone>
-</div>
 
 <hr />
 
@@ -34,8 +33,6 @@
 {
     <div class="bg-warning">No place for you here:  @lastdropped?.Titel </div>
 }
-
-
 
 @code {
 

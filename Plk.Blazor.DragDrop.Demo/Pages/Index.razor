@@ -9,11 +9,9 @@
 
     <hr />
 
-    <div id="simple-dd">
-        <Dropzone Items="MyToDoList">
-            <Todo OnRemoveClick="(item)=>MyToDoList.Remove(item)" Item="@context"></Todo>
-        </Dropzone>
-    </div>
+    <Dropzone Items="MyToDoList">
+        <Todo OnRemoveClick="(item)=>MyToDoList.Remove(item)" Item="@context"></Todo>
+    </Dropzone>
 
 </div>
 
