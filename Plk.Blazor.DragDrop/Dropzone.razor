@@ -1,7 +1,7 @@
 ﻿@typeparam TItem
 @inject DragDropService<TItem> DragDropService
 
-<div class="plk-dd-dropzone" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()">
+<div class="plk-dd-dropzone @GetStyleClass()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()">
 
     @foreach (var item in Items)
     {
@@ -125,11 +125,25 @@
         return item.Equals(dragTargetItem) ? "plk-dd-dragged-over" : "";
     }
 
+    private string GetStyleClass()
+    {
+        if( Style == DragDropStyle.Default)
+        {
+            return "plk-dd-default-style";
+        }
+
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// To use your own style css set this to none
+    /// </summary>
+    [Parameter] public DragDropStyle Style { get; set; } = DragDropStyle.Default;
+
     /// <summary>
     /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted
     /// </summary>
-    [Parameter]
-    public Func<TItem, bool> Accepts { get; set; }
+    [Parameter] public Func<TItem, bool> Accepts { get; set; }
 
     /// <summary>
     /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to the given Accept Delegate 

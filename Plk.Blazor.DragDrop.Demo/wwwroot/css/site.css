@@ -186,23 +186,7 @@ app {
     min-height: 50px;
 }
 
-#simple-dd .plk-dd-dragged-over > div {
-    background-color: lightgray;
-    opacity: 0.6;
-    animation: blinker 1s linear infinite;
-}
 
-#simple-dd .plk-dd-in-transit > div {
-    background-color: aqua;
-}
-
-.plk-dd-inprogess > * {
-    pointer-events: none;
-}
-
-.blink_me {
-    animation: blinker 1s linear infinite;
-}
 
 .grid-container {
     display: grid;

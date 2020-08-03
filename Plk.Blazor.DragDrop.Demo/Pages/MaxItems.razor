@@ -8,25 +8,23 @@
 
 <div class="bg-light">First Dropzone:</div>
 
-<div id="simple-dd">
     <Dropzone Items="MyFirstList">
         <div class="mt-2" style="border: 2px solid blue">
             @context.Titel
         </div>
     </Dropzone>
-</div>
 
 <hr />
 
 <div class="bg-light">Second Dropzone: (max items 2)</div>
 
-<div id="simple-dd">
+
     <Dropzone Items="MySecondList" MaxItems="2" TItem="TodoItem" OnItemDropRejectedByMaxItemLimit="@((i)=>lastRejected = i)">
         <div class="mt-2" style="border: 2px solid black">
             @context.Titel
         </div>
     </Dropzone>
-</div>
+
 
 <hr />
 
