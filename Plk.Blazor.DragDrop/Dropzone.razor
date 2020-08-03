@@ -1,7 +1,7 @@
 ﻿@typeparam TItem
 @inject DragDropService<TItem> DragDropService
 
-<div class="plk-dd-dropzone @GetStyleClass()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()">
+<div class="plk-dd-dropzone @GetStyleClass()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
 
     @foreach (var item in Items)
     {
