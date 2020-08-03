@@ -29,6 +29,10 @@ services.AddBlazorDragDrop();
 
 ------
 
+Version 1.x:
+
+Please upgrade to 2.0 - there will be no support/bugfixes for the 1.x version.
+
 Version 2.x :
 
 #### Create a draggable list for your items
@@ -138,6 +142,4 @@ Add this to your _host.html:
     </script>
 ```
 
-Version 1.x:
 
-Please upgrade to 2.0 - there will be no support/bugfixes for the 1.x version.
