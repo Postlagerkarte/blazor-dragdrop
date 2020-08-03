@@ -1,11 +1,6 @@
 # blazor-dragdrop
 Drag and Drop Library for Blazor
 
-
-```diff
-!This library is suitable if you need to make a small set of items draggable. It is not suitable to for large lists
-```
-
 [![Build Status](https://dev.azure.com/postlagerkarte/blazor-dragdrop/_apis/build/status/Postlagerkarte.blazor-dragdrop?branchName=master)](https://dev.azure.com/postlagerkarte/blazor-dragdrop/_build/latest?definitionId=3&branchName=master)
 
 #### Demo:
@@ -34,26 +29,35 @@ services.AddBlazorDragDrop();
 
 ------
 
-#### Make elements draggable:
+#### Create a draggable list for your items
+
+You have to create a dropzone and assign your items to it:
 
 ```html
-<Dropzone>
-    <Draggable>
-        <li class="list-group-item">Cras justo odio</li>
-    </Draggable>
-      <Draggable>
-        <li class="list-group-item">Morbi leo risus</li>
-    </Draggable>
-<Dropzone>
+    <Dropzone Items="MyItems">
+        
+    </Dropzone>
 ```
-
-#### Create a dropzone:
+This will not yet render anything - you have to provide a render template so that the dropzone knows how to render your items. 
 
 ```html
-<Dropzone>
-
-</Dropzone>
+    <Dropzone Items="MyItems">
+        <div>@context.MyProperty</div>
+    </Dropzone>
 ```
+
+You can also use your own component as a render template:
+
+```html
+    <Dropzone Items="MyItems">
+        <MyCompoenent Item="@context"></MyComponent>
+    </Dropzone>
+```
+By default the dropzone will use a build-in style for the drag/drop animations. 
+
+If you add or remove items to the underlying list the dropzone will automatically update. 
+
+After a drag operation you can inspect your list to get the current position of items. 
 
 #### Features:
 
@@ -64,56 +68,38 @@ Only allow limited number of items in a Dropzone:
 
 </Dropzone>
 ```
+If you drop something and the limit you can get a notification by providing a callback.
 
-Restricted Dropzone: (executes the give accept func before accepting the draggable)
+Restrict Drop: (executes the give accept func before accepting the draggable)
 
 ```html
 <Dropzone Accepts='(d) => d.Gender == "Male"'>
 
 </Dropzone>
 ```
+If you drop something and the item is rejected you can get a notification by providing a callback.
 
-Attach data to draggables:
+Multiple Dropzone:
+
+You can create more than one dropzone and move items betweens them.
+
+#### Styling:
+
+If you want to provide your own style you have to set the Style attribute to 'custom':
+
 ```html
-<Draggable Tag='new { Gender = "Female" , Age = 22}'>
-<li class="list-group-item">Cras justo odio</li>
-</Draggable>
+<Dropzone Items="MyItems" Style="DragDropStyle.Custom">
 ```
-
-Control if an element is draggable:
+You can then target:
 
 ```html
-<Draggable AllowDrag="(d)=>MyFunc(d)">
-<li class="list-group-item">Cras justo odio</li>
-</Draggable>
+plk-dd-dragged-over
+plk-dd-in-transit
 ```
-
-------
 
 #### Examples:
 
-Create a draggable list:
-```html
-    <Dropzone>
-        <ul class="list-group">
-            <Draggable>
-                <li class="list-group-item">Cras justo odio</li>
-            </Draggable>
-            <Draggable>
-                <li class="list-group-item">Dapibus ac facilisis in</li>
-            </Draggable>
-            <Draggable>
-                <li class="list-group-item">Morbi leo risus</li>
-            </Draggable>
-            <Draggable>
-                <li class="list-group-item">Porta ac consectetur ac</li>
-            </Draggable>
-            <Draggable>
-                <li class="list-group-item">Vestibulum at eros</li>
-            </Draggable>
-        </ul>
-    </Dropzone>
-```
+Check the demo page.
 
 ------
 #### Mobile Devices:
