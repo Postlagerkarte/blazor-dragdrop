@@ -76,7 +76,7 @@ Only allow limited number of items in a Dropzone:
 
 </Dropzone>
 ```
-If you drop something and the limit you can get a notification by providing a callback.
+If you drop something and the limit is reached you can get a notification by providing a callback.
 
 Restrict Drop: (executes the give accept func before accepting the draggable)
 
