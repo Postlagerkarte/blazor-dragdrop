@@ -12,6 +12,6 @@ namespace Plk.Blazor.DragDrop
     internal class DragDropService<T>
     {
         public T ActiveItem { get; set; }
-        public List<T> Items { get; set; }
+        public IList<T> Items { get; set; }
     }
 }
