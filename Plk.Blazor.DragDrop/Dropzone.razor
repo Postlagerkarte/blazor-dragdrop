@@ -1,30 +1,53 @@
 ﻿@typeparam TItem
 @inject DragDropService<TItem> DragDropService
 
-<div class="plk-dd-dropzone @GetStyleClass()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
+    <div class="plk-dd-dropzone @GetStyleClass()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
 
-    @foreach (var item in Items)
-    {
-        <div draggable="true"
-             @ondragstart="()=>OnDragStart(item)"
-             @ondragend="()=>OnDragEnd()"
-             @ondragenter="()=>OnDragEnter(item)"
-             @ondragleave="()=>OnDragLeave()"
-             class="@CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
+        @foreach (var item in Items)
+        {
 
-            @{ 
-                if(ChildContent != null)
-                {
-                    @ChildContent(item);
-                }
+            if (Items.IndexOf(item) == 0)
+            {
+                <div @ondrop="()=>OnDropItemOnSpacing(0)" style="height:@(ItemSpacing)px"></div>
             }
 
-        </div>
-    }
+            <div draggable="true"
+                 @ondragstart="()=>OnDragStart(item)"
+                 @ondragend="()=>OnDragEnd()"
+                 @ondragenter="()=>OnDragEnter(item)"
+                 @ondragleave="()=>OnDragLeave()"
+                 class="@CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
 
-</div>
+                @{
+                    if (ChildContent != null)
+                    {
+                        @ChildContent(item);
+                    }
+                }
+
+            </div>
+
+            <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" style="height:@(ItemSpacing)px"></div>
+        }
+
+    </div>
 
 @code {     
+
+    private void OnDropItemOnSpacing(int newIndex)
+    {
+        var activeItem = DragDropService.ActiveItem;
+        var oldIndex = Items.IndexOf(activeItem);
+
+        if(oldIndex != -1) // check if item is present in dropzone
+        {
+            Items.RemoveAt(oldIndex);
+            // the actual index could have shifted due to the removal
+            if (newIndex > oldIndex) newIndex--;
+        }
+
+        Items.Insert(newIndex, activeItem);
+    }
 
     private TItem dragTargetItem;
 
@@ -175,13 +198,21 @@
     /// </summary>
     [Parameter] public EventCallback<TItem> OnItemDropRejectedByMaxItemLimit { get; set; }
 
+    /// <summary>
+    /// The amount of vertical space betweeen items in pixel. Defaults to 10px. 
+    /// </summary>
+    [Parameter] public int ItemSpacing { get; set; } = 10;
+
     [Parameter] public RenderFragment<TItem> ChildContent { get; set; }
 
     private void OnDrop()
     {
         var activeItem = DragDropService.ActiveItem;
 
-        if (IsInvalidItem()) return;
+        if (IsInvalidItem())
+        {
+            return;
+        }
 
         if(IsMaxItemLimitReached())
         {
@@ -201,6 +232,11 @@
             {
                 Items.Insert(Items.Count, activeItem); //insert item to new zone
                 DragDropService.Items.Remove(activeItem); //remove from old zone
+            }
+            else
+            {
+
+
             }
         }
         else // we have a direct target

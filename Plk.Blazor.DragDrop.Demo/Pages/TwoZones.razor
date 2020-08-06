@@ -9,7 +9,7 @@
 <div class="bg-light">First Dropzone:</div>
 
     <Dropzone Items="MyFirstList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
-        <div class="mt-2" style="border: 2px solid blue">
+        <div style="border: 2px solid blue">
             @context.Titel
         </div>
     </Dropzone>
@@ -19,7 +19,7 @@
 <div class="bg-light">Second Dropzone:</div>
 
     <Dropzone Items="MySecondList"  TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
-        <div class="mt-2" style="border: 2px solid black">
+        <div style="border: 2px solid black">
             @context.Titel
         </div>
     </Dropzone>
