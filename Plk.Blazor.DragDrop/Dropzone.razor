@@ -36,6 +36,11 @@
 
     private void OnDropItemOnSpacing(int newIndex)
     {
+        if (IsInvalidItem())
+        {
+            return;
+        }
+
         var activeItem = DragDropService.ActiveItem;
         var oldIndex = Items.IndexOf(activeItem);
 
