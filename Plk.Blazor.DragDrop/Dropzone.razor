@@ -1,14 +1,15 @@
 ﻿@typeparam TItem
 @inject DragDropService<TItem> DragDropService
+@using System.Text 
 
-    <div class="plk-dd-dropzone @GetStyleClass()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
+    <div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
 
         @foreach (var item in Items)
         {
 
             if (Items.IndexOf(item) == 0)
             {
-                <div @ondrop="()=>OnDropItemOnSpacing(0)" style="height:@(ItemSpacing)px"></div>
+                <div @ondrop="()=>OnDropItemOnSpacing(0)" class="@GetClassesForSpacing()"></div>
             }
 
             <div draggable="true"
@@ -16,7 +17,7 @@
                  @ondragend="()=>OnDragEnd()"
                  @ondragenter="()=>OnDragEnter(item)"
                  @ondragleave="()=>OnDragLeave()"
-                 class="@CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
+                 class="@GetClassesForDraggable() @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
 
                 @{
                     if (ChildContent != null)
@@ -27,7 +28,7 @@
 
             </div>
 
-            <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" style="height:@(ItemSpacing)px"></div>
+            <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" class="@GetClassesForSpacing()"></div>
         }
 
     </div>
@@ -158,14 +159,56 @@
         return item.Equals(dragTargetItem) ? "plk-dd-dragged-over" : "";
     }
 
-    private string GetStyleClass()
+    private string GetClassesForDraggable()
     {
-        if( Style == DragDropStyle.Default)
+        var builder = new StringBuilder();
+
+        builder.Append("plk-dd-draggable");
+
+        if (!String.IsNullOrEmpty(ItemWrapperClass))
         {
-            return "plk-dd-default-style";
+            builder.AppendLine(" " + ItemWrapperClass);
         }
 
-        return string.Empty;
+        return builder.ToString();
+    }
+
+    private string GetClassesForDropzone()
+    {
+        var builder = new StringBuilder();
+
+        builder.Append("plk-dd-dropzone");
+
+        if (Style == DragDropStyle.Default)
+        {
+            builder.Append(" plk-dd-default-style");
+        }
+
+        if (!String.IsNullOrEmpty(Class))
+        {
+            builder.AppendLine(" " + Class);
+        }
+
+        return builder.ToString();
+    }
+
+    private string GetClassesForSpacing()
+    {
+        var builder = new StringBuilder();
+
+        builder.Append("plk-dd-spacing");
+
+        if (Style == DragDropStyle.Default)
+        {
+            builder.Append(" plk-dd-default-style");
+        }
+
+        if (!String.IsNullOrEmpty(ItemSpacingClass))
+        {
+            builder.AppendLine(" " + ItemSpacingClass);
+        }
+
+        return builder.ToString();
     }
 
     /// <summary>
@@ -208,12 +251,18 @@
     /// </summary>
     [Parameter] public EventCallback<TItem> OnItemDropRejectedByMaxItemLimit { get; set; }
 
-    /// <summary>
-    /// The amount of vertical space betweeen items in pixel. Defaults to 10px. 
-    /// </summary>
-    [Parameter] public int ItemSpacing { get; set; } = 10;
-
     [Parameter] public RenderFragment<TItem> ChildContent { get; set; }
+
+    /// <summary>
+    /// Specifies one or more classnames for the Dropzone element.
+    /// </summar
+    [Parameter] public string Class { get; set; }
+
+    /// <summary>
+    /// Specifies one or more classnames for the draggable div that wraps your elements.
+    /// </summar
+    [Parameter] public string ItemWrapperClass { get; set; }
+
 
     private void OnDrop()
     {

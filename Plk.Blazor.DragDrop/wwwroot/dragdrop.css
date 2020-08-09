@@ -2,10 +2,24 @@
     pointer-events: none;
 }
 
+.plk-dd-default-style .plk-dd-spacing {
+    height: 10px;
+}
+
+.plk-dd-default-style .plk-dd-dragged-over  {
+    background-color: lightgray;
+    opacity: 0.6;
+    animation: blinker 1s linear infinite;
+}
+
 .plk-dd-default-style .plk-dd-dragged-over > div {
     background-color: lightgray;
     opacity: 0.6;
     animation: blinker 1s linear infinite;
+}
+
+.plk-dd-default-style .plk-dd-in-transit {
+    background-color: aqua;
 }
 
 .plk-dd-default-style .plk-dd-in-transit > div {

@@ -1,0 +1,20 @@
+﻿@page "/flex"
+
+<div class="bg-success">You can use flex display</div>
+
+<hr />
+
+<div class="plk-flex">
+    <Dropzone Class="flex-container" Items="Items" ItemWrapperClass="flex-item" Style="DragDropStyle.Custom">
+        <div>@context</div>
+    </Dropzone>
+
+</div>
+
+
+@code {
+    public List<string> Items = new List<string>()
+    {
+        "1", "2", "3", "4", "5", "6"
+    };
+}
