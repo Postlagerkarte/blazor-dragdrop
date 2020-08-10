@@ -9,7 +9,7 @@
 
             if (Items.IndexOf(item) == 0)
             {
-                <div @ondrop="()=>OnDropItemOnSpacing(0)" class="@GetClassesForSpacing()"></div>
+                <div @ondrop="()=>OnDropItemOnSpacing(0)"  @ondragenter="()=>DragDropService.ActiveSpacerId =  0" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@GetClassesForSpacing(0)"></div>
             }
 
             <div draggable="true"
@@ -28,7 +28,7 @@
 
             </div>
 
-            <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" class="@GetClassesForSpacing()"></div>
+            <div  @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)"  @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
         }
 
     </div>
@@ -57,6 +57,9 @@
         }
 
         Items.Insert(newIndex, activeItem);
+
+        //clear the spacing-id
+        DragDropService.ActiveSpacerId = null;
 
     }
 
@@ -107,6 +110,8 @@
 
     public void OnDragEnter(TItem item)
     {
+        DragDropService.ActiveSpacerId = null;
+
         var activeItem = DragDropService.ActiveItem;
 
         if (item.Equals(activeItem)) return;
@@ -131,6 +136,7 @@
 
     public void OnDragLeave()
     {
+        DragDropService.ActiveSpacerId = null;
         dragTargetItem = default(TItem);
 
         shouldRender = true;
@@ -192,7 +198,7 @@
         return builder.ToString();
     }
 
-    private string GetClassesForSpacing()
+    private string GetClassesForSpacing(int spacerId)
     {
         var builder = new StringBuilder();
 
@@ -203,9 +209,9 @@
             builder.Append(" plk-dd-default-style");
         }
 
-        if (!String.IsNullOrEmpty(ItemSpacingClass))
+        if(DragDropService.ActiveSpacerId == spacerId)
         {
-            builder.AppendLine(" " + ItemSpacingClass);
+            builder.Append(" plk-dd-spacing-dragged-over");
         }
 
         return builder.ToString();
@@ -294,7 +300,7 @@
             }
             else
             {
-
+                //what to do here?
 
             }
         }
@@ -309,6 +315,8 @@
 
         DragDropService.ActiveItem = default(TItem);
         dragTargetItem = default(TItem);
+        //clear the spacing-id
+        DragDropService.ActiveSpacerId = null;
 
         shouldRender = true;
         StateHasChanged();

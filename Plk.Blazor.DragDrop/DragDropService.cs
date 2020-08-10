@@ -11,7 +11,19 @@ namespace Plk.Blazor.DragDrop
 {
     internal class DragDropService<T>
     {
+        /// <summary>
+        /// Currently Active Item
+        /// </summary>
         public T ActiveItem { get; set; }
+
+        /// <summary>
+        /// Holds a reference to the items of the dropzone in which the drag operation originated
+        /// </summary>
         public IList<T> Items { get; set; }
+
+        /// <summary>
+        /// Holds the id of the Active Spacing div
+        /// </summary>
+        public int? ActiveSpacerId { get; set; }
     }
 }

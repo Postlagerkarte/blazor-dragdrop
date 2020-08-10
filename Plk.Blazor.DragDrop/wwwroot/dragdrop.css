@@ -6,6 +6,10 @@
     height: 10px;
 }
 
+.plk-dd-default-style .plk-dd-spacing-dragged-over {
+    padding: 25px;
+}
+
 .plk-dd-default-style .plk-dd-dragged-over  {
     background-color: lightgray;
     opacity: 0.6;
