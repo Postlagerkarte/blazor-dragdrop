@@ -110,8 +110,6 @@
 
     public void OnDragEnter(TItem item)
     {
-        DragDropService.ActiveSpacerId = null;
-
         var activeItem = DragDropService.ActiveItem;
 
         if (item.Equals(activeItem)) return;
@@ -136,7 +134,6 @@
 
     public void OnDragLeave()
     {
-        DragDropService.ActiveSpacerId = null;
         dragTargetItem = default(TItem);
 
         shouldRender = true;
