@@ -44,7 +44,11 @@
         var activeItem = DragDropService.ActiveItem;
         var oldIndex = Items.IndexOf(activeItem);
 
-        if(oldIndex != -1) // check if item is present in dropzone
+        if(oldIndex == -1) // item not present in target dropzone
+        {
+            DragDropService.Items.Remove(activeItem);
+        }
+        else // same dropzone drop
         {
             Items.RemoveAt(oldIndex);
             // the actual index could have shifted due to the removal
@@ -52,6 +56,7 @@
         }
 
         Items.Insert(newIndex, activeItem);
+
     }
 
     private TItem dragTargetItem;
