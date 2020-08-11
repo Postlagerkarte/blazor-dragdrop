@@ -25,5 +25,16 @@ namespace Plk.Blazor.DragDrop
         /// Holds the id of the Active Spacing div
         /// </summary>
         public int? ActiveSpacerId { get; set; }
+
+        /// <summary>
+        /// Resets the service to initial state
+        /// </summary>
+        public void Reset()
+        {
+            ActiveItem = default(T);
+            ActiveSpacerId = null;
+            Items = null;
+        }
     }
 }
+

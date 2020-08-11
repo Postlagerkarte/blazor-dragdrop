@@ -37,8 +37,11 @@
 
     private void OnDropItemOnSpacing(int newIndex)
     {
-        if (IsInvalidItem())
+        shouldRender = true;
+
+        if (!IsDropAllowed())
         {
+            DragDropService.Reset();
             return;
         }
 
@@ -266,27 +269,42 @@
     /// </summar
     [Parameter] public string ItemWrapperClass { get; set; }
 
-
-    private void OnDrop()
+    private bool IsDropAllowed()
     {
         var activeItem = DragDropService.ActiveItem;
 
         if (IsInvalidItem())
         {
-            return;
+            return false;
         }
 
-        if(IsMaxItemLimitReached())
+        if (IsMaxItemLimitReached())
         {
             OnItemDropRejectedByMaxItemLimit.InvokeAsync(activeItem);
+            return false;
+        }
+
+        if (!IsItemAccepted())
+        {
+            OnItemDropRejected.InvokeAsync(activeItem);
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private void OnDrop()
+    {
+        shouldRender = true;
+
+        if (!IsDropAllowed())
+        {
+            DragDropService.Reset();
             return;
         }
 
-        if(!IsItemAccepted())
-        {
-            OnItemDropRejected.InvokeAsync(activeItem);
-            return;
-        }
+        var activeItem = DragDropService.ActiveItem;
 
         if (dragTargetItem == null) //no direct drag target
         {
@@ -309,13 +327,9 @@
             }
         }
 
-
-        DragDropService.ActiveItem = default(TItem);
         dragTargetItem = default(TItem);
-        //clear the spacing-id
-        DragDropService.ActiveSpacerId = null;
+        DragDropService.Reset();
 
-        shouldRender = true;
         StateHasChanged();
 
         OnItemDrop.InvokeAsync(activeItem);
