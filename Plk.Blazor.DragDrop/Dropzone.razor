@@ -37,8 +37,6 @@
 
     private void OnDropItemOnSpacing(int newIndex)
     {
-        shouldRender = true;
-
         if (!IsDropAllowed())
         {
             DragDropService.Reset();
@@ -68,7 +66,6 @@
 
     private TItem dragTargetItem;
 
-    bool shouldRender = true;
 
     private bool IsMaxItemLimitReached()
     {
@@ -93,7 +90,7 @@
 
     protected override bool ShouldRender()
     {
-        return shouldRender;
+        return DragDropService.ShouldRender;
     }
 
     public string CheckIfDragOperationIsInProgess()
@@ -107,7 +104,7 @@
     {
         DragDropService.ActiveItem = default(TItem);
 
-        shouldRender = true;
+        DragDropService.ShouldRender = true;
         StateHasChanged();
     }
 
@@ -130,27 +127,27 @@
             Swap(dragTargetItem, activeItem);
         }
 
-        shouldRender = true;
+        DragDropService.ShouldRender = true;
         StateHasChanged();
-        shouldRender = false;
+        DragDropService.ShouldRender = false;
     }
 
     public void OnDragLeave()
     {
         dragTargetItem = default(TItem);
 
-        shouldRender = true;
+        DragDropService.ShouldRender = true;
         StateHasChanged();
-        shouldRender = false;
+        DragDropService.ShouldRender = false;
     }
 
     public void OnDragStart(TItem item)
     {
-        shouldRender = true;
+        DragDropService.ShouldRender = true;
         DragDropService.ActiveItem = item;
         DragDropService.Items = Items;
         StateHasChanged();
-        shouldRender = false;
+        DragDropService.ShouldRender = false;
     }
 
     public string CheckIfItemIsInTransit(TItem item)
@@ -296,7 +293,7 @@
 
     private void OnDrop()
     {
-        shouldRender = true;
+        DragDropService.ShouldRender = true;
 
         if (!IsDropAllowed())
         {
