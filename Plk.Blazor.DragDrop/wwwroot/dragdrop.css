@@ -23,11 +23,11 @@
 }
 
 .plk-dd-default-style .plk-dd-in-transit {
-    background-color: aqua;
+    opacity: 0;
 }
 
 .plk-dd-default-style .plk-dd-in-transit > div {
-    background-color: aqua;
+    opacity: 0;
 }
 
 .blink_me {
