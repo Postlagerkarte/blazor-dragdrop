@@ -7,8 +7,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
+[assembly: InternalsVisibleTo("Plk.Blazor.DragDrop.Test")]
 namespace Plk.Blazor.DragDrop
 {
+
     internal class DragDropService<T>
     {
         /// <summary>

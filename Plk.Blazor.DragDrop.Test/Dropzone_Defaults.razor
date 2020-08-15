@@ -1,0 +1,51 @@
+﻿@inherits TestComponentBase
+
+<Fixture Setup="RegisterService" Test="DefaultDropzoneRendersCorrectly">
+    <ComponentUnderTest>
+        <Dropzone Items="Items">
+            @context.Name
+        </Dropzone>
+    </ComponentUnderTest>
+
+
+    @code
+  {
+        void RegisterService(Fixture fixture)
+        {
+            fixture.Services.AddBlazorDragDrop();
+        }
+
+        public class MyItem
+        {
+            public string Name { get; set; }
+        }
+
+        public List<MyItem> Items = new List<MyItem>()
+        {
+            new MyItem(){Name = "Hello"}
+        };
+
+        void DefaultDropzoneRendersCorrectly(Fixture fixture)
+        {
+            var cut = fixture.GetComponentUnderTest<Dropzone<MyItem>>();
+
+            //find the dropzone div
+            var dropzone = cut.FindAll(".plk-dd-dropzone");
+            Assert.Equal(1, dropzone.Count);
+            Assert.True(dropzone[0].ClassList.Contains("plk-dd-default-style"));
+
+
+            //find the draggable div
+            var draggable = cut.FindAll(".plk-dd-draggable");
+            Assert.Equal(1, draggable.Count);
+            Assert.Equal(Items[0].Name, draggable[0].TextContent.Trim());
+
+            //find the two spacing divs
+            var spacing = cut.FindAll(".plk-dd-spacing");
+            Assert.Equal(2, spacing.Count);
+
+        }
+    }
+</Fixture>
+
+

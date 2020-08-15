@@ -1,0 +1,49 @@
+﻿@inherits TestComponentBase
+
+<Fixture Setup="RegisterService" Test="DefaultDropzoneDragTest">
+    <ComponentUnderTest>
+        <Dropzone Items="Items">
+            @context.Name
+        </Dropzone>
+    </ComponentUnderTest>
+
+
+    @code
+  {
+        void RegisterService(Fixture fixture)
+        {
+            fixture.Services.AddBlazorDragDrop();
+        }
+
+        public class MyItem
+        {
+            public string Name { get; set; }
+        }
+
+        public List<MyItem> Items = new List<MyItem>()
+        {
+            new MyItem(){Name = "Hello"},
+            new MyItem(){Name = "World"}
+        };
+
+        void DefaultDropzoneDragTest(Fixture fixture)
+        {
+            var cut = fixture.GetComponentUnderTest<Dropzone<MyItem>>();
+
+            //find the draggabke
+            var draggable = cut.FindAll(".plk-dd-draggable")[0];
+            //execute a dragstart
+            draggable.DragStart();
+
+
+            //get the DragDropService
+            var service = fixture.Services.GetService<DragDropService<MyItem>>();
+
+            Assert.Equal(Items[0], service.ActiveItem);
+            Assert.Equal(2, service.Items.Count);
+
+        }
+    }
+</Fixture>
+
+
