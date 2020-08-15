@@ -206,7 +206,13 @@
             builder.Append(" plk-dd-default-style");
         }
 
-        if(DragDropService.ActiveSpacerId == spacerId)
+
+        //if active space id and item is from another dropzone -> always create insert space
+        if (DragDropService.ActiveSpacerId == spacerId && Items.IndexOf(DragDropService.ActiveItem) == -1)
+        {
+            builder.Append(" plk-dd-spacing-dragged-over");
+        } // else -> check if active space id and that it is an item that needs space
+        else if (DragDropService.ActiveSpacerId == spacerId && (spacerId != Items.IndexOf(DragDropService.ActiveItem)) && (spacerId != Items.IndexOf(DragDropService.ActiveItem)+1))
         {
             builder.Append(" plk-dd-spacing-dragged-over");
         }
