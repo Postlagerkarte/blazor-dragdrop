@@ -8,21 +8,31 @@
 
 <div class="bg-light">First Dropzone:</div>
 
-    <Dropzone Items="MyFirstList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
-        <div style="border: 2px solid blue">
-            @context.Titel
-        </div>
-    </Dropzone>
+<Dropzone Items="MyFirstList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+    <div style="border: 2px solid blue">
+        @context.Titel
+    </div>
+</Dropzone>
 
 <hr />
 
 <div class="bg-light">Second Dropzone:</div>
 
-    <Dropzone Items="MySecondList"  TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
-        <div style="border: 2px solid black">
-            @context.Titel
-        </div>
-    </Dropzone>
+<Dropzone Items="MySecondList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+    <div style="border: 2px solid black">
+        @context.Titel
+    </div>
+</Dropzone>
+
+<hr />
+
+<div class="bg-light">Third Dropzone (copy items):</div>
+
+<Dropzone CopyItem="(item)=> { return new TodoItem() {Titel = item.Titel}; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+    <div style="border: 2px solid black">
+        @context.Titel
+    </div>
+</Dropzone>
 
 <hr />
 
@@ -34,7 +44,7 @@
     private TodoItem lastdropped { get; set; }
 
     public List<TodoItem> MyFirstList = new List<TodoItem>()
-    {
+{
             new TodoItem(){Titel = "Item 1"},
             new TodoItem(){Titel = "Item 2"},
             new TodoItem(){Titel = "Item 3"},
@@ -49,6 +59,10 @@
             new TodoItem(){Titel = "Item 8"},
             new TodoItem(){Titel = "Item 9"},
             new TodoItem(){Titel = "Item 10"},
+    };
+
+    public List<TodoItem> MyThirdList = new List<TodoItem>()
+    {
     };
 
 }

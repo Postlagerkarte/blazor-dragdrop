@@ -36,6 +36,7 @@ namespace Plk.Blazor.DragDrop
             ActiveItem = default(T);
             ActiveSpacerId = null;
             Items = null;
+            ShouldRender = true;
         }
 
         public bool ShouldRender { get; set; } = true;

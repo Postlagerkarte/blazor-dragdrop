@@ -1,0 +1,101 @@
+﻿@inherits TestComponentBase
+
+@code{
+    void RegisterService(Fixture fixture)
+    {
+        fixture.Services.AddBlazorDragDrop();
+    }
+
+    public class MyItem
+    {
+        public string Name { get; set; }
+    }
+
+    public List<MyItem> Items = new List<MyItem>()
+        {
+            new MyItem(){Name = "Hello"},
+            new MyItem(){Name = "World"}
+        };
+
+    public List<MyItem> Items2 = new List<MyItem>()
+    {
+
+    };
+}
+
+<Fixture Setup="RegisterService" Test="DropzoneMoveTest">
+    <ComponentUnderTest>
+        <Dropzone Items="Items">
+            @context.Name
+        </Dropzone>
+        <hr />
+        <Dropzone TItem="MyItem" Id="SecondDropzone" Items="Items2">
+            @context.Name
+        </Dropzone>
+    </ComponentUnderTest>
+
+
+    @code
+  {
+
+        void DropzoneMoveTest(Fixture fixture)
+        {
+            var cut = fixture.GetComponentUnderTest();
+
+            //get the DragDropService
+            var service = fixture.Services.GetService<DragDropService<MyItem>>();
+            service.ActiveItem = Items[0];
+            service.Items = Items;
+
+            var movedItem = service.ActiveItem;
+
+
+            var secondDropzone = cut.Find("#SecondDropzone");
+            secondDropzone.Drop();
+
+            Assert.Single(Items);
+            Assert.Single(Items2);
+            Assert.Equal(movedItem, Items2[0]);
+
+        }
+    }
+
+</Fixture>
+
+<Fixture Setup="RegisterService" Test="DropzoneCopyTest">
+    <ComponentUnderTest>
+        <Dropzone Items="Items">
+            @context.Name
+        </Dropzone>
+        <hr />
+        <Dropzone TItem="MyItem" CopyItem="(item)=> { return new MyItem() { Name = item.Name }; }" Id="SecondDropzone" Items="Items2">
+            @context.Name
+        </Dropzone>
+    </ComponentUnderTest>
+
+
+    @code
+  {
+         void DropzoneCopyTest(Fixture fixture)
+        {
+            var cut = fixture.GetComponentUnderTest();
+
+            //get the DragDropService
+            var service = fixture.Services.GetService<DragDropService<MyItem>>();
+            service.ActiveItem = Items[0];
+            service.Items = Items;
+            var movedItem = service.ActiveItem;
+
+            var secondDropzone = cut.Find("#SecondDropzone");
+            secondDropzone.Drop();
+
+            Assert.Equal(2, Items.Count);
+            Assert.Single(Items2);
+            Assert.NotEqual(movedItem, Items2[0]);
+
+        }
+    }
+</Fixture>
+
+
+

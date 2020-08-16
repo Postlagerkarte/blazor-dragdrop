@@ -2,7 +2,7 @@
 @inject DragDropService<TItem> DragDropService
 @using System.Text 
 
-    <div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
+    <div id="@Id" class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
 
         @foreach (var item in Items)
         {
@@ -48,7 +48,10 @@
 
         if(oldIndex == -1) // item not present in target dropzone
         {
-            DragDropService.Items.Remove(activeItem);
+            if(CopyItem == null)
+            {
+                DragDropService.Items.Remove(activeItem);
+            }
         }
         else // same dropzone drop
         {
@@ -57,11 +60,17 @@
             if (newIndex > oldIndex) newIndex--;
         }
 
-        Items.Insert(newIndex, activeItem);
+        if(CopyItem == null)
+        {
+            Items.Insert(newIndex, activeItem);
+        }
+        else
+        {
+            Items.Insert(newIndex, CopyItem(activeItem));
+        }
 
-        //clear the spacing-id
-        DragDropService.ActiveSpacerId = null;
-
+        //Operation is finished
+        DragDropService.Reset();
     }
 
     private TItem dragTargetItem;
@@ -262,9 +271,19 @@
     [Parameter] public string Class { get; set; }
 
     /// <summary>
+    /// Specifies the id for the Dropzone element.
+    /// </summar
+    [Parameter] public string Id { get; set; }
+
+    /// <summary>
     /// Specifies one or more classnames for the draggable div that wraps your elements.
     /// </summar
     [Parameter] public string ItemWrapperClass { get; set; }
+
+    /// <summary>
+    /// If set items dropped are copied to this dropzone and are not removed from their source.
+    /// </summar
+    [Parameter] public Func<TItem,TItem> CopyItem { get; set; }
 
     private bool IsDropAllowed()
     {
