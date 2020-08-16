@@ -35,46 +35,45 @@
 
 @code {     
 
-    private void OnDropItemOnSpacing(int newIndex)
-    {
-        if (!IsDropAllowed())
+        private void OnDropItemOnSpacing(int newIndex)
         {
-            DragDropService.Reset();
-            return;
-        }
+            if (!IsDropAllowed())
+            {
+                DragDropService.Reset();
+                return;
+            }
 
-        var activeItem = DragDropService.ActiveItem;
-        var oldIndex = Items.IndexOf(activeItem);
+            var activeItem = DragDropService.ActiveItem;
+            var oldIndex = Items.IndexOf(activeItem);
 
-        if(oldIndex == -1) // item not present in target dropzone
-        {
+            if(oldIndex == -1) // item not present in target dropzone
+            {
+                if(CopyItem == null)
+                {
+                    DragDropService.Items.Remove(activeItem);
+                }
+            }
+            else // same dropzone drop
+            {
+                Items.RemoveAt(oldIndex);
+                // the actual index could have shifted due to the removal
+                if (newIndex > oldIndex) newIndex--;
+            }
+
             if(CopyItem == null)
             {
-                DragDropService.Items.Remove(activeItem);
+                Items.Insert(newIndex, activeItem);
             }
-        }
-        else // same dropzone drop
-        {
-            Items.RemoveAt(oldIndex);
-            // the actual index could have shifted due to the removal
-            if (newIndex > oldIndex) newIndex--;
-        }
+            else
+            {
+                Items.Insert(newIndex, CopyItem(activeItem));
+            }
 
-        if(CopyItem == null)
-        {
-            Items.Insert(newIndex, activeItem);
+            //Operation is finished
+            DragDropService.Reset();
         }
-        else
-        {
-            Items.Insert(newIndex, CopyItem(activeItem));
-        }
-
-        //Operation is finished
-        DragDropService.Reset();
-    }
 
     private TItem dragTargetItem;
-
 
     private bool IsMaxItemLimitReached()
     {
@@ -90,11 +89,9 @@
         return Accepts(DragDropService.ActiveItem);
     }
 
-    private bool IsInvalidItem()
+    private bool IsValidItem()
     {
-        var activeItem = DragDropService.ActiveItem;
-
-        return (activeItem == null); // probably something was dragged that is not a valid draggable
+        return DragDropService.ActiveItem != null;
     }
 
     protected override bool ShouldRender()
@@ -123,7 +120,7 @@
 
         if (item.Equals(activeItem)) return;
 
-        if (IsInvalidItem()) return;
+        if (!IsValidItem()) return;
 
         if (IsMaxItemLimitReached()) return;
 
@@ -295,7 +292,7 @@
     {
         var activeItem = DragDropService.ActiveItem;
 
-        if (IsInvalidItem())
+        if (!IsValidItem())
         {
             return false;
         }
@@ -332,8 +329,15 @@
         {
             if (!Items.Contains(activeItem)) //if dragged to another dropzone
             {
-                Items.Insert(Items.Count, activeItem); //insert item to new zone
-                DragDropService.Items.Remove(activeItem); //remove from old zone
+                if(CopyItem == null)
+                {
+                    Items.Insert(Items.Count, activeItem); //insert item to new zone
+                    DragDropService.Items.Remove(activeItem); //remove from old zone
+                }
+                else
+                {
+                    Items.Insert(Items.Count, CopyItem(activeItem)); //insert item to new zone
+                }
             }
             else
             {
