@@ -33,12 +33,18 @@ namespace Plk.Blazor.DragDrop
         /// </summary>
         public void Reset()
         {
+            ShouldRender = true;
             ActiveItem = default(T);
             ActiveSpacerId = null;
             Items = null;
+
+            StateHasChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public bool ShouldRender { get; set; } = true;
+
+        // Notify subscribers that there is a need for rerender
+        public EventHandler StateHasChanged { get; set; }
     }
 }
 

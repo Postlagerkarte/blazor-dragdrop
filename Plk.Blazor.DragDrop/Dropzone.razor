@@ -1,39 +1,40 @@
 ﻿@typeparam TItem
 @inject DragDropService<TItem> DragDropService
-@using System.Text 
+@using System.Text
+@implements IDisposable
 
-    <div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
+<div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
 
-        @foreach (var item in Items)
+    @foreach (var item in Items)
+    {
+
+        if (Items.IndexOf(item) == 0)
         {
-
-            if (Items.IndexOf(item) == 0)
-            {
-                <div @ondrop="()=>OnDropItemOnSpacing(0)"  @ondragenter="()=>DragDropService.ActiveSpacerId =  0" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@GetClassesForSpacing(0)"></div>
-            }
-
-            <div draggable="true"
-                 @ondragstart="()=>OnDragStart(item)"
-                 @ondragend="()=>OnDragEnd()"
-                 @ondragenter="()=>OnDragEnter(item)"
-                 @ondragleave="()=>OnDragLeave()"
-                 class="@GetClassesForDraggable() @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
-
-                @{
-                    if (ChildContent != null)
-                    {
-                        @ChildContent(item);
-                    }
-                }
-
-            </div>
-
-            <div  @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)"  @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
+            <div @ondrop="()=>OnDropItemOnSpacing(0)" @ondragenter="()=>DragDropService.ActiveSpacerId =  0" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@GetClassesForSpacing(0)"></div>
         }
 
-    </div>
+        <div draggable="true"
+             @ondragstart="()=>OnDragStart(item)"
+             @ondragend="()=>OnDragEnd()"
+             @ondragenter="()=>OnDragEnter(item)"
+             @ondragleave="()=>OnDragLeave()"
+             class="@GetClassesForDraggable() @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
 
-@code {     
+            @{
+                if (ChildContent != null)
+                {
+                    @ChildContent(item);
+                }
+            }
+
+        </div>
+
+        <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
+    }
+
+</div>
+
+@code {
 
     private void OnDropItemOnSpacing(int newIndex)
     {
@@ -46,7 +47,7 @@
         var activeItem = DragDropService.ActiveItem;
         var oldIndex = Items.IndexOf(activeItem);
 
-        if(oldIndex == -1) // item not present in target dropzone
+        if (oldIndex == -1) // item not present in target dropzone
         {
             DragDropService.Items.Remove(activeItem);
         }
@@ -93,6 +94,19 @@
         return DragDropService.ShouldRender;
     }
 
+    private void ForceRender(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+
+    protected override void OnInitialized()
+    {
+        DragDropService.StateHasChanged += ForceRender;
+
+        base.OnInitialized();
+    }
+
     public string CheckIfDragOperationIsInProgess()
     {
         var activeItem = DragDropService.ActiveItem;
@@ -102,10 +116,7 @@
 
     public void OnDragEnd()
     {
-        DragDropService.ActiveItem = default(TItem);
-
-        DragDropService.ShouldRender = true;
-        StateHasChanged();
+        DragDropService.Reset();
     }
 
     public void OnDragEnter(TItem item)
@@ -212,7 +223,7 @@
         {
             builder.Append(" plk-dd-spacing-dragged-over");
         } // else -> check if active space id and that it is an item that needs space
-        else if (DragDropService.ActiveSpacerId == spacerId && (spacerId != Items.IndexOf(DragDropService.ActiveItem)) && (spacerId != Items.IndexOf(DragDropService.ActiveItem)+1))
+        else if (DragDropService.ActiveSpacerId == spacerId && (spacerId != Items.IndexOf(DragDropService.ActiveItem)) && (spacerId != Items.IndexOf(DragDropService.ActiveItem) + 1))
         {
             builder.Append(" plk-dd-spacing-dragged-over");
         }
@@ -231,17 +242,17 @@
     [Parameter] public Func<TItem, bool> Accepts { get; set; }
 
     /// <summary>
-    /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to the given Accept Delegate 
+    /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to the given Accept Delegate
     /// </summary>
     [Parameter] public EventCallback<TItem> OnItemDropRejected { get; set; }
 
     /// <summary>
-    /// Raises a callback with the dropped item as parameter 
+    /// Raises a callback with the dropped item as parameter
     /// </summary>
     [Parameter] public EventCallback<TItem> OnItemDrop { get; set; }
 
     /// <summary>
-    /// If set to true, items will we be swapped/inserted instantly. 
+    /// If set to true, items will we be swapped/inserted instantly.
     /// </summary>
     [Parameter] public bool InstantReplace { get; set; }
 
@@ -324,7 +335,7 @@
         }
         else // we have a direct target
         {
-            if(!InstantReplace)
+            if (!InstantReplace)
             {
                 Swap(dragTargetItem, activeItem); //swap target with active item
             }
@@ -346,7 +357,7 @@
         if (indexActiveItem == -1) // item is new to the dropzone
         {
             //insert into new zone
-            Items.Insert(indexDraggedOverItem+1, activeItem);
+            Items.Insert(indexDraggedOverItem + 1, activeItem);
             //remove from old zone
             DragDropService.Items.Remove(activeItem);
         }
@@ -358,5 +369,10 @@
             Items[indexActiveItem] = tmp;
         }
 
+    }
+
+    public void Dispose()
+    {
+        DragDropService.StateHasChanged -= ForceRender;
     }
 }
