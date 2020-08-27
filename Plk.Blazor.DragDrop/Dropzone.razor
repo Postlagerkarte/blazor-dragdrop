@@ -36,37 +36,45 @@
 
 @code {
 
-    private void OnDropItemOnSpacing(int newIndex)
-    {
-        if (!IsDropAllowed())
+        private void OnDropItemOnSpacing(int newIndex)
         {
+            if (!IsDropAllowed())
+            {
+                DragDropService.Reset();
+                return;
+            }
+
+            var activeItem = DragDropService.ActiveItem;
+            var oldIndex = Items.IndexOf(activeItem);
+
+            if(oldIndex == -1) // item not present in target dropzone
+            {
+                if(CopyItem == null)
+                {
+                    DragDropService.Items.Remove(activeItem);
+                }
+            }
+            else // same dropzone drop
+            {
+                Items.RemoveAt(oldIndex);
+                // the actual index could have shifted due to the removal
+                if (newIndex > oldIndex) newIndex--;
+            }
+
+            if(CopyItem == null)
+            {
+                Items.Insert(newIndex, activeItem);
+            }
+            else
+            {
+                Items.Insert(newIndex, CopyItem(activeItem));
+            }
+
+            //Operation is finished
             DragDropService.Reset();
-            return;
         }
-
-        var activeItem = DragDropService.ActiveItem;
-        var oldIndex = Items.IndexOf(activeItem);
-
-        if (oldIndex == -1) // item not present in target dropzone
-        {
-            DragDropService.Items.Remove(activeItem);
-        }
-        else // same dropzone drop
-        {
-            Items.RemoveAt(oldIndex);
-            // the actual index could have shifted due to the removal
-            if (newIndex > oldIndex) newIndex--;
-        }
-
-        Items.Insert(newIndex, activeItem);
-
-        //clear the spacing-id
-        DragDropService.ActiveSpacerId = null;
-
-    }
 
     private TItem dragTargetItem;
-
 
     private bool IsMaxItemLimitReached()
     {
@@ -82,11 +90,9 @@
         return Accepts(DragDropService.ActiveItem);
     }
 
-    private bool IsInvalidItem()
+    private bool IsValidItem()
     {
-        var activeItem = DragDropService.ActiveItem;
-
-        return (activeItem == null); // probably something was dragged that is not a valid draggable
+        return DragDropService.ActiveItem != null;
     }
 
     protected override bool ShouldRender()
@@ -125,7 +131,7 @@
 
         if (item.Equals(activeItem)) return;
 
-        if (IsInvalidItem()) return;
+        if (!IsValidItem()) return;
 
         if (IsMaxItemLimitReached()) return;
 
@@ -279,15 +285,25 @@
     [Parameter] public string Class { get; set; }
 
     /// <summary>
+    /// Specifies the id for the Dropzone element.
+    /// </summar
+    [Parameter] public string Id { get; set; }
+
+    /// <summary>
     /// Specifies one or more classnames for the draggable div that wraps your elements.
     /// </summar
     [Parameter] public string ItemWrapperClass { get; set; }
+
+    /// <summary>
+    /// If set items dropped are copied to this dropzone and are not removed from their source.
+    /// </summar
+    [Parameter] public Func<TItem,TItem> CopyItem { get; set; }
 
     private bool IsDropAllowed()
     {
         var activeItem = DragDropService.ActiveItem;
 
-        if (IsInvalidItem())
+        if (!IsValidItem())
         {
             return false;
         }
@@ -324,8 +340,15 @@
         {
             if (!Items.Contains(activeItem)) //if dragged to another dropzone
             {
-                Items.Insert(Items.Count, activeItem); //insert item to new zone
-                DragDropService.Items.Remove(activeItem); //remove from old zone
+                if(CopyItem == null)
+                {
+                    Items.Insert(Items.Count, activeItem); //insert item to new zone
+                    DragDropService.Items.Remove(activeItem); //remove from old zone
+                }
+                else
+                {
+                    Items.Insert(Items.Count, CopyItem(activeItem)); //insert item to new zone
+                }
             }
             else
             {

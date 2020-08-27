@@ -87,6 +87,21 @@ Restrict Drop: (executes the give accept func before accepting the draggable)
 ```
 If you drop something and the item is rejected you can get a notification by providing a callback.
 
+Copy Items:
+
+By default, items are moved between dropzones. 
+
+If you instead want the item to be copied you can make use of the "CopyItem" attribute:
+
+```html
+<Dropzone CopyItem="(item)=> { return new TodoItem() {Titel = item.Titel}; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+    <div style="border: 2px solid black">
+        @context.Titel
+    </div>
+</Dropzone>
+```
+The CopyItem attribute expects a method telling the dropzone how to create a copy of the item. It receives the currently active item as input.
+
 Instant Replace: 
 
 By default you get a visual clue for the drop operation. You can activate Instant Replace to instead swap out items on the fly. This option should only be used for small lists.
