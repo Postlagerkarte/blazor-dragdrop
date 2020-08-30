@@ -8,7 +8,7 @@
     @foreach (var item in Items)
     {
 
-        if (Items.IndexOf(item) == 0)
+        if (Items.IndexOf(item) == 0 && MaxItems == null || MaxItems > 1)
         {
             <div @ondrop="()=>OnDropItemOnSpacing(0)" @ondragenter="()=>DragDropService.ActiveSpacerId =  0" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@GetClassesForSpacing(0)"></div>
         }
@@ -29,50 +29,53 @@
 
         </div>
 
-        <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
+        @if (MaxItems == null || MaxItems > 1)
+        {
+            <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
+        }
     }
 
 </div>
 
 @code {
 
-        private void OnDropItemOnSpacing(int newIndex)
+    private void OnDropItemOnSpacing(int newIndex)
+    {
+        if (!IsDropAllowed())
         {
-            if (!IsDropAllowed())
-            {
-                DragDropService.Reset();
-                return;
-            }
+            DragDropService.Reset();
+            return;
+        }
 
-            var activeItem = DragDropService.ActiveItem;
-            var oldIndex = Items.IndexOf(activeItem);
+        var activeItem = DragDropService.ActiveItem;
+        var oldIndex = Items.IndexOf(activeItem);
 
-            if(oldIndex == -1) // item not present in target dropzone
-            {
-                if(CopyItem == null)
-                {
-                    DragDropService.Items.Remove(activeItem);
-                }
-            }
-            else // same dropzone drop
-            {
-                Items.RemoveAt(oldIndex);
-                // the actual index could have shifted due to the removal
-                if (newIndex > oldIndex) newIndex--;
-            }
-
+        if(oldIndex == -1) // item not present in target dropzone
+        {
             if(CopyItem == null)
             {
-                Items.Insert(newIndex, activeItem);
+                DragDropService.Items.Remove(activeItem);
             }
-            else
-            {
-                Items.Insert(newIndex, CopyItem(activeItem));
-            }
-
-            //Operation is finished
-            DragDropService.Reset();
         }
+        else // same dropzone drop
+        {
+            Items.RemoveAt(oldIndex);
+            // the actual index could have shifted due to the removal
+            if (newIndex > oldIndex) newIndex--;
+        }
+
+        if(CopyItem == null)
+        {
+            Items.Insert(newIndex, activeItem);
+        }
+        else
+        {
+            Items.Insert(newIndex, CopyItem(activeItem));
+        }
+
+        //Operation is finished
+        DragDropService.Reset();
+    }
 
     private TItem dragTargetItem;
 
@@ -199,11 +202,6 @@
 
         builder.Append("plk-dd-dropzone");
 
-        if (Style == DragDropStyle.Default)
-        {
-            builder.Append(" plk-dd-default-style");
-        }
-
         if (!String.IsNullOrEmpty(Class))
         {
             builder.AppendLine(" " + Class);
@@ -218,12 +216,6 @@
 
         builder.Append("plk-dd-spacing");
 
-        if (Style == DragDropStyle.Default)
-        {
-            builder.Append(" plk-dd-default-style");
-        }
-
-
         //if active space id and item is from another dropzone -> always create insert space
         if (DragDropService.ActiveSpacerId == spacerId && Items.IndexOf(DragDropService.ActiveItem) == -1)
         {
@@ -236,11 +228,6 @@
 
         return builder.ToString();
     }
-
-    /// <summary>
-    /// To use your own style css set this to none
-    /// </summary>
-    [Parameter] public DragDropStyle Style { get; set; } = DragDropStyle.Default;
 
     /// <summary>
     /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted

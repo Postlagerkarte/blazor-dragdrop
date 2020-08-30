@@ -182,11 +182,6 @@ app {
     }
 }
 
-.plk-dd-dropzone {
-    min-height: 50px;
-}
-
-
 
 .grid-container {
     display: grid;
@@ -203,69 +198,6 @@ app {
     text-align: center;
 }
 
-@keyframes blinker {
-    50% {
-        opacity: 0;
-    }
-}
-
-
-#cards-dd .plk-dd-dragged-over > div {
-    background-color: lightgray;
-    opacity: 0.6;
-    animation: blinker 1s linear infinite;
-}
-
-
-#cards-dd .plk-dd-in-transit > div {
-    background-color: aqua;
-}
-
-.cards-list {
-    z-index: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-}
-
-.card {
-    margin: 30px auto;
-    width: 300px;
-    height: 300px;
-    border-radius: 40px;
-    box-shadow: 5px 5px 30px 7px rgba(0,0,0,0.25), -5px -5px 30px 7px rgba(0,0,0,0.22);
-    cursor: pointer;
-    transition: 0.4s;
-}
-
-    .card .card_image {
-        width: inherit;
-        height: inherit;
-        border-radius: 40px;
-    }
-
-        .card .card_image img {
-            width: inherit;
-            height: inherit;
-            border-radius: 40px;
-            object-fit: cover;
-        }
-
-    .card .card_title {
-        text-align: center;
-        border-radius: 0px 0px 40px 40px;
-        font-family: sans-serif;
-        font-weight: bold;
-        font-size: 30px;
-        margin-top: -80px;
-        height: 40px;
-    }
-
-    .card:hover {
-        transform: scale(0.9, 0.9);
-        box-shadow: 5px 5px 30px 15px rgba(0,0,0,0.25), -5px -5px 30px 15px rgba(0,0,0,0.22);
-    }
 
 .title-white {
     color: white;
@@ -289,32 +221,5 @@ app {
     display: flex;
     background-color: dodgerblue;
 
-}
-.plk-flex .plk-dd-spacing {
-    width: 20px;
-}
-
-.plk-flex .plk-dd-dragged-over {
-    background-color: lightgray;
-    opacity: 0.6;
-    animation: blinker 1s linear infinite;
-}
-
-.plk-flex .plk-dd-dragged-over > div {
-    background-color: lightgray;
-    opacity: 0.9;
-    animation: blinker 1s linear infinite;
-}
-
-.plk-flex .plk-dd-in-transit {
-    background-color: orangered;
-}
-
-.plk-flex .plk-dd-in-transit > div {
-    background-color: orangered;
-}
-
-.blink_me {
-    animation: blinker 1s linear infinite;
 }
 
