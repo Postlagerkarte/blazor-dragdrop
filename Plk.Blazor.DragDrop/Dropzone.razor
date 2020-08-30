@@ -73,7 +73,7 @@
             //Operation is finished
             DragDropService.Reset();
 
-            OnItemMoved.InvokeAsync(activeItem);
+            OnItemDrop.InvokeAsync(activeItem);
         }
 
     private TItem dragTargetItem;
@@ -258,11 +258,6 @@
     /// Raises a callback with the dropped item as parameter
     /// </summary>
     [Parameter] public EventCallback<TItem> OnItemDrop { get; set; }
-
-    /// <summary>
-    /// Raises a callback with the dropped item as parameter in case the item is dropped on spacing
-    /// </summary>
-    [Parameter] public EventCallback<TItem> OnItemMoved { get; set; }
 
     /// <summary>
     /// If set to true, items will we be swapped/inserted instantly.
