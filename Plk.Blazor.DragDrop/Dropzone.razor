@@ -72,6 +72,8 @@
 
             //Operation is finished
             DragDropService.Reset();
+
+            OnItemDrop.InvokeAsync(activeItem);
         }
 
     private TItem dragTargetItem;
