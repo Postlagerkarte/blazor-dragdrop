@@ -21,11 +21,9 @@ Install-Package blazor-dragdrop
 services.AddBlazorDragDrop();
 ```
 
-2)  Include relevant stylesheet either in your _host.cshtml (server-side blazor) or index.html (client-side blazor) 
+2) Add relevant styles to your app (since 2.2 no styles are included in the library anymore)
 
-```html
-<link href="_content/blazor-dragdrop/dragdrop.css" rel="stylesheet" />
-```
+You can copy styles from [dragdrop.css](Plk.Blazor.DragDrop.Demo/wwwroot/css/dragdrop.css) to your site.css to get started. Read more about styling [here](#styling).
 
 ------
 
@@ -66,6 +64,8 @@ By default the dropzone will use a build-in style for the drag/drop animations.
 If you add or remove items to the underlying list the dropzone will automatically update. 
 
 After a drag operation you can inspect your list to get the current position of items. 
+
+Use the TItem property of the Dropzone to tell the compiler about the item type you are using. It is helpful when using some of the event handlers. 
 
 #### Features:
 
@@ -119,15 +119,10 @@ You can create more than one dropzone and move items between them.
 
 #### Styling:
 
-If you want to provide your own style you have to set the Style attribute to 'custom':
-
-```html
-<Dropzone Items="MyItems" Style="DragDropStyle.Custom">
-```
 To style the dropzone divs you can either create a css selector for plk-dd-dropzone or you assign classes to the dropzone:
 
 ```html
-<Dropzone Class="my-a my-b" Style="DragDropStyle.Custom">
+<Dropzone Class="my-a my-b">
 ```
 
 Furthermore, you create css selectors for the following classes:
@@ -137,11 +132,20 @@ plk-dd-dragged-over (class added to the item that is currently dragged over)
 plk-dd-in-transit (class added to the item that is currently dragged around)
 plk-dd-spacing (class added to the div that sits between two items)
 plk-dd-spacing-dragged-over (class added to div that is currently the drop target)
+plk-dd-inprogess (class added to a dropzone when a drag operation is in progress)
+```
+
+You should always disable pointer events for a dropzone when a drag operation is in progress. Include this in your custom css:
+
+```html
+.plk-dd-inprogess > * {
+    pointer-events: none;
+}
 ```
 
 #### Examples:
 
-Check the demo page.
+Check the [demo page](https://blazordragdrop.azurewebsites.net).
 
 ------
 #### Mobile Devices:
