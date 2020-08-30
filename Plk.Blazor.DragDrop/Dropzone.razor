@@ -73,9 +73,11 @@
             Items.Insert(newIndex, CopyItem(activeItem));
         }
 
-        //Operation is finished
-        DragDropService.Reset();
-    }
+            //Operation is finished
+            DragDropService.Reset();
+
+            OnItemDrop.InvokeAsync(activeItem);
+        }
 
     private TItem dragTargetItem;
 
