@@ -136,6 +136,7 @@
     public void OnDragEnd()
     {
         DragDropService.Reset();
+        GroupService.UnsetSelectedGroup();
     }
 
     public void OnDragEnter(TItem item)
@@ -339,11 +340,9 @@
         if (!IsDropAllowed())
         {
             DragDropService.Reset();
-            GroupService.UnsetSelectedGroup();
             return;
         }
 
-        GroupService.UnsetSelectedGroup();
         var activeItem = DragDropService.ActiveItem;
 
         if (dragTargetItem == null) //no direct drag target
