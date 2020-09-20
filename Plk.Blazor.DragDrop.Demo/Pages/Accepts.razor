@@ -11,7 +11,7 @@
 
     <Dropzone Items="MyFirstList">
         <div style="border: 2px solid blue">
-            @context.Titel
+            @context.Title
         </div>
     </Dropzone>
 
@@ -21,9 +21,9 @@
 <div class="bg-light">Second Dropzone: (only accepts items containing the word 'fun')</div>
 
 
-    <Dropzone Items="MySecondList" Accepts='(d)=>d.Titel.Contains("fun")' TItem="TodoItem" OnItemDropRejected="@((i)=>lastdropped = i)">
+    <Dropzone Items="MySecondList" Accepts='(d)=>d.Title.Contains("fun")' TItem="TodoItem" OnItemDropRejected="@((i)=>lastdropped = i)">
         <div class="mt-2" style="border: 2px solid black">
-            @context.Titel
+            @context.Title
         </div>
     </Dropzone>
 
@@ -31,7 +31,7 @@
 
 @if(lastdropped != null)
 {
-    <div class="bg-warning">No place for you here:  @lastdropped?.Titel </div>
+    <div class="bg-warning">No place for you here:  @lastdropped?.Title </div>
 }
 
 @code {
@@ -40,16 +40,16 @@
 
     public List<TodoItem> MyFirstList = new List<TodoItem>()
 {
-            new TodoItem(){Titel = "Item 1 - boring"},
-            new TodoItem(){Titel = "Item 2 - angry"},
-            new TodoItem(){Titel = "Item 3 - fun"},
-            new TodoItem(){Titel = "Item 4 - more fun"},
-            new TodoItem(){Titel = "Item 5 - great"},
+            new TodoItem(){Title = "Item 1 - boring"},
+            new TodoItem(){Title = "Item 2 - angry"},
+            new TodoItem(){Title = "Item 3 - fun"},
+            new TodoItem(){Title = "Item 4 - more fun"},
+            new TodoItem(){Title = "Item 5 - great"},
     };
 
     public List<TodoItem> MySecondList = new List<TodoItem>()
 {
-            new TodoItem(){Titel = "Item 6 - the real fun"},
+            new TodoItem(){Title = "Item 6 - the real fun"},
     };
 
 }

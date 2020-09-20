@@ -1,16 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Plk.Blazor.DragDrop.Test")]
-namespace Plk.Blazor.DragDrop
+namespace Plk.Blazor.DragDrop.Services
 {
-
     internal class DragDropService<T>
     {
         /// <summary>
@@ -34,7 +28,7 @@ namespace Plk.Blazor.DragDrop
         public void Reset()
         {
             ShouldRender = true;
-            ActiveItem = default(T);
+            ActiveItem = default;
             ActiveSpacerId = null;
             Items = null;
 

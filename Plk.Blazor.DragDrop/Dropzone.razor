@@ -1,9 +1,10 @@
 ﻿@typeparam TItem
-@inject DragDropService<TItem> DragDropService
+@inject Services.DragDropService<TItem> DragDropService
+@inject Services.DropzoneGroupService GroupService
 @using System.Text
 @implements IDisposable
 
-<div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
+<div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" style="@DropzoneStyle" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
 
     @foreach (var item in Items)
     {
@@ -38,6 +39,11 @@
 </div>
 
 @code {
+    [Parameter]
+    public string DropzoneStyle { get; set; }
+
+    [Parameter]
+    public string DropzoneGroupId { get; set; }
 
     private void OnDropItemOnSpacing(int newIndex)
     {
@@ -50,9 +56,9 @@
         var activeItem = DragDropService.ActiveItem;
         var oldIndex = Items.IndexOf(activeItem);
 
-        if(oldIndex == -1) // item not present in target dropzone
+        if (oldIndex == -1) // item not present in target dropzone
         {
-            if(CopyItem == null)
+            if (CopyItem == null)
             {
                 DragDropService.Items.Remove(activeItem);
             }
@@ -64,7 +70,7 @@
             if (newIndex > oldIndex) newIndex--;
         }
 
-        if(CopyItem == null)
+        if (CopyItem == null)
         {
             Items.Insert(newIndex, activeItem);
         }
@@ -73,11 +79,11 @@
             Items.Insert(newIndex, CopyItem(activeItem));
         }
 
-            //Operation is finished
-            DragDropService.Reset();
+        //Operation is finished
+        DragDropService.Reset();
 
-            OnItemDrop.InvokeAsync(activeItem);
-        }
+        OnItemDrop.InvokeAsync(activeItem);
+    }
 
     private TItem dragTargetItem;
 
@@ -97,7 +103,7 @@
 
     private bool IsValidItem()
     {
-        return DragDropService.ActiveItem != null;
+        return DragDropService.ActiveItem != null && GroupService.CurrentDragItemGroupId == this.DropzoneGroupId;
     }
 
     protected override bool ShouldRender()
@@ -114,6 +120,8 @@
     protected override void OnInitialized()
     {
         DragDropService.StateHasChanged += ForceRender;
+        GroupService.OnGroupSet += OnGroupSet;
+        GroupService.OnGroupUnset += OnGroupUnset;
 
         base.OnInitialized();
     }
@@ -165,16 +173,22 @@
 
     public void OnDragStart(TItem item)
     {
+        if (GroupService.CurrentDragItemGroupId != null)
+        {
+            return;
+        }
+
         DragDropService.ShouldRender = true;
         DragDropService.ActiveItem = item;
         DragDropService.Items = Items;
+        GroupService.SetSelectedGroupId(this.DropzoneGroupId);
         StateHasChanged();
         DragDropService.ShouldRender = false;
     }
 
     public string CheckIfItemIsInTransit(TItem item)
     {
-        return item.Equals(DragDropService.ActiveItem) ? "plk-dd-in-transit no-pointer-events" : "";
+        return item.Equals(DragDropService.ActiveItem) && GroupService.CurrentDragItemGroupId == this.DropzoneGroupId ? "plk-dd-in-transit no-pointer-events" : "";
     }
 
     public string CheckIfItemIsDragTarget(TItem item)
@@ -217,6 +231,11 @@
         var builder = new StringBuilder();
 
         builder.Append("plk-dd-spacing");
+
+        if (GroupService.CurrentDragItemGroupId != this.DropzoneGroupId)
+        {
+            return builder.ToString();
+        }
 
         //if active space id and item is from another dropzone -> always create insert space
         if (DragDropService.ActiveSpacerId == spacerId && Items.IndexOf(DragDropService.ActiveItem) == -1)
@@ -286,7 +305,7 @@
     /// <summary>
     /// If set items dropped are copied to this dropzone and are not removed from their source.
     /// </summar
-    [Parameter] public Func<TItem,TItem> CopyItem { get; set; }
+    [Parameter] public Func<TItem, TItem> CopyItem { get; set; }
 
     private bool IsDropAllowed()
     {
@@ -320,16 +339,18 @@
         if (!IsDropAllowed())
         {
             DragDropService.Reset();
+            GroupService.UnsetSelectedGroup();
             return;
         }
 
+        GroupService.UnsetSelectedGroup();
         var activeItem = DragDropService.ActiveItem;
 
         if (dragTargetItem == null) //no direct drag target
         {
             if (!Items.Contains(activeItem)) //if dragged to another dropzone
             {
-                if(CopyItem == null)
+                if (CopyItem == null)
                 {
                     Items.Insert(Items.Count, activeItem); //insert item to new zone
                     DragDropService.Items.Remove(activeItem); //remove from old zone
@@ -364,27 +385,42 @@
     private void Swap(TItem draggedOverItem, TItem activeItem)
     {
         var indexDraggedOverItem = Items.IndexOf((TItem)draggedOverItem);
+
         var indexActiveItem = Items.IndexOf((TItem)activeItem);
 
         if (indexActiveItem == -1) // item is new to the dropzone
         {
-            //insert into new zone
-            Items.Insert(indexDraggedOverItem + 1, activeItem);
-            //remove from old zone
-            DragDropService.Items.Remove(activeItem);
+            indexActiveItem = DragDropService.Items.IndexOf((TItem)activeItem);
+
+            Items[indexDraggedOverItem] = activeItem;
+
+            DragDropService.Items[indexActiveItem] = draggedOverItem;
         }
         else //swap the items
         {
             if (indexDraggedOverItem == indexActiveItem) return;
-            TItem tmp = Items[indexDraggedOverItem];
-            Items[indexDraggedOverItem] = Items[indexActiveItem];
-            Items[indexActiveItem] = tmp;
+
+            Items[indexDraggedOverItem] = activeItem;
+
+            Items[indexActiveItem] = draggedOverItem;
         }
+    }
+
+    // TODO: Visually show the groups into which the current dragged object can be moved
+    public void OnGroupSet(string groupId)
+    {
+
+    }
+
+    public void OnGroupUnset(string groupId)
+    {
 
     }
 
     public void Dispose()
     {
         DragDropService.StateHasChanged -= ForceRender;
+        GroupService.OnGroupSet -= OnGroupSet;
+        GroupService.OnGroupUnset -= OnGroupUnset;
     }
 }

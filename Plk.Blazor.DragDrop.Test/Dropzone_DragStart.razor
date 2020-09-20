@@ -37,7 +37,7 @@
 
 
             //get the DragDropService
-            var service = fixture.Services.GetService<DragDropService<MyItem>>();
+            var service = fixture.Services.GetService<DragDrop.Services.DragDropService<MyItem>>();
 
             Assert.Equal(Items[0], service.ActiveItem);
             Assert.Equal(2, service.Items.Count);

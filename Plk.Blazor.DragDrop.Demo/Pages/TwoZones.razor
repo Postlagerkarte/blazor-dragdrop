@@ -10,7 +10,7 @@
 
 <Dropzone Items="MyFirstList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
     <div style="border: 2px solid blue">
-        @context.Titel
+        @context.Title
     </div>
 </Dropzone>
 
@@ -20,7 +20,7 @@
 
 <Dropzone Items="MySecondList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
     <div style="border: 2px solid black">
-        @context.Titel
+        @context.Title
     </div>
 </Dropzone>
 
@@ -28,15 +28,15 @@
 
 <div class="bg-light">Third Dropzone (copy items):</div>
 
-<Dropzone CopyItem="(item)=> { return new TodoItem() {Titel = item.Titel}; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+<Dropzone CopyItem="(item)=> { return new TodoItem() {Title = item.Title}; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
     <div style="border: 2px solid black">
-        @context.Titel
+        @context.Title
     </div>
 </Dropzone>
 
 <hr />
 
-<div>Last Dropped Item: @lastdropped?.Titel</div>
+<div>Last Dropped Item: @lastdropped?.Title</div>
 
 
 @code {
@@ -45,20 +45,20 @@
 
     public List<TodoItem> MyFirstList = new List<TodoItem>()
 {
-            new TodoItem(){Titel = "Item 1"},
-            new TodoItem(){Titel = "Item 2"},
-            new TodoItem(){Titel = "Item 3"},
-            new TodoItem(){Titel = "Item 4"},
-            new TodoItem(){Titel = "Item 5"},
+            new TodoItem(){Title = "Item 1"},
+            new TodoItem(){Title = "Item 2"},
+            new TodoItem(){Title = "Item 3"},
+            new TodoItem(){Title = "Item 4"},
+            new TodoItem(){Title = "Item 5"},
     };
 
     public List<TodoItem> MySecondList = new List<TodoItem>()
     {
-            new TodoItem(){Titel = "Item 6"},
-            new TodoItem(){Titel = "Item 7"},
-            new TodoItem(){Titel = "Item 8"},
-            new TodoItem(){Titel = "Item 9"},
-            new TodoItem(){Titel = "Item 10"},
+            new TodoItem(){Title = "Item 6"},
+            new TodoItem(){Title = "Item 7"},
+            new TodoItem(){Title = "Item 8"},
+            new TodoItem(){Title = "Item 9"},
+            new TodoItem(){Title = "Item 10"},
     };
 
     public List<TodoItem> MyThirdList = new List<TodoItem>()

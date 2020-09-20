@@ -1,0 +1,37 @@
+﻿@page "/groups"
+<h3>Groups</h3>
+
+<h4>Dropzone for ItemList1, DropzoneGroupId="group1"</h4>
+<Dropzone Items="ItemList1" DropzoneGroupId="group1" Context="item">
+    <div style="border: 2px solid black;">
+        @item
+    </div>
+</Dropzone>
+
+<h4>Dropzone for ItemList2, DropzoneGroupId="group1"</h4>
+<Dropzone Items="ItemList2" DropzoneGroupId="group1" Context="item">
+    <div style="border: 2px solid black;">
+        @item
+    </div>
+</Dropzone>
+
+<h4>Dropzone for ItemList1, DropzoneGroupId="group2"</h4>
+<Dropzone Items="ItemList1" DropzoneGroupId="group2" Context="item">
+    <div style="border: 2px solid black;">
+        @item
+    </div>
+</Dropzone>
+
+<h4>Dropzone for ItemList2, DropzoneGroupId="group3"</h4>
+<Dropzone Items="ItemList2" DropzoneGroupId="group3" Context="item">
+    <div style="border: 2px solid black;">
+        @item
+    </div>
+</Dropzone>
+
+
+
+@code {
+    List<string> ItemList1 = Enumerable.Range(0, 3).Select(i => $"Item {i} from {nameof(ItemList1)}").ToList();
+    List<string> ItemList2 = Enumerable.Range(0, 3).Select(i => $"Item {i} from {nameof(ItemList2)}").ToList();
+}

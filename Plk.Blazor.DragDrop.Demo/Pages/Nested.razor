@@ -1,0 +1,199 @@
+﻿@page "/nested"
+@using Plk.Blazor.DragDrop.Demo.Data
+@using Plk.Blazor.DragDrop.Demo.Components
+
+<h3>NestedDropzones</h3>
+
+<h4>Nested dropzones with simple items. Group 1</h4>
+<Dropzone Items="RootComponentList" DropzoneGroupId="rootGroup" Context="RootComponent">
+    <div style="border: 2px solid black">
+        @RootComponent.Title
+        <div style="border: 2px solid black">
+            <Dropzone Items="RootComponent.TodoItemList" DropzoneGroupId="chilGroup" Context="ChildItem">
+                <Todo Item="ChildItem" OnRemoveClick="@((item) => RootComponent.TodoItemList.Remove(item))" />
+            </Dropzone>
+        </div>
+    </div>
+</Dropzone>
+
+<h4>Nested dropzones with simple items. Group 2</h4>
+<Dropzone Items="SecondRootComponentList" DropzoneGroupId="rootGroup2" Context="RootComponent" >
+    <div style="border: 2px solid black">
+        @RootComponent.Title
+        <div style="border: 2px solid black">
+            <Dropzone Items="RootComponent.TodoItemList" DropzoneGroupId="chilGroup2" Context="ChildItem">
+                <Todo OnRemoveClick="@((item) => RootComponent.TodoItemList.Remove(item))" Item="ChildItem" />
+            </Dropzone>
+        </div>
+    </div>
+</Dropzone>
+
+<h4>Nested dropzones with complex items</h4>
+<div style="border: 4px dashed black; padding-left: 10px; padding-right: 10px;">
+    <h5>Root dropzone 1, DropzoneGroupId="rootGroupComplex"</h5>
+    <Dropzone Items="ComplexRootComponentList" DropzoneGroupId="rootGroupComplex" Context="RootComponent">
+        <div style="border: 4px solid black; padding-left: 10px; padding-right: 10px;">
+            <h5>Child zone "@RootComponent.Title", DropzoneGroupId="chilGroupComplex"</h5>
+            <Dropzone Items="RootComponent.NodeList" DropzoneGroupId="chilGroupComplex" Context="ComplexNode">
+                <div style="border: 2px solid black; padding-left: 10px; padding-right: 10px;">
+                    <h5>Sub child zone 1, DropzoneGroupId="childSubGroup1"</h5>
+                    <Dropzone Items="ComplexNode.TodoItemListOne" DropzoneGroupId="childSubGroup1" Context="ChildSubGroup">
+                        <Todo OnRemoveClick="@((item) => ComplexNode.TodoItemListOne.Remove(item))" Item="ChildSubGroup" />
+                    </Dropzone>
+                </div>
+                <div style="border: 2px solid black; padding-left: 10px; padding-right: 10px; margin-top: 10px;">
+                    <h5>Sub child zone 2, DropzoneGroupId="childSubGroup2"</h5>
+                    <Dropzone Items="ComplexNode.TodoItemListTwo" DropzoneGroupId="childSubGroup2" Context="ChildSubGroup">
+                        <Todo OnRemoveClick="@((item) => ComplexNode.TodoItemListTwo.Remove(item))" Item="ChildSubGroup" />
+                    </Dropzone>
+                </div>
+            </Dropzone>
+        </div>
+    </Dropzone>
+</div>
+
+<div style="border: 4px dashed black; padding-left: 10px; padding-right: 10px; margin-top: 8px;">
+    <h5>Root dropzone 2, DropzoneGroupId="rootGroupComplex"</h5>
+    <Dropzone Items="SecondComplexRootComponentList" DropzoneGroupId="rootGroupComplex" Context="RootComponent">
+        <div style="border: 4px solid black">
+            <h5>Child zone "@RootComponent.Title", DropzoneGroupId="chilGroupComplex"</h5>
+            <Dropzone Items="RootComponent.NodeList" DropzoneGroupId="chilGroupComplex" Context="ComplexNode">
+                <div style="border: 2px solid black; padding-left: 10px; padding-right: 10px;">
+                    <h5>Sub child zone 1, DropzoneGroupId="childSubGroup1"</h5>
+                    <Dropzone Items="ComplexNode.TodoItemListOne" DropzoneGroupId="childSubGroup1" Context="ChildSubGroup">
+                        <div style="border: 1px solid black; padding-left: 10px; padding-right: 10px;">
+                            @ChildSubGroup.Title
+                        </div>
+                    </Dropzone>
+                </div>
+                <div style="border: 2px solid black; padding-left: 10px; padding-right: 10px;">
+                    <h5>Sub child zone 2, DropzoneGroupId="childSubGroup2"</h5>
+                    <Dropzone Items="ComplexNode.TodoItemListTwo" DropzoneGroupId="childSubGroup2" Context="ChildSubGroup">
+                        <div style="border: 1px solid black; padding-left: 10px; padding-right: 10px;">
+                            @ChildSubGroup.Title
+                        </div>
+                    </Dropzone>
+                </div>
+            </Dropzone>
+        </div>
+    </Dropzone>
+</div>
+
+
+@code {
+    List<RootComponent> RootComponentList;
+    List<RootComponent> SecondRootComponentList;
+
+    List<ComplexRootComponent> ComplexRootComponentList;
+    List<ComplexRootComponent> SecondComplexRootComponentList;
+
+    protected override void OnInitialized()
+    {
+        InsertTestData();
+    }
+
+    private void InsertTestData()
+    {
+        Insert(out RootComponentList);
+        Insert(out SecondRootComponentList);
+        InsertComplex(out ComplexRootComponentList);
+        InsertComplex(out SecondComplexRootComponentList);
+
+        void Insert(out List<RootComponent> componentList)
+        {
+            componentList = new List<RootComponent>();
+
+            for (int rootCount = 0; rootCount < 2; rootCount++)
+            {
+                var cur = new RootComponent
+                {
+                    TodoItemList = new List<TodoItem>()
+                };
+
+                componentList.Add(cur);
+
+                for (int todoCount = 0; todoCount < 2; todoCount++)
+                {
+                    cur.TodoItemList.Add(new TodoItem
+                    {
+                        Title = $"Item {todoCount} from {cur.Title}"
+                    });
+                }
+            }
+        }
+
+        void InsertComplex(out List<ComplexRootComponent> componentList)
+        {
+            componentList = new List<ComplexRootComponent>();
+
+            for (int rootCount = 0; rootCount < 2; rootCount++)
+            {
+                var cur = new ComplexRootComponent
+                {
+                    NodeList = new List<ComplexNode>()
+                };
+
+                componentList.Add(cur);
+
+                for (int nodeCount = 0; nodeCount < 2; nodeCount++)
+                {
+                    var node = new ComplexNode
+                    {
+                        TodoItemListOne = new List<TodoItem>(),
+                        TodoItemListTwo = new List<TodoItem>()
+                    };
+
+                    for (int todoCount = 0; todoCount < 2; todoCount++)
+                    {
+                        node.TodoItemListOne.Add(new TodoItem
+                        {
+                            Title = $"Item {todoCount} from {cur.Title} list 1"
+                        });
+
+                        node.TodoItemListTwo.Add(new TodoItem
+                        {
+                            Title = $"Item {todoCount} from {cur.Title} list 2"
+                        });
+                    }
+
+                    cur.NodeList.Add(node);
+                }
+            }
+        }
+    }
+
+    public class RootComponent
+    {
+        private static int _idGenerator = 0;
+
+        private static int GenerateId() => _idGenerator++;
+
+        public string Title { get; set; } = $"Root element {GenerateId()}";
+
+        public List<TodoItem> TodoItemList { get; set; }
+    }
+
+    public class ComplexRootComponent
+    {
+        private static int _idGenerator = 0;
+
+        private static int GenerateId() => _idGenerator++;
+
+        public string Title { get; set; } = $"Complex root element {GenerateId()}";
+
+        public List<ComplexNode> NodeList { get; set; }
+    }
+
+    public class ComplexNode
+    {
+        private static int _idGenerator = 0;
+
+        private static int GenerateId() => _idGenerator++;
+
+        public string Title { get; set; } = $"Complex node {GenerateId()}";
+
+        public List<TodoItem> TodoItemListOne { get; set; }
+
+        public List<TodoItem> TodoItemListTwo { get; set; }
+    }
+}

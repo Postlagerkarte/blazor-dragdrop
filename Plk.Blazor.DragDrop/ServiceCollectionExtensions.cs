@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Plk.Blazor.DragDrop.Services;
 
 namespace Plk.Blazor.DragDrop
 {
@@ -9,7 +7,8 @@ namespace Plk.Blazor.DragDrop
     {
         public static IServiceCollection AddBlazorDragDrop(this IServiceCollection services)
         {
-            return services.AddScoped(typeof(DragDropService<>));
+            return services.AddScoped(typeof(DragDropService<>))
+                           .AddSingleton<DropzoneGroupService>();
         }
     }
 }
