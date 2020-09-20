@@ -70,6 +70,7 @@ Use the TItem property of the Dropzone to tell the compiler about the item type 
 #### Features:
 
 **Only allow limited number of items in a Dropzone:** 
+
 ```html
 <Dropzone MaxItems="2">
 
@@ -78,6 +79,7 @@ Use the TItem property of the Dropzone to tell the compiler about the item type 
 If you drop something and the limit is reached you can get a notification by providing a callback.
 
 **Restrict Drop (executes the give accept func before accepting the draggable):**
+
 ```html
 <Dropzone Accepts='(d) => d.Gender == "Male"'>
 
@@ -86,6 +88,7 @@ If you drop something and the limit is reached you can get a notification by pro
 If you drop something and the item is rejected you can get a notification by providing a callback.
 
 **Copy Items:**
+
 By default, items are moved between dropzones. 
 
 If you instead want the item to be copied you can make use of the "CopyItem" attribute:
@@ -100,6 +103,7 @@ If you instead want the item to be copied you can make use of the "CopyItem" att
 The CopyItem attribute expects a method telling the dropzone how to create a copy of the item. It receives the currently active item as input.
 
 **Instant Replace:**
+
 By default you get a visual clue for the drop operation. You can activate Instant Replace to instead swap out items on the fly. This option should only be used for small lists.
 
 ```html
@@ -110,10 +114,12 @@ By default you get a visual clue for the drop operation. You can activate Instan
 
 
 **Multiple Dropzone:**
+
 You can create more than one dropzone and move items between them.
 
 
 **Dropzone Groups:**
+
 You can set dropzone group id to restrict the ability to move items between multiple dropzones or to create nested dropzones.
 
 ```html
