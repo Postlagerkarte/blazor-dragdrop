@@ -1,0 +1,157 @@
+﻿@page "/NestedDifferentViews"
+@using Data
+@using Plk.Blazor.DragDrop.Demo.Components
+
+<table>
+    <tr>
+        <th style="padding: 20px; vertical-align: top">
+            <h3>Some kind of menu</h3>
+            <Dropzone Items="NewGroups" DropzoneGroupId="groupDropzone" Context="group" DropzoneStyle="min-height: 500px; border: 2px solid black;" Id="Menu zone">
+                <div style="background-color: gray">
+                    <h5>@group.Title</h5>
+                    <Dropzone Items="@group.FieldList" DropzoneGroupId="fieldDropzone" Context="field" Id="Menu child zone">
+                        <div style="border: 1px solid black; background-color: antiquewhite">
+                            @field.Title
+                        </div>
+                    </Dropzone>
+                </div>
+            </Dropzone>
+        </th>
+        <th style="padding: 20px; vertical-align: top">
+            <h3>Edit form for @someItem.Title</h3>
+            <EditForm Model="someItem">
+                <Dropzone Items="someItem.GroupList" DropzoneGroupId="groupDropzone" Context="group" DropzoneStyle="min-height: 500px; border: 2px solid black;" Id="Edit form zone">
+                    <div style="background-color: gray">
+                        <h5>@group.Title</h5>
+                        <Dropzone Items="@group.FieldList" DropzoneGroupId="fieldDropzone" Context="field" Id="Edit form group zone">
+                            <div style="border: 1px solid black; background-color: antiquewhite">
+                                @field.Title
+                                <FieldComponent Field="field" />
+                            </div>
+                        </Dropzone>
+                    </div>
+                </Dropzone>
+            </EditForm>
+        </th>
+    </tr>
+</table>
+
+@code {
+    protected override bool ShouldRender()
+    {
+        var res = _shouldRender;
+
+        if (res != null)
+        {
+            _shouldRender = null;
+            return (bool)res;
+        }
+
+        return base.ShouldRender();
+    }
+
+    bool? _shouldRender = null;
+
+    Item someItem = null;
+
+    List<FieldGroup> NewGroups;
+
+    protected override void OnInitialized()
+    {
+        someItem = new Item
+        {
+            Title = "Some Item",
+            GroupList = new List<FieldGroup>
+            {
+                new FieldGroup
+                {
+                    Title = "Base info",
+                    FieldList = new List<Field>
+                    {
+                        new TextField
+                        {
+                            Title = "Description",
+                            Value = "Element description value"
+                        },
+                        new DateField
+                        {
+                            Title = "Plan start date",
+                            Value = DateTimeOffset.Now
+                        },
+                        new DateField
+                        {
+                            Title = "Plan finish date",
+                            Value = DateTimeOffset.Now.AddDays(5)
+                        }
+                    }
+                },
+                new FieldGroup
+                {
+                    Title = "Additional info",
+                    FieldList = new List<Field>
+                    {
+                        new DateField
+                        {
+                            Title = "Real start date",
+                            Value = DateTimeOffset.Now.AddDays(5)
+                        },
+                        new DateField
+                        {
+                            Title = "Real finish date",
+                            Value = DateTimeOffset.MaxValue
+                        }
+                    }
+                },
+                new FieldGroup
+                {
+                    Title = "System info",
+                    FieldList = new List<Field>
+                    {
+                        new TextField
+                        {
+                            Title = "Instance id",
+                            Value = Guid.NewGuid().ToString()
+                        }
+                    }
+                }
+            }
+        };
+        NewGroups = new List<FieldGroup>
+        {
+            new FieldGroup
+            {
+                Title = "Some field group",
+                FieldList = new List<Field>
+                {
+                    new TextField
+                    {
+                        Title = "Some field with value",
+                        Value = "Some field value"
+                    },
+                    new TextField
+                    {
+                        Title = "Another field without value"
+                    }
+                }
+            },
+            new FieldGroup
+            {
+                Title = "Another field group",
+                FieldList = new List<Field>
+                {
+                    new DateField
+                    {
+                        Title = "Some date field with value",
+                        Value = DateTimeOffset.Now
+                    },
+                    new DateField
+                    {
+                        Title = "Some date field without value"
+                    }
+                }
+            }
+        };
+    }
+
+    
+}

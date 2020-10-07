@@ -1,0 +1,18 @@
+﻿@using Data 
+
+@_field?.RenderFieldEdit()
+
+@code {
+    private Field _field;
+
+    [Parameter]
+    public Field Field
+    {
+        get { return _field; }
+        set
+        {
+            value.ParentComponent = this;
+            _field = value;
+        }
+    }
+}
