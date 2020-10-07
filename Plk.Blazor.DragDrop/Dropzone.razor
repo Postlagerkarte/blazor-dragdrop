@@ -4,21 +4,21 @@
 @using System.Text
 @implements IDisposable
 
-<div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" style="@DropzoneStyle" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
+<div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" style="@DropzoneStyle" @ondrop="() => CurrentState.OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
 
     @foreach (var item in Items)
     {
 
         if (Items.IndexOf(item) == 0 && MaxItems == null || MaxItems > 1)
         {
-            <div @ondrop="()=>OnDropItemOnSpacing(0)" @ondragenter="()=>DragDropService.ActiveSpacerId =  0" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@GetClassesForSpacing(0)"></div>
+            <div @ondrop="()=>CurrentState.OnDropItemOnSpacing(0)" @ondrop:stopPropagation @ondragenter="()=>CurrentState.OnSpacingDragEnter(0)" @ondragleave="() => CurrentState.OnSpacingDragLeave()" class="@GetClassesForSpacing(0)"></div>
         }
 
         <div draggable="true"
-             @ondragstart="()=>OnDragStart(item)"
-             @ondragend="()=>OnDragEnd()"
-             @ondragenter="()=>OnDragEnter(item)"
-             @ondragleave="()=>OnDragLeave()"
+             @ondragstart="()=>CurrentState.OnDragStart(item)"
+             @ondragend="() => CurrentState.OnDragEnd()"
+             @ondragenter="()=>CurrentState.OnDragEnter(item)"
+             @ondragleave="() => CurrentState.OnDragLeave()"
              class="@GetClassesForDraggable() @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
 
             @{
@@ -32,7 +32,7 @@
 
         @if (MaxItems == null || MaxItems > 1)
         {
-            <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
+            <div @ondrop="()=>CurrentState.OnDropItemOnSpacing(Items.IndexOf(item)+1)" @ondrop:stopPropagation @ondragenter="()=>CurrentState.OnSpacingDragEnter(Items.IndexOf(item)+1)" @ondragleave="() => CurrentState.OnSpacingDragLeave()" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
         }
     }
 
@@ -45,47 +45,16 @@
     [Parameter]
     public string DropzoneGroupId { get; set; }
 
-    private void OnDropItemOnSpacing(int newIndex)
-    {
-        if (!IsDropAllowed())
-        {
-            DragDropService.Reset();
-            return;
-        }
-
-        var activeItem = DragDropService.ActiveItem;
-        var oldIndex = Items.IndexOf(activeItem);
-
-        if (oldIndex == -1) // item not present in target dropzone
-        {
-            if (CopyItem == null)
-            {
-                DragDropService.Items.Remove(activeItem);
-            }
-        }
-        else // same dropzone drop
-        {
-            Items.RemoveAt(oldIndex);
-            // the actual index could have shifted due to the removal
-            if (newIndex > oldIndex) newIndex--;
-        }
-
-        if (CopyItem == null)
-        {
-            Items.Insert(newIndex, activeItem);
-        }
-        else
-        {
-            Items.Insert(newIndex, CopyItem(activeItem));
-        }
-
-        //Operation is finished
-        DragDropService.Reset();
-
-        OnItemDrop.InvokeAsync(activeItem);
-    }
-
     private TItem dragTargetItem;
+
+    private DropzoneState CurrentState { get; set; }
+
+    private bool ChangingStateManually { get; set; } = false;
+
+    private void ChangeState(DropzoneState newState)
+    {
+        CurrentState = newState;
+    }
 
     private bool IsMaxItemLimitReached()
     {
@@ -106,19 +75,17 @@
         return DragDropService.ActiveItem != null && GroupService.CurrentDragItemGroupId == this.DropzoneGroupId;
     }
 
-    protected override bool ShouldRender()
-    {
-        return DragDropService.ShouldRender;
-    }
+    protected override bool ShouldRender() => CurrentState.ShouldRender;
 
     private void ForceRender(object sender, EventArgs e)
     {
         StateHasChanged();
     }
 
-
     protected override void OnInitialized()
     {
+        CurrentState = new DefaultState(this);
+
         DragDropService.StateHasChanged += ForceRender;
         GroupService.OnGroupSet += OnGroupSet;
         GroupService.OnGroupUnset += OnGroupUnset;
@@ -131,60 +98,6 @@
         var activeItem = DragDropService.ActiveItem;
 
         return activeItem == null ? "" : "plk-dd-inprogess";
-    }
-
-    public void OnDragEnd()
-    {
-        DragDropService.Reset();
-        GroupService.UnsetSelectedGroup();
-    }
-
-    public void OnDragEnter(TItem item)
-    {
-        var activeItem = DragDropService.ActiveItem;
-
-        if (item.Equals(activeItem)) return;
-
-        if (!IsValidItem()) return;
-
-        if (IsMaxItemLimitReached()) return;
-
-        if (!IsItemAccepted()) return;
-
-        dragTargetItem = item;
-
-        if (InstantReplace)
-        {
-            Swap(dragTargetItem, activeItem);
-        }
-
-        DragDropService.ShouldRender = true;
-        StateHasChanged();
-        DragDropService.ShouldRender = false;
-    }
-
-    public void OnDragLeave()
-    {
-        dragTargetItem = default(TItem);
-
-        DragDropService.ShouldRender = true;
-        StateHasChanged();
-        DragDropService.ShouldRender = false;
-    }
-
-    public void OnDragStart(TItem item)
-    {
-        if (GroupService.CurrentDragItemGroupId != null)
-        {
-            return;
-        }
-
-        DragDropService.ShouldRender = true;
-        DragDropService.ActiveItem = item;
-        DragDropService.Items = Items;
-        GroupService.SetSelectedGroupId(this.DropzoneGroupId);
-        StateHasChanged();
-        DragDropService.ShouldRender = false;
     }
 
     public string CheckIfItemIsInTransit(TItem item)
@@ -290,96 +203,23 @@
 
     /// <summary>
     /// Specifies one or more classnames for the Dropzone element.
-    /// </summar
+    /// </summary>
     [Parameter] public string Class { get; set; }
 
     /// <summary>
     /// Specifies the id for the Dropzone element.
-    /// </summar
+    /// </summary>
     [Parameter] public string Id { get; set; }
 
     /// <summary>
     /// Specifies one or more classnames for the draggable div that wraps your elements.
-    /// </summar
+    /// </summary>
     [Parameter] public string ItemWrapperClass { get; set; }
 
     /// <summary>
     /// If set items dropped are copied to this dropzone and are not removed from their source.
-    /// </summar
+    /// </summary>
     [Parameter] public Func<TItem, TItem> CopyItem { get; set; }
-
-    private bool IsDropAllowed()
-    {
-        var activeItem = DragDropService.ActiveItem;
-
-        if (!IsValidItem())
-        {
-            return false;
-        }
-
-        if (IsMaxItemLimitReached())
-        {
-            OnItemDropRejectedByMaxItemLimit.InvokeAsync(activeItem);
-            return false;
-        }
-
-        if (!IsItemAccepted())
-        {
-            OnItemDropRejected.InvokeAsync(activeItem);
-            return false;
-        }
-
-        return true;
-    }
-
-
-    private void OnDrop()
-    {
-        DragDropService.ShouldRender = true;
-
-        if (!IsDropAllowed())
-        {
-            DragDropService.Reset();
-            return;
-        }
-
-        var activeItem = DragDropService.ActiveItem;
-
-        if (dragTargetItem == null) //no direct drag target
-        {
-            if (!Items.Contains(activeItem)) //if dragged to another dropzone
-            {
-                if (CopyItem == null)
-                {
-                    Items.Insert(Items.Count, activeItem); //insert item to new zone
-                    DragDropService.Items.Remove(activeItem); //remove from old zone
-                }
-                else
-                {
-                    Items.Insert(Items.Count, CopyItem(activeItem)); //insert item to new zone
-                }
-            }
-            else
-            {
-                //what to do here?
-
-            }
-        }
-        else // we have a direct target
-        {
-            if (!InstantReplace)
-            {
-                Swap(dragTargetItem, activeItem); //swap target with active item
-            }
-        }
-
-        dragTargetItem = default(TItem);
-        DragDropService.Reset();
-
-        StateHasChanged();
-
-        OnItemDrop.InvokeAsync(activeItem);
-    }
 
     private void Swap(TItem draggedOverItem, TItem activeItem)
     {
@@ -408,12 +248,18 @@
     // TODO: Visually show the groups into which the current dragged object can be moved
     public void OnGroupSet(string groupId)
     {
-
+        if (IsValidItem() && ChangingStateManually == false)
+        {
+            ChangeState(new AvailableForDropZoneState(this));
+        }
     }
 
     public void OnGroupUnset(string groupId)
     {
-
+        if (CurrentState.IsDefaultState == false && ChangingStateManually == false)
+        {
+            ChangeState(new DefaultState(this));
+        }
     }
 
     public void Dispose()
