@@ -17,11 +17,6 @@ namespace Plk.Blazor.DragDrop
 
             public override void OnDragEnter(TItem item)
             {
-                if (DropzoneMaxItemLimitReached())
-                {
-                    return;
-                }
-
                 if (_dropzone.IsItemAccepted() == false)
                 {
                     return;
@@ -48,13 +43,6 @@ namespace Plk.Blazor.DragDrop
                 var activeItem = DragDropService.ActiveItem;
 
                 DragDropService.ShouldRender = true;
-
-                if (DropzoneMaxItemLimitReached())
-                {
-                    _dropzone.OnItemDropRejectedByMaxItemLimit.InvokeAsync(activeItem);
-                    DragDropService.Reset();
-                    return;
-                }
 
                 if (_dropzone.IsItemAccepted() == false)
                 {
