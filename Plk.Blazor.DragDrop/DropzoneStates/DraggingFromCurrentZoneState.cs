@@ -74,18 +74,31 @@ namespace Plk.Blazor.DragDrop
                 if (_dropzone.CopyItem == null)
                 {
                     _dropzone.Items.Insert(newIndex, activeItem);
+                    _dropzone.Items.Remove(activeItem);
                 }
                 else
                 {
-                    _dropzone.Items.Insert(newIndex, _dropzone.CopyItem(activeItem));
+                    if (DropzoneMaxItemLimitReached() == false)
+                    {
+                        _dropzone.Items.Insert(newIndex, _dropzone.CopyItem(activeItem));
+                    }
+                    else
+                    {
+                        _dropzone.OnItemDropRejectedByMaxItemLimit.InvokeAsync(activeItem);
+                        return;
+                    }
                 }
-
-                _dropzone.Items.Remove(activeItem);
 
                 _dropzone.OnItemDrop.InvokeAsync(activeItem);
             }
 
-            public override void OnSpacingDragEnter(int id) => ChangeSpacerId(id);
+            public override void OnSpacingDragEnter(int id)
+            {
+                if (_dropzone.CopyItem == null || DropzoneMaxItemLimitReached() == false)
+                {
+                    ChangeSpacerId(id);
+                }
+            }
 
             public override void OnSpacingDragLeave() => ChangeSpacerId(null);
         }
