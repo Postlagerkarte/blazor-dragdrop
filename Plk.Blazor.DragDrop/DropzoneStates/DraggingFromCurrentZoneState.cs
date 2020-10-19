@@ -73,8 +73,9 @@ namespace Plk.Blazor.DragDrop
 
                 if (_dropzone.CopyItem == null)
                 {
+                    var currentIndex = _dropzone.Items.IndexOf(activeItem);
                     _dropzone.Items.Insert(newIndex, activeItem);
-                    _dropzone.Items.Remove(activeItem);
+                    _dropzone.Items.RemoveAt(currentIndex > newIndex ? currentIndex + 1 : currentIndex);
                 }
                 else
                 {
