@@ -235,13 +235,38 @@
 
             DragDropService.Items[indexActiveItem] = draggedOverItem;
         }
-        else //swap the items
+        else
         {
             if (indexDraggedOverItem == indexActiveItem) return;
 
             Items[indexDraggedOverItem] = activeItem;
 
             Items[indexActiveItem] = draggedOverItem;
+        }
+    }
+
+    private void PlaceItem(TItem draggedOverItem, TItem activeItem)
+    {
+        var indexDraggedOverItem = Items.IndexOf((TItem)draggedOverItem);
+
+        var indexActiveItem = Items.IndexOf((TItem)activeItem);
+
+        if (indexActiveItem == -1) // item is new to the dropzone
+        {
+            //insert into new zone
+            Items.Insert(indexDraggedOverItem + 1, activeItem);
+            //remove from old zone
+            DragDropService.Items.Remove(activeItem);
+            // Change DragDropService Items link
+            DragDropService.Items = Items;
+        }
+        else
+        {
+            if (indexDraggedOverItem == indexActiveItem) return;
+
+            TItem tmp = Items[indexDraggedOverItem];
+            Items[indexDraggedOverItem] = Items[indexActiveItem];
+            Items[indexActiveItem] = tmp;
         }
     }
 

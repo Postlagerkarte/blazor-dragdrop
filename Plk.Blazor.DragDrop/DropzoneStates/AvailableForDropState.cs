@@ -26,7 +26,7 @@ namespace Plk.Blazor.DragDrop
 
                 if (_dropzone.InstantReplace)
                 {
-                    _dropzone.Swap(_dropzone.dragTargetItem, DragDropService.ActiveItem);
+                    _dropzone.PlaceItem(_dropzone.dragTargetItem, DragDropService.ActiveItem);
                 }
 
                 DragDropService.ShouldRender = true;

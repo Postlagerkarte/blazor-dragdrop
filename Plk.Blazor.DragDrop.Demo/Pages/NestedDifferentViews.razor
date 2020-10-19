@@ -2,14 +2,23 @@
 @using Data
 @using Plk.Blazor.DragDrop.Demo.Components
 
+<h4>InstantReplace control</h4>
+<button @onclick="() => parentInstantReplace = !parentInstantReplace" style="margin-bottom: 10px;">
+    @EnableDisableString(parentInstantReplace) InstantReplace for parent zones
+</button>
+<br />
+<button @onclick="() => childInstantReplace = !childInstantReplace">
+    @EnableDisableString(childInstantReplace) InstantReplace for child zones
+</button>
+
 <table>
     <tr>
         <th style="padding: 20px; vertical-align: top">
             <h3>Some kind of menu</h3>
-            <Dropzone Items="NewGroups" DropzoneGroupId="groupDropzone" Context="group" DropzoneStyle="min-height: 500px; border: 2px solid black;" Id="Menu zone">
+            <Dropzone Items="NewGroups" DropzoneGroupId="groupDropzone" Context="group" DropzoneStyle="min-height: 500px; border: 2px solid black;" Id="Menu zone" InstantReplace="@parentInstantReplace">
                 <div style="background-color: gray">
                     <h5>@group.Title</h5>
-                    <Dropzone Items="@group.FieldList" DropzoneGroupId="fieldDropzone" Context="field" Id="Menu child zone">
+                    <Dropzone Items="@group.FieldList" DropzoneGroupId="fieldDropzone" Context="field" Id="Menu child zone" InstantReplace="@childInstantReplace">
                         <div style="border: 1px solid black; background-color: antiquewhite">
                             @field.Title
                         </div>
@@ -20,10 +29,10 @@
         <th style="padding: 20px; vertical-align: top">
             <h3>Edit form for @someItem.Title</h3>
             <EditForm Model="someItem">
-                <Dropzone Items="someItem.GroupList" DropzoneGroupId="groupDropzone" Context="group" DropzoneStyle="min-height: 500px; border: 2px solid black;" Id="Edit form zone">
+                <Dropzone Items="someItem.GroupList" DropzoneGroupId="groupDropzone" Context="group" DropzoneStyle="min-height: 500px; border: 2px solid black;" Id="Edit form zone" InstantReplace="@parentInstantReplace">
                     <div style="background-color: gray">
                         <h5>@group.Title</h5>
-                        <Dropzone Items="@group.FieldList" DropzoneGroupId="fieldDropzone" Context="field" Id="Edit form group zone">
+                        <Dropzone Items="@group.FieldList" DropzoneGroupId="fieldDropzone" Context="field" Id="Edit form group zone" InstantReplace="@childInstantReplace">
                             <div style="border: 1px solid black; background-color: antiquewhite">
                                 @field.Title
                                 <FieldComponent Field="field" />
@@ -37,6 +46,14 @@
 </table>
 
 @code {
+    bool childInstantReplace = false;
+    bool parentInstantReplace = false;
+
+    string EnableDisableString(bool param)
+    {
+        return param ? "Disable" : "Enable";
+    }
+
     protected override bool ShouldRender()
     {
         var res = _shouldRender;
@@ -153,5 +170,5 @@
         };
     }
 
-    
+
 }
