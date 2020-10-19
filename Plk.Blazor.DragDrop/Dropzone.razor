@@ -4,7 +4,13 @@
 @using System.Text
 @implements IDisposable
 
-<div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" style="@DropzoneStyle" @ondrop="() => CurrentState.OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);" id="@Id">
+<div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" style="@DropzoneStyle" @ondrop="() => CurrentState.OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);" id="@Id" 
+     @ondrop:stopPropagation 
+     @ondragenter:stopPropagation
+     @ondragend:stopPropagation
+     @ondragover:stopPropagation
+     @ondragleave:stopPropagation
+     @ondragstart:stopPropagation>
 
     @foreach (var item in Items)
     {
