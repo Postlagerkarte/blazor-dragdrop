@@ -92,7 +92,7 @@
     {
         if (Accepts == null) return true;
 
-        return Accepts(DragDropService.ActiveItem);
+        return Accepts(DragDropService.ActiveItem, dragTargetItem);
     }
 
     private bool IsValidItem()
@@ -128,6 +128,7 @@
     public void OnDragEnd()
     {
         DragDropService.Reset();
+        //dragTargetItem = default;
     }
 
     public void OnDragEnter(TItem item)
@@ -181,7 +182,12 @@
     {
         if (item.Equals(DragDropService.ActiveItem)) return "";
 
-        return item.Equals(dragTargetItem) ? "plk-dd-dragged-over" : "";
+        if (item.Equals(dragTargetItem))
+        {
+            return IsItemAccepted() ? "plk-dd-dragged-over" : "plk-dd-dragged-over-denied";
+        }
+
+        return "";
     }
 
     private string GetClassesForDraggable()
@@ -234,7 +240,7 @@
     /// <summary>
     /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted
     /// </summary>
-    [Parameter] public Func<TItem, bool> Accepts { get; set; }
+    [Parameter] public Func<TItem, TItem, bool> Accepts { get; set; }
 
     /// <summary>
     /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to the given Accept Delegate

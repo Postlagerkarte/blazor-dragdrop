@@ -78,10 +78,14 @@ Only allow limited number of items in a Dropzone:
 ```
 If you drop something and the limit is reached you can get a notification by providing a callback.
 
-Restrict Drop: (executes the give accept func before accepting the draggable)
+Restrict Drop:
+
+The item can only be dropped if the given Func returns `true`.
+The first parameter is the item that is currently being dragged.
+The second parameter is the item directly under the current item or null when there is a gap.
 
 ```html
-<Dropzone Accepts='(d) => d.Gender == "Male"'>
+<Dropzone Accepts='(d, t) => d.Gender == "Male"'>
 
 </Dropzone>
 ```

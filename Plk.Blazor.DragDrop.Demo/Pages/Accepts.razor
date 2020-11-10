@@ -2,7 +2,7 @@
 @using Plk.Blazor.DragDrop.Demo.Components
 @using Plk.Blazor.DragDrop.Demo.Data
 
-<div class="bg-success">You can drag items from one dropzone to another dropzone.</div>
+<div class="bg-success">You can accept or deny items.</div>
 
 <hr />
 
@@ -21,8 +21,8 @@
 <div class="bg-light">Second Dropzone: (only accepts items containing the word 'fun')</div>
 
 
-    <Dropzone Items="MySecondList" Accepts='(d)=>d.Titel.Contains("fun")' TItem="TodoItem" OnItemDropRejected="@((i)=>lastdropped = i)">
-        <div class="mt-2" style="border: 2px solid black">
+    <Dropzone Items="MySecondList" Accepts='(d, t)=>d.Titel.Contains("fun")' TItem="TodoItem" OnItemDropRejected="@((i)=>lastdropped = i)">
+        <div style="border: 2px solid black">
             @context.Titel
         </div>
     </Dropzone>
