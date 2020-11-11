@@ -396,12 +396,19 @@
             //remove from old zone
             DragDropService.Items.Remove(activeItem);
         }
-        else //swap the items
+        else if (InstantReplace) //swap the items
         {
             if (indexDraggedOverItem == indexActiveItem) return;
             TItem tmp = Items[indexDraggedOverItem];
             Items[indexDraggedOverItem] = Items[indexActiveItem];
             Items[indexActiveItem] = tmp;
+        }
+        else //no instant replace, just insert it after 
+        {
+            if (indexDraggedOverItem == indexActiveItem) return;
+            var tmp = Items[indexActiveItem];
+            Items.RemoveAt(indexActiveItem);
+            Items.Insert(indexDraggedOverItem, tmp);
         }
 
     }
