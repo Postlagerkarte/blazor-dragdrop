@@ -1,6 +1,6 @@
 ﻿@using Plk.Blazor.DragDrop.Demo.Data 
 
-<div style="border: 2px solid black;">
+<div style="border: 2px solid @BorderColor;">
     <button  @onclick="@(()=> OnRemoveClick.InvokeAsync(Item))" class="btn btn-secondary m-1">
         <span class="oi oi-trash"></span>
     </button>
@@ -17,5 +17,10 @@
 
     [Parameter]
     public EventCallback<TodoItem> OnRemoveClick { get; set; }
+
+    public string BorderColor { get {
+            if (Item.IsNew) return "gold";
+            return "black";
+        } }
 
 }
