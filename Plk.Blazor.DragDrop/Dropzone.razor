@@ -75,11 +75,8 @@
 
         //Operation is finished
         DragDropService.Reset();
-
         OnItemDrop.InvokeAsync(activeItem);
     }
-
-    private TItem dragTargetItem;
 
     private bool IsMaxItemLimitReached()
     {
@@ -100,7 +97,7 @@
     {
         if (Accepts == null) return true;
 
-        return Accepts(DragDropService.ActiveItem);
+        return Accepts(DragDropService.ActiveItem, DragDropService.DragTargetItem);
     }
 
     private bool IsValidItem()
@@ -145,6 +142,7 @@
     public void OnDragEnd()
     {
         DragDropService.Reset();
+        //dragTargetItem = default;
     }
 
     public void OnDragEnter(TItem item)
@@ -159,11 +157,11 @@
 
         if (!IsItemAccepted()) return;
 
-        dragTargetItem = item;
+        DragDropService.DragTargetItem = item;
 
         if (InstantReplace)
         {
-            Swap(dragTargetItem, activeItem);
+            Swap(DragDropService.DragTargetItem, activeItem);
         }
 
         DragDropService.ShouldRender = true;
@@ -173,7 +171,7 @@
 
     public void OnDragLeave()
     {
-        dragTargetItem = default(TItem);
+        DragDropService.DragTargetItem = default;
 
         DragDropService.ShouldRender = true;
         StateHasChanged();
@@ -198,7 +196,12 @@
     {
         if (item.Equals(DragDropService.ActiveItem)) return "";
 
-        return item.Equals(dragTargetItem) ? "plk-dd-dragged-over" : "";
+        if (item.Equals(DragDropService.DragTargetItem))
+        {
+            return IsItemAccepted() ? "plk-dd-dragged-over" : "plk-dd-dragged-over-denied";
+        }
+
+        return "";
     }
 
     private string GetClassesForDraggable()
@@ -251,7 +254,7 @@
     /// <summary>
     /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted
     /// </summary>
-    [Parameter] public Func<TItem, bool> Accepts { get; set; }
+    [Parameter] public Func<TItem, TItem, bool> Accepts { get; set; }
 
 
     /// <summary>
@@ -293,22 +296,22 @@
 
     /// <summary>
     /// Specifies one or more classnames for the Dropzone element.
-    /// </summar
+    /// </summary>
     [Parameter] public string Class { get; set; }
 
     /// <summary>
     /// Specifies the id for the Dropzone element.
-    /// </summar
+    /// </summary>
     [Parameter] public string Id { get; set; }
 
     /// <summary>
     /// Specifies one or more classnames for the draggable div that wraps your elements.
-    /// </summar
+    /// </summary>
     [Parameter] public string ItemWrapperClass { get; set; }
 
     /// <summary>
     /// If set items dropped are copied to this dropzone and are not removed from their source.
-    /// </summar
+    /// </summary>
     [Parameter] public Func<TItem,TItem> CopyItem { get; set; }
 
     private bool IsDropAllowed()
@@ -335,7 +338,6 @@
         return true;
     }
 
-
     private void OnDrop()
     {
         DragDropService.ShouldRender = true;
@@ -348,7 +350,7 @@
 
         var activeItem = DragDropService.ActiveItem;
 
-        if (dragTargetItem == null) //no direct drag target
+        if (DragDropService.DragTargetItem == null) //no direct drag target
         {
             if (!Items.Contains(activeItem)) //if dragged to another dropzone
             {
@@ -372,11 +374,10 @@
         {
             if (!InstantReplace)
             {
-                Swap(dragTargetItem, activeItem); //swap target with active item
+                Swap(DragDropService.DragTargetItem, activeItem); //swap target with active item
             }
         }
 
-        dragTargetItem = default(TItem);
         DragDropService.Reset();
 
         StateHasChanged();
@@ -386,8 +387,8 @@
 
     private void Swap(TItem draggedOverItem, TItem activeItem)
     {
-        var indexDraggedOverItem = Items.IndexOf((TItem)draggedOverItem);
-        var indexActiveItem = Items.IndexOf((TItem)activeItem);
+        var indexDraggedOverItem = Items.IndexOf(draggedOverItem);
+        var indexActiveItem = Items.IndexOf(activeItem);
 
         if (indexActiveItem == -1) // item is new to the dropzone
         {

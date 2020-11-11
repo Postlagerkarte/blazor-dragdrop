@@ -1,22 +1,21 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Plk.Blazor.DragDrop.Test")]
 namespace Plk.Blazor.DragDrop
 {
-
     internal class DragDropService<T>
     {
         /// <summary>
         /// Currently Active Item
         /// </summary>
         public T ActiveItem { get; set; }
+
+        /// <summary>
+        /// The item the active item is hovering above.
+        /// </summary>
+        public T DragTargetItem { get; set; }
 
         /// <summary>
         /// Holds a reference to the items of the dropzone in which the drag operation originated
@@ -34,9 +33,10 @@ namespace Plk.Blazor.DragDrop
         public void Reset()
         {
             ShouldRender = true;
-            ActiveItem = default(T);
+            ActiveItem = default;
             ActiveSpacerId = null;
             Items = null;
+            DragTargetItem = default;
 
             StateHasChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -47,4 +47,3 @@ namespace Plk.Blazor.DragDrop
         public EventHandler StateHasChanged { get; set; }
     }
 }
-
