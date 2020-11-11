@@ -13,12 +13,12 @@
             <div @ondrop="()=>OnDropItemOnSpacing(0)" @ondragenter="()=>DragDropService.ActiveSpacerId =  0" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@GetClassesForSpacing(0)"></div>
         }
 
-        <div draggable="true"
+        <div draggable="@IsItemDragable(item)"
              @ondragstart="()=>OnDragStart(item)"
              @ondragend="()=>OnDragEnd()"
              @ondragenter="()=>OnDragEnter(item)"
              @ondragleave="()=>OnDragLeave()"
-             class="@GetClassesForDraggable() @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess()">
+             class="@GetClassesForDraggable() @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess() @CheckIfDraggable(item)">
 
             @{
                 if (ChildContent != null)
@@ -75,7 +75,6 @@
 
         //Operation is finished
         DragDropService.Reset();
-
         OnItemDrop.InvokeAsync(activeItem);
     }
 
@@ -84,6 +83,14 @@
         var activeItem = DragDropService.ActiveItem;
 
         return (!Items.Contains(activeItem) && MaxItems.HasValue && MaxItems == Items.Count());
+    }
+
+    private string IsItemDragable(TItem item)
+    {
+        if (AllowsDrag == null) return "true";
+        if (item == null) return "false";
+
+        return AllowsDrag(item).ToString();
     }
 
     private bool IsItemAccepted()
@@ -116,6 +123,15 @@
         base.OnInitialized();
     }
 
+    public string CheckIfDraggable(TItem item)
+    {
+        if (AllowsDrag == null) return "";
+        if (item == null) return "";
+
+        if (AllowsDrag(item)) return "";
+
+        return "plk-dd-noselect";
+    }
     public string CheckIfDragOperationIsInProgess()
     {
         var activeItem = DragDropService.ActiveItem;
@@ -239,6 +255,12 @@
     /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted
     /// </summary>
     [Parameter] public Func<TItem, TItem, bool> Accepts { get; set; }
+
+
+    /// <summary>
+    /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted
+    /// </summary>
+    [Parameter] public Func<TItem, bool> AllowsDrag { get; set; }
 
     /// <summary>
     /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to the given Accept Delegate
@@ -375,12 +397,19 @@
             //remove from old zone
             DragDropService.Items.Remove(activeItem);
         }
-        else //swap the items
+        else if (InstantReplace) //swap the items
         {
             if (indexDraggedOverItem == indexActiveItem) return;
             TItem tmp = Items[indexDraggedOverItem];
             Items[indexDraggedOverItem] = Items[indexActiveItem];
             Items[indexActiveItem] = tmp;
+        }
+        else //no instant replace, just insert it after 
+        {
+            if (indexDraggedOverItem == indexActiveItem) return;
+            var tmp = Items[indexActiveItem];
+            Items.RemoveAt(indexActiveItem);
+            Items.Insert(indexDraggedOverItem, tmp);
         }
 
     }
