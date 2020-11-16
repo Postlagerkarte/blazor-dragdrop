@@ -10,7 +10,7 @@
 
     <Dropzone Items="MyFirstList">
         <div class="mt-2" style="border: 2px solid blue">
-            @context.Titel
+            @context.Title
         </div>
     </Dropzone>
 
@@ -21,7 +21,7 @@
 
     <Dropzone Items="MySecondList" MaxItems="2" TItem="TodoItem" OnItemDropRejectedByMaxItemLimit="@((i)=>lastRejected = i)">
         <div style="border: 2px solid black">
-            @context.Titel
+            @context.Title
         </div>
     </Dropzone>
 
@@ -30,7 +30,7 @@
 
 @if (lastRejected != null)
 {
-<div class="mt-1 bg-warning">Last Rejected: @lastRejected.Titel</div>
+<div class="mt-1 bg-warning">Last Rejected: @lastRejected.Title</div>
 }
 
 
@@ -41,17 +41,17 @@
 
     public List<TodoItem> MyFirstList = new List<TodoItem>()
 {
-            new TodoItem(){Titel = "Item 1"},
-            new TodoItem(){Titel = "Item 2"},
-            new TodoItem(){Titel = "Item 3"},
-            new TodoItem(){Titel = "Item 4"},
-            new TodoItem(){Titel = "Item 5"},
+            new TodoItem(){Title = "Item 1"},
+            new TodoItem(){Title = "Item 2"},
+            new TodoItem(){Title = "Item 3"},
+            new TodoItem(){Title = "Item 4"},
+            new TodoItem(){Title = "Item 5"},
     };
 
     public List<TodoItem> MySecondList = new List<TodoItem>()
 {
-            new TodoItem(){Titel = "Item 6"},
-            new TodoItem(){Titel = "Item 7"},
+            new TodoItem(){Title = "Item 6"},
+            new TodoItem(){Title = "Item 7"},
     };
 
 }
