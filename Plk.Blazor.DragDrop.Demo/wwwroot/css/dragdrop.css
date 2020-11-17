@@ -13,6 +13,10 @@
 .plk-dd-spacing {
     height: 10px;
 }
+.plk-dd-no-spacing {
+    height: 10px;
+    margin-top: -10px;
+}
 
 .plk-dd-spacing-dragged-over {
     padding: 25px;
