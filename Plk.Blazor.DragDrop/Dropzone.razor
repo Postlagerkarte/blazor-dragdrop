@@ -18,6 +18,7 @@
              @ondragend="()=>OnDragEnd()"
              @ondragenter="()=>OnDragEnter(item)"
              @ondragleave="()=>OnDragLeave()"
+             @ondrop="()=> { if (NoGapBetweenItems) OnDropItemOnSpacing(Items.IndexOf(item) + 1); }"
              class="@GetClassesForDraggable() @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess() @CheckIfDraggable(item)">
 
             @{
@@ -50,9 +51,9 @@
         var activeItem = DragDropService.ActiveItem;
         var oldIndex = Items.IndexOf(activeItem);
 
-        if(oldIndex == -1) // item not present in target dropzone
+        if (oldIndex == -1) // item not present in target dropzone
         {
-            if(CopyItem == null)
+            if (CopyItem == null)
             {
                 DragDropService.Items.Remove(activeItem);
             }
@@ -64,7 +65,7 @@
             if (newIndex > oldIndex) newIndex--;
         }
 
-        if(CopyItem == null)
+        if (CopyItem == null)
         {
             Items.Insert(newIndex, activeItem);
         }
@@ -236,7 +237,12 @@
     {
         var builder = new StringBuilder();
 
-        builder.Append("plk-dd-spacing");
+        //only add the spacer style on the first item, so things can still be dropped at the top of the list
+        //or if nogaps is set to false
+        if (NoGapBetweenItems && spacerId != 0)
+            builder.Append("plk-dd-no-spacing");
+        else
+            builder.Append("plk-dd-spacing");
 
         //if active space id and item is from another dropzone -> always create insert space
         if (DragDropService.ActiveSpacerId == spacerId && Items.IndexOf(DragDropService.ActiveItem) == -1)
@@ -310,9 +316,14 @@
     [Parameter] public string ItemWrapperClass { get; set; }
 
     /// <summary>
+    /// If true, no gaps will be rendered between items. Defaults to false.
+    /// </summary>
+    [Parameter] public bool NoGapBetweenItems { get; set; }
+
+    /// <summary>
     /// If set items dropped are copied to this dropzone and are not removed from their source.
     /// </summary>
-    [Parameter] public Func<TItem,TItem> CopyItem { get; set; }
+    [Parameter] public Func<TItem, TItem> CopyItem { get; set; }
 
     private bool IsDropAllowed()
     {
@@ -354,7 +365,7 @@
         {
             if (!Items.Contains(activeItem)) //if dragged to another dropzone
             {
-                if(CopyItem == null)
+                if (CopyItem == null)
                 {
                     Items.Insert(Items.Count, activeItem); //insert item to new zone
                     DragDropService.Items.Remove(activeItem); //remove from old zone
@@ -404,7 +415,7 @@
             Items[indexDraggedOverItem] = Items[indexActiveItem];
             Items[indexActiveItem] = tmp;
         }
-        else //no instant replace, just insert it after 
+        else //no instant replace, just insert it after
         {
             if (indexDraggedOverItem == indexActiveItem) return;
             var tmp = Items[indexActiveItem];

@@ -1,0 +1,50 @@
+﻿@page "/nogap"
+@using Plk.Blazor.DragDrop.Demo.Components
+@using Plk.Blazor.DragDrop.Demo.Data
+
+<div class="bg-success">You can drag a new item into and around a list, but not the other items.</div>
+
+<hr />
+
+<div class="bg-light">First Dropzone:</div>
+
+<Dropzone Items="MyFirstList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)" AllowsDrag='(d)=>d.Title == "Item 1"' InstantReplace="false">
+    <Todo Item="@context"></Todo>
+</Dropzone>
+
+<hr />
+
+<div class="bg-light">Second Dropzone:</div>
+
+<Dropzone Items="MySecondList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)" AllowsDrag='(d)=>d.Title == "Item 1"' InstantReplace="false" NoGapBetweenItems="true">
+    <Todo Item="@context"></Todo>
+</Dropzone>
+
+<hr />
+
+<div>Last Dropped Item: @lastdropped?.Title</div>
+
+
+@code {
+
+    private TodoItem lastdropped { get; set; }
+
+    public List<TodoItem> MyFirstList = new List<TodoItem>()
+{
+            new TodoItem(){Title = "Item 1" , IsNew = true},
+    };
+
+    public List<TodoItem> MySecondList = new List<TodoItem>()
+{
+            new TodoItem(){Title = "Item 2"},
+            new TodoItem(){Title = "Item 3"},
+            new TodoItem(){Title = "Item 4"},
+            new TodoItem(){Title = "Item 5"},
+            new TodoItem(){Title = "Item 6"},
+            new TodoItem(){Title = "Item 7"},
+            new TodoItem(){Title = "Item 8"},
+            new TodoItem(){Title = "Item 9"},
+            new TodoItem(){Title = "Item 10"},
+    };
+
+}
