@@ -21,7 +21,12 @@ Install-Package blazor-dragdrop
 services.AddBlazorDragDrop();
 ```
 
-2) Add relevant styles to your app (since 2.2 no styles are included in the library anymore)
+2) Add to your Imports.razor
+```csharp
+@using Plk.Blazor.DragDrop
+```
+
+3) Add relevant styles to your app (since 2.2 no styles are included in the library anymore)
 
 You can copy styles from [dragdrop.css](Plk.Blazor.DragDrop.Demo/wwwroot/css/dragdrop.css) to your site.css to get started. Read more about styling [here](#styling).
 
