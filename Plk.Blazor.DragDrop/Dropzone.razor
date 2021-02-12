@@ -1,4 +1,4 @@
-﻿@typeparam TItem
+@typeparam TItem
 @inject DragDropService<TItem> DragDropService
 @using System.Text
 @implements IDisposable
@@ -141,6 +141,11 @@
 
     public void OnDragEnd()
     {
+        if (DragEnd != null)
+        {
+            DragEnd(DragDropService.ActiveItem);
+        }
+
         DragDropService.Reset();
         //dragTargetItem = default;
     }
@@ -261,6 +266,11 @@
     /// Allows to pass a delegate which executes if something is dropped and decides if the item is accepted
     /// </summary>
     [Parameter] public Func<TItem, bool> AllowsDrag { get; set; }
+
+    /// <summary>
+    /// Allows to pass a delegate which executes if a drag operation ends
+    /// </summary>
+    [Parameter] public Action<TItem> DragEnd { get; set; }
 
     /// <summary>
     /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to the given Accept Delegate
