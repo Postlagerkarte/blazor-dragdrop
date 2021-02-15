@@ -1,8 +1,8 @@
-﻿@page "/allowsdrag"
+﻿@page "/nogap"
 @using Plk.Blazor.DragDrop.Demo.Components
 @using Plk.Blazor.DragDrop.Demo.Data
 
-<div class="bg-success">You can drag a new item into and around a list, but not the other items.</div>
+<div class="bg-success">There is no gap rendered between items</div>
 
 <hr />
 
@@ -16,7 +16,7 @@
 
 <div class="bg-light">Second Dropzone:</div>
 
-<Dropzone Items="MySecondList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)" AllowsDrag='(d)=>d.Title == "Item 1"' InstantReplace="false">
+<Dropzone Items="MySecondList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)" AllowsDrag='(d)=>d.Title == "Item 1"' InstantReplace="false" NoGapBetweenItems="true">
     <Todo Item="@context"></Todo>
 </Dropzone>
 
