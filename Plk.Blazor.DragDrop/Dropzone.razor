@@ -283,6 +283,11 @@
     [Parameter] public EventCallback<TItem> OnItemDrop { get; set; }
 
     /// <summary>
+    /// Raises a callback with the replaced item as parameter
+    /// </summary>
+    [Parameter] public EventCallback<TItem> OnReplacedItemDrop { get; set; }
+
+    /// <summary>
     /// If set to true, items will we be swapped/inserted instantly.
     /// </summary>
     [Parameter] public bool InstantReplace { get; set; }
@@ -413,6 +418,7 @@
             TItem tmp = Items[indexDraggedOverItem];
             Items[indexDraggedOverItem] = Items[indexActiveItem];
             Items[indexActiveItem] = tmp;
+            OnReplacedItemDrop.InvokeAsync(Items[indexActiveItem]);
         }
         else //no instant replace, just insert it after 
         {
