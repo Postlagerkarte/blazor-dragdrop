@@ -1,0 +1,84 @@
+﻿@inherits TestComponentBase
+
+@code
+{
+    void RegisterService(Fixture fixture)
+    {
+        fixture.Services.AddBlazorDragDrop();
+    }
+
+    public class MyItem
+    {
+        public string Name { get; set; }
+    }
+
+    public List<MyItem> Items = new List<MyItem>()
+    {
+        new MyItem {Name = "Foo"}
+    };
+
+    public List<MyItem> Items2 = new List<MyItem>()
+    {
+        new MyItem {Name = "Bar"},
+        new MyItem {Name = "Baz"},
+    };
+}
+
+<Fixture Setup="RegisterService" Test="DropzoneAcceptsDragTargetItemTest" >
+    <ComponentUnderTest>
+        <Dropzone Id="FirstDropzone" Items="Items">
+            @context.Name
+        </Dropzone>
+        <hr />
+        <Dropzone Id="SecondDropzone" Items="Items2" Accepts="@SecondDropzoneAccepts">
+            @context.Name
+        </Dropzone>
+    </ComponentUnderTest>
+
+    @code
+    {
+        private MyItem expectedDragTargetItem;
+
+        void DropzoneAcceptsDragTargetItemTest(Fixture fixture)
+        {
+            var dropzones = fixture.GetComponentUnderTest();
+    
+            // drag "Foo" ...
+            var draggableFoo = dropzones.FindAll(".plk-dd-draggable")[0];
+            draggableFoo.DragStart();
+
+            // ... to "Bar" ...
+            expectedDragTargetItem = Items2[0];
+            var draggableBar = dropzones.FindAll(".plk-dd-draggable")[1];
+            draggableBar.DragEnter();
+
+            var dragDropService = fixture.Services.GetService<DragDropService<MyItem>>();
+            Assert.Equal(expectedDragTargetItem, dragDropService.DragTargetItem);
+
+            // ... then to "Baz" ....
+            draggableBar.DragLeave();
+
+            expectedDragTargetItem = Items2[1];
+            var draggableBaz = dropzones.FindAll(".plk-dd-draggable")[2];
+            draggableBaz.DragEnter();
+
+            Assert.Equal(expectedDragTargetItem, dragDropService.DragTargetItem);
+
+            // ... then back to drop zone of "Foo"
+            draggableBaz.DragLeave();
+
+            var firstDropzone = dropzones.FindAll(".plk-dd-dropzone")[0];
+            expectedDragTargetItem = null;
+            firstDropzone.DragEnter();
+
+            Assert.Equal(expectedDragTargetItem, dragDropService.DragTargetItem);
+        }
+
+        bool SecondDropzoneAccepts(MyItem activeItem, MyItem dragTargetItem)
+        {
+            Assert.Equal(expectedDragTargetItem, dragTargetItem);
+
+            return true;
+        }
+    }
+</Fixture>
