@@ -93,11 +93,11 @@
         return AllowsDrag(item).ToString();
     }
 
-    private bool IsItemAccepted()
+    private bool IsItemAccepted(TItem dragTargetItem)
     {
         if (Accepts == null) return true;
 
-        return Accepts(DragDropService.ActiveItem, DragDropService.DragTargetItem);
+        return Accepts(DragDropService.ActiveItem, dragTargetItem);
     }
 
     private bool IsValidItem()
@@ -160,7 +160,7 @@
 
         if (IsMaxItemLimitReached()) return;
 
-        if (!IsItemAccepted()) return;
+        if (!IsItemAccepted(item)) return;
 
         DragDropService.DragTargetItem = item;
 
@@ -203,7 +203,7 @@
 
         if (item.Equals(DragDropService.DragTargetItem))
         {
-            return IsItemAccepted() ? "plk-dd-dragged-over" : "plk-dd-dragged-over-denied";
+            return IsItemAccepted(DragDropService.DragTargetItem) ? "plk-dd-dragged-over" : "plk-dd-dragged-over-denied";
         }
 
         return "";
@@ -344,7 +344,7 @@
             return false;
         }
 
-        if (!IsItemAccepted())
+        if (!IsItemAccepted(DragDropService.DragTargetItem))
         {
             OnItemDropRejected.InvokeAsync(activeItem);
             return false;
