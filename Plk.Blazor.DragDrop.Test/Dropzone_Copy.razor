@@ -69,22 +69,19 @@
             @context.Name
         </Dropzone>
         <hr />
-        <Dropzone TItem="MyItem" OnSelectDropAction="@SelectCopyDropAction" Id="SecondDropzone" Items="Items2">
-            @context.Name
+        <Dropzone Id="SecondDropzone" Items="Items2">
+            <DropActions>
+                <CopyDropAction CopyItem="(MyItem item)=> { return new MyItem() { Name = item.Name }; }" />
+            </DropActions>
+            <ChildContent>
+                @context.Name
+            </ChildContent>
         </Dropzone>
     </ComponentUnderTest>
 
 
     @code
     {
-        private void SelectCopyDropAction(DropzoneSelectDropActionArgs<MyItem> args)
-        {
-            var dropAction = new CopyDropAction<MyItem>();
-            dropAction.CopyItem = (item)=> { return new MyItem() { Name = item.Name }; };
-
-            args.DropAction = dropAction;
-        }
-
         void DropzoneCopyTest(Fixture fixture)
         {
             var cut = fixture.GetComponentUnderTest();

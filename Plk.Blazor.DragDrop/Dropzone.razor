@@ -38,6 +38,13 @@
 
 </div>
 
+<CascadingValue Value="this">
+    @if(DropActions != null)
+    {
+        @DropActions
+    }
+</CascadingValue>
+
 @code {
 
     private async Task OnDropItemOnSpacing(int newIndex)
@@ -50,7 +57,7 @@
 
         var activeItem = DragDropService.ActiveItem;
 
-        var selectDropActionArgs = new DropzoneSelectDropActionArgs<TItem>
+        var dropActionContext = new DropActionContext<TItem>
         {
             Sender = this,
             ActiveItem = activeItem,
@@ -59,11 +66,10 @@
             TargetItemIndex = newIndex
         };
 
-        await OnSelectDropAction.InvokeAsync(selectDropActionArgs);
+        var suitableDropActions = _registeredDropActions.Where(a => a.IsSuitable != null && a.IsSuitable(dropActionContext));
 
-        var dropAction = selectDropActionArgs.DropAction ?? new MoveDropAction<TItem>();
-
-        dropAction.Execute(activeItem, DragDropService.Items, Items, newIndex);
+        foreach (var suitableDropAction in suitableDropActions)
+            suitableDropAction.Execute(dropActionContext);
 
         //Operation is finished
         DragDropService.Reset();
@@ -301,6 +307,23 @@
     /// </summary>
     [Parameter] public EventCallback<TItem> OnItemDropRejectedByMaxItemLimit { get; set; }
 
+    /// <summary>
+    /// Use this property to register drop actions in Dropzone.
+    /// </summary>
+    [Parameter] public RenderFragment DropActions { get; set; }
+
+    private IList<IDropAction<TItem>> _registeredDropActions = new List<IDropAction<TItem>>();
+
+    internal void RegisterDropAction(IDropAction<TItem> dropAction)
+    {
+      _registeredDropActions.Add(dropAction);
+    }
+
+    internal void DeregisterDropAction(IDropAction<TItem> dropAction)
+    {
+      _registeredDropActions.Remove(dropAction);
+    }
+
     [Parameter] public RenderFragment<TItem> ChildContent { get; set; }
 
     /// <summary>
@@ -317,12 +340,6 @@
     /// Allows to pass a delegate which specifies one or more classnames for the draggable div that wraps your elements.
     /// </summary>
     [Parameter] public Func<TItem, string> ItemWrapperClass { get; set; }
-
-    /// <summary>
-    /// Raises a callback in which a drop action can be selected that should be executed by the Dropzone component when
-    /// an item has been dropped. If no callback is assigned a move action is performed by default.
-    /// </summary>
-    [Parameter] public EventCallback<DropzoneSelectDropActionArgs<TItem>> OnSelectDropAction { get; set; }
 
     private bool IsDropAllowed()
     {
@@ -362,7 +379,7 @@
 
         if (!InstantReplace)
         {
-            var selectDropActionArgs = new DropzoneSelectDropActionArgs<TItem>
+            var dropActionContext = new DropActionContext<TItem>
             {
                 Sender = this,
                 ActiveItem = activeItem,
@@ -370,11 +387,10 @@
                 TargetItems = Items
             };
 
-            await OnSelectDropAction.InvokeAsync(selectDropActionArgs);
+            var suitableDropActions = _registeredDropActions.Where(a => a.IsSuitable != null && a.IsSuitable(dropActionContext));
 
-            var dropAction = selectDropActionArgs.DropAction ?? new MoveDropAction<TItem>();
-
-            dropAction.Execute(activeItem, DragDropService.Items, Items, null);
+            foreach (var suitableDropAction in suitableDropActions)
+                suitableDropAction.Execute(dropActionContext);
         }
 
         DragDropService.Reset();

@@ -1,0 +1,25 @@
+@typeparam TItem
+
+@implements IDisposable
+
+@code
+{
+    [CascadingParameter]
+    public Dropzone<TItem> Dropzone { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Dropzone == null)
+            throw new ArgumentNullException(nameof(Dropzone), "DropAction must exist within a Dropzone");
+
+        Dropzone.RegisterDropAction(this);
+
+        base.OnInitialized();
+    }
+
+    public void Dispose()
+    {
+        if (Dropzone != null)
+            Dropzone.DeregisterDropAction(this);
+    }
+}

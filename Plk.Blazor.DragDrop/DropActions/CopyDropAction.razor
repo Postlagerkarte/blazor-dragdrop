@@ -1,0 +1,26 @@
+@typeparam TItem
+
+@inherits DropActionBase<TItem>
+
+@code
+{
+    [Parameter]
+    public Func<TItem, TItem> CopyItem { get; set; }
+
+    public override void Execute(DropActionContext<TItem> context)
+    {  
+        TItem copiedItem = CopyItem != null ? CopyItem(context.ActiveItem) : context.ActiveItem;
+
+        if (copiedItem == null)
+            return;
+
+        if (context.TargetItemIndex.HasValue)
+        {
+            context.TargetItems.Insert(context.TargetItemIndex.Value, copiedItem);
+        }
+        else
+        {
+            context.TargetItems.Add(copiedItem);
+        }
+    }
+}
