@@ -61,10 +61,9 @@
 
         await OnSelectDropAction.InvokeAsync(selectDropActionArgs);
 
-        if (selectDropActionArgs.DropAction != null)
-        {
-            selectDropActionArgs.DropAction.Execute(activeItem, DragDropService.Items, Items, newIndex);
-        }
+        var dropAction = selectDropActionArgs.DropAction ?? new MoveDropAction<TItem>();
+
+        dropAction.Execute(activeItem, DragDropService.Items, Items, newIndex);
 
         //Operation is finished
         DragDropService.Reset();
@@ -320,7 +319,8 @@
     [Parameter] public Func<TItem, string> ItemWrapperClass { get; set; }
 
     /// <summary>
-    /// Raises a callback in which a drop action can be selected that should be executed by the Dropzone component when an item has been dropped.
+    /// Raises a callback in which a drop action can be selected that should be executed by the Dropzone component when
+    /// an item has been dropped. If no callback is assigned a move action is performed by default.
     /// </summary>
     [Parameter] public EventCallback<DropzoneSelectDropActionArgs<TItem>> OnSelectDropAction { get; set; }
 
@@ -372,10 +372,9 @@
 
             await OnSelectDropAction.InvokeAsync(selectDropActionArgs);
 
-            if (selectDropActionArgs.DropAction != null)
-            {
-                selectDropActionArgs.DropAction.Execute(activeItem, DragDropService.Items, Items, null);
-            }
+            var dropAction = selectDropActionArgs.DropAction ?? new MoveDropAction<TItem>();
+
+            dropAction.Execute(activeItem, DragDropService.Items, Items, null);
         }
 
         DragDropService.Reset();
