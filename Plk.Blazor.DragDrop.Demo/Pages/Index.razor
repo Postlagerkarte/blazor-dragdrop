@@ -1,6 +1,7 @@
-﻿@page "/"
+@page "/"
 @using Plk.Blazor.DragDrop.Demo.Components
 @using Plk.Blazor.DragDrop.Demo.Data
+@using Plk.Blazor.DragDrop.DropActions
 
 <div id="main" class="container-fluid">
 
@@ -10,7 +11,12 @@
     <hr />
 
     <Dropzone Items="MyToDoList">
-        <Todo OnRemoveClick="(item)=>MyToDoList.Remove(item)" Item="@context"></Todo>
+        <DropActions>
+            <MoveDropAction TItem="TodoItem" />
+        </DropActions>
+        <ChildContent>
+            <Todo OnRemoveClick="(item)=>MyToDoList.Remove(item)" Item="@context"></Todo>
+        </ChildContent>
     </Dropzone>
 
 </div>

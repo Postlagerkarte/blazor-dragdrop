@@ -1,4 +1,5 @@
-﻿@page "/flex"
+@page "/flex"
+@using Plk.Blazor.DragDrop.DropActions
 
 <div class="bg-success">You can use flex display</div>
 
@@ -6,7 +7,12 @@
 
 <div class="plk-flex">
     <Dropzone Class="flex-container" Items="Items" ItemWrapperClass="@(item => "flex-item")">
-        <div>@context</div>
+        <DropActions>
+            <MoveDropAction TItem="string" />
+        </DropActions>
+        <ChildContent>
+            <div>@context</div>
+        </ChildContent>
     </Dropzone>
 
 </div>

@@ -10,9 +10,14 @@
 <div class="bg-light">First Dropzone:</div>
 
 <Dropzone Items="MyFirstList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)"  AllowsDrag='(d)=>d.Titel == "Item 1"'>
-    <div style="border: 2px solid blue">
-        @context.Titel
-    </div>
+    <DropActions>
+        <MoveDropAction TItem="TodoItem" />
+    </DropActions>
+    <ChildContent>
+        <div style="border: 2px solid blue">
+            @context.Titel
+        </div>
+    </ChildContent>
 </Dropzone>
 
 <hr />
@@ -20,9 +25,14 @@
 <div class="bg-light">Second Dropzone:</div>
 
 <Dropzone Items="MySecondList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)"  AllowsDrag='(d)=>d.Titel == "Item 1"'>
-    <div style="border: 2px solid black">
-        @context.Titel
-    </div>
+    <DropActions>
+        <MoveDropAction TItem="TodoItem" />
+    </DropActions>
+    <ChildContent>
+        <div style="border: 2px solid black">
+            @context.Titel
+        </div>
+    </ChildContent>
 </Dropzone>
 
 <hr />
