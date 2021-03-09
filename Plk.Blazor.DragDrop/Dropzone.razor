@@ -49,6 +49,7 @@
 
         var activeItem = DragDropService.ActiveItem;
         var oldIndex = Items.IndexOf(activeItem);
+        var sameDropZone = false;
 
         if(oldIndex == -1) // item not present in target dropzone
         {
@@ -59,6 +60,7 @@
         }
         else // same dropzone drop
         {
+            sameDropZone = true;
             Items.RemoveAt(oldIndex);
             // the actual index could have shifted due to the removal
             if (newIndex > oldIndex) newIndex--;
@@ -70,7 +72,8 @@
         }
         else
         {
-            Items.Insert(newIndex, CopyItem(activeItem));
+            // for the same zone - do not call CopyItem
+            Items.Insert(newIndex, sameDropZone ? activeItem : CopyItem(activeItem));
         }
 
         //Operation is finished
@@ -389,10 +392,32 @@
         }
         else // we have a direct target
         {
-            if (!InstantReplace)
+            if( !Items.Contains( activeItem ) ) // if dragged to another dropzone
             {
-                Swap(DragDropService.DragTargetItem, activeItem); //swap target with active item
+                if( CopyItem == null )
+                {
+                    if( !InstantReplace )
+                    {
+                        Swap(DragDropService.DragTargetItem, activeItem); //swap target with active item
+                    }
+                }
+                else
+                {
+                    if( !InstantReplace )
+                    {
+                        Swap(DragDropService.DragTargetItem, CopyItem( activeItem ) ); //swap target with a copy of active item
+                    }
+                }
             }
+            else
+            {
+                // if dragged to the same dropzone
+                if (!InstantReplace)
+                {
+                    Swap( DragDropService.DragTargetItem, activeItem ); //swap target with active item
+                }
+            }
+
         }
 
         DragDropService.Reset();
