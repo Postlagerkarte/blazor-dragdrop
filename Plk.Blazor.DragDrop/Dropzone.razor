@@ -1,6 +1,7 @@
 @typeparam TItem
 @inject DragDropService<TItem> DragDropService
 @using System.Text
+@using Plk.Blazor.DragDrop.DropActions
 @implements IDisposable
 
 <div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);">
@@ -39,7 +40,7 @@
 
 @code {
 
-    private void OnDropItemOnSpacing(int newIndex)
+    private async Task OnDropItemOnSpacing(int newIndex)
     {
         if (!IsDropAllowed())
         {
@@ -48,34 +49,26 @@
         }
 
         var activeItem = DragDropService.ActiveItem;
-        var oldIndex = Items.IndexOf(activeItem);
 
-        if(oldIndex == -1) // item not present in target dropzone
+        var selectDropActionArgs = new DropzoneSelectDropActionArgs<TItem>
         {
-            if(CopyItem == null)
-            {
-                DragDropService.Items.Remove(activeItem);
-            }
-        }
-        else // same dropzone drop
-        {
-            Items.RemoveAt(oldIndex);
-            // the actual index could have shifted due to the removal
-            if (newIndex > oldIndex) newIndex--;
-        }
+            Sender = this,
+            ActiveItem = activeItem,
+            SourceItems = DragDropService.Items,
+            TargetItems = Items,
+            TargetItemIndex = newIndex
+        };
 
-        if(CopyItem == null)
+        await OnSelectDropAction.InvokeAsync(selectDropActionArgs);
+
+        if (selectDropActionArgs.DropAction != null)
         {
-            Items.Insert(newIndex, activeItem);
-        }
-        else
-        {
-            Items.Insert(newIndex, CopyItem(activeItem));
+            selectDropActionArgs.DropAction.Execute(activeItem, DragDropService.Items, Items, newIndex);
         }
 
         //Operation is finished
         DragDropService.Reset();
-        OnItemDrop.InvokeAsync(activeItem);
+        await OnItemDrop.InvokeAsync(activeItem);
     }
 
     private bool IsMaxItemLimitReached()
@@ -327,9 +320,9 @@
     [Parameter] public Func<TItem, string> ItemWrapperClass { get; set; }
 
     /// <summary>
-    /// If set items dropped are copied to this dropzone and are not removed from their source.
+    /// Raises a callback in which a drop action can be selected that should be executed by the Dropzone component when an item has been dropped.
     /// </summary>
-    [Parameter] public Func<TItem,TItem> CopyItem { get; set; }
+    [Parameter] public EventCallback<DropzoneSelectDropActionArgs<TItem>> OnSelectDropAction { get; set; }
 
     private bool IsDropAllowed()
     {
@@ -355,7 +348,7 @@
         return true;
     }
 
-    private void OnDrop()
+    private async Task OnDrop()
     {
         DragDropService.ShouldRender = true;
 
@@ -367,31 +360,21 @@
 
         var activeItem = DragDropService.ActiveItem;
 
-        if (DragDropService.DragTargetItem == null) //no direct drag target
+        if (!InstantReplace)
         {
-            if (!Items.Contains(activeItem)) //if dragged to another dropzone
+            var selectDropActionArgs = new DropzoneSelectDropActionArgs<TItem>
             {
-                if(CopyItem == null)
-                {
-                    Items.Insert(Items.Count, activeItem); //insert item to new zone
-                    DragDropService.Items.Remove(activeItem); //remove from old zone
-                }
-                else
-                {
-                    Items.Insert(Items.Count, CopyItem(activeItem)); //insert item to new zone
-                }
-            }
-            else
-            {
-                //what to do here?
+                Sender = this,
+                ActiveItem = activeItem,
+                SourceItems = DragDropService.Items,
+                TargetItems = Items
+            };
 
-            }
-        }
-        else // we have a direct target
-        {
-            if (!InstantReplace)
+            await OnSelectDropAction.InvokeAsync(selectDropActionArgs);
+
+            if (selectDropActionArgs.DropAction != null)
             {
-                Swap(DragDropService.DragTargetItem, activeItem); //swap target with active item
+                selectDropActionArgs.DropAction.Execute(activeItem, DragDropService.Items, Items, null);
             }
         }
 
@@ -399,7 +382,7 @@
 
         StateHasChanged();
 
-        OnItemDrop.InvokeAsync(activeItem);
+        await OnItemDrop.InvokeAsync(activeItem);
     }
 
     private void Swap(TItem draggedOverItem, TItem activeItem)
