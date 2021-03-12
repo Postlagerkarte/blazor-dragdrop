@@ -1,6 +1,7 @@
-﻿@page "/twozones"
+@page "/twozones"
 @using Plk.Blazor.DragDrop.Demo.Components
 @using Plk.Blazor.DragDrop.Demo.Data
+@using Plk.Blazor.DragDrop.DropActions
 
 <div class="bg-success">You can drag items from one dropzone to another dropzone.</div>
 
@@ -9,9 +10,14 @@
 <div class="bg-light">First Dropzone:</div>
 
 <Dropzone Items="MyFirstList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)"  AllowsDrag='(d)=>d.Titel == "Item 1"'>
-    <div style="border: 2px solid blue">
-        @context.Titel
-    </div>
+    <DropActions>
+        <MoveDropAction TItem="TodoItem" />
+    </DropActions>
+    <ChildContent>
+        <div style="border: 2px solid blue">
+            @context.Titel
+        </div>
+    </ChildContent>
 </Dropzone>
 
 <hr />
@@ -19,19 +25,29 @@
 <div class="bg-light">Second Dropzone:</div>
 
 <Dropzone Items="MySecondList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)"  AllowsDrag='(d)=>d.Titel == "Item 1"'>
-    <div style="border: 2px solid black">
-        @context.Titel
-    </div>
+    <DropActions>
+        <MoveDropAction TItem="TodoItem" />
+    </DropActions>
+    <ChildContent>
+        <div style="border: 2px solid black">
+            @context.Titel
+        </div>
+    </ChildContent>
 </Dropzone>
 
 <hr />
 
 <div class="bg-light">Third Dropzone (copy items):</div>
 
-<Dropzone CopyItem="(item)=> { return new TodoItem() {Titel = item.Titel}; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
-    <div style="border: 2px solid black">
-        @context.Titel
-    </div>
+<Dropzone Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+    <DropActions>
+        <CopyDropAction CopyItem="(TodoItem item) => { return new TodoItem() { Titel = item.Titel }; }" />
+    </DropActions>
+    <ChildContent>
+        <div style="border: 2px solid black">
+            @context.Titel
+        </div>
+    </ChildContent>
 </Dropzone>
 
 <hr />
@@ -64,5 +80,4 @@
     public List<TodoItem> MyThirdList = new List<TodoItem>()
     {
     };
-
 }

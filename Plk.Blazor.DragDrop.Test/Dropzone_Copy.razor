@@ -1,4 +1,5 @@
-﻿@inherits TestComponentBase
+@using Plk.Blazor.DragDrop.DropActions
+@inherits TestComponentBase
 
 @code{
     void RegisterService(Fixture fixture)
@@ -68,15 +69,20 @@
             @context.Name
         </Dropzone>
         <hr />
-        <Dropzone TItem="MyItem" CopyItem="(item)=> { return new MyItem() { Name = item.Name }; }" Id="SecondDropzone" Items="Items2">
-            @context.Name
+        <Dropzone Id="SecondDropzone" Items="Items2">
+            <DropActions>
+                <CopyDropAction CopyItem="(MyItem item)=> { return new MyItem() { Name = item.Name }; }" />
+            </DropActions>
+            <ChildContent>
+                @context.Name
+            </ChildContent>
         </Dropzone>
     </ComponentUnderTest>
 
 
     @code
-  {
-         void DropzoneCopyTest(Fixture fixture)
+    {
+        void DropzoneCopyTest(Fixture fixture)
         {
             var cut = fixture.GetComponentUnderTest();
 

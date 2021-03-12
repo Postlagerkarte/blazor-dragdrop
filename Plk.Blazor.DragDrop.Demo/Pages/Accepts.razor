@@ -1,6 +1,7 @@
-﻿@page "/accepts"
+@page "/accepts"
 @using Plk.Blazor.DragDrop.Demo.Components
 @using Plk.Blazor.DragDrop.Demo.Data
+@using Plk.Blazor.DragDrop.DropActions
 
 <div class="bg-success">You can accept or deny items.</div>
 
@@ -10,9 +11,14 @@
 
 
     <Dropzone Items="MyFirstList">
-        <div style="border: 2px solid blue">
-            @context.Titel
-        </div>
+        <DropActions>
+            <MoveDropAction TItem="TodoItem" />
+        </DropActions>
+        <ChildContent>
+            <div style="border: 2px solid blue">
+                @context.Titel
+            </div>
+        </ChildContent>
     </Dropzone>
 
 
@@ -22,9 +28,14 @@
 
 
     <Dropzone Items="MySecondList" Accepts='(d, t)=>d.Titel.Contains("fun")' TItem="TodoItem" OnItemDropRejected="@((i)=>lastdropped = i)">
-        <div style="border: 2px solid black">
-            @context.Titel
-        </div>
+        <DropActions>
+            <MoveDropAction TItem="TodoItem" />
+        </DropActions>
+        <ChildContent>
+            <div style="border: 2px solid black">
+                @context.Titel
+            </div>
+        </ChildContent>
     </Dropzone>
 
 <hr />

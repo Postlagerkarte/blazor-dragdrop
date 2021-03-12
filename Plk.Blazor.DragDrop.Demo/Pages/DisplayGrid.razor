@@ -1,4 +1,5 @@
-﻿@page "/displaygrid"
+@page "/displaygrid"
+@using Plk.Blazor.DragDrop.DropActions
 
 <div class="bg-success">You can use grid display</div>
 
@@ -6,9 +7,14 @@
 
 <div class="grid-container">
     <Dropzone Items="Items">
-        <div>
-            <div class="grid-item">@context</div>
-        </div>
+        <DropActions>
+            <MoveDropAction TItem="string" />
+        </DropActions>
+        <ChildContent>
+            <div>
+                <div class="grid-item">@context</div>
+            </div>
+        </ChildContent>
     </Dropzone>
 </div>
 

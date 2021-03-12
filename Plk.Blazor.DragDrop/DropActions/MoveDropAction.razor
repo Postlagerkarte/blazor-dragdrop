@@ -1,0 +1,20 @@
+@typeparam TItem
+
+@inherits DropActionBase<TItem>
+
+@code
+{
+    public override void Execute(DropActionContext<TItem> context)
+    {
+        context.SourceItems.Remove(context.ActiveItem);
+
+        if (context.TargetItemIndex.HasValue)
+        {
+            context.TargetItems.Insert(context.TargetItemIndex.Value, context.ActiveItem);
+        }
+        else
+        {
+            context.TargetItems.Add(context.ActiveItem);
+        }
+    }
+}
