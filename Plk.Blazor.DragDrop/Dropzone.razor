@@ -415,10 +415,18 @@
 
         if (indexActiveItem == -1) // item is new to the dropzone
         {
-            //insert into new zone
-            Items.Insert(indexDraggedOverItem + 1, activeItem);
-            //remove from old zone
-            DragDropService.Items.Remove(activeItem);
+            if (CopyItem == null)
+            {
+                //insert into new zone
+                Items.Insert(indexDraggedOverItem + 1, activeItem);
+                //remove from old zone
+                DragDropService.Items.Remove(activeItem);
+            }
+            else
+            {
+                Items.Insert(indexDraggedOverItem + 1, CopyItem(activeItem)); //insert item to new zone
+            }
+
         }
         else if (InstantReplace) //swap the items
         {
