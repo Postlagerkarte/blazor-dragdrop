@@ -2,7 +2,7 @@
 @using Plk.Blazor.DragDrop.Demo.Components
 @using Plk.Blazor.DragDrop.Demo.Data
 
-<div class="bg-success">You can drag items from one dropzone to another dropzone.</div>
+<div class="bg-success">You can drag items with name "Item 1" from one dropzone to another dropzone.</div>
 
 <hr />
 
@@ -28,7 +28,7 @@
 
 <div class="bg-light">Third Dropzone (copy items):</div>
 
-<Dropzone CopyItem="(item)=> { return new TodoItem() {Titel = item.Titel}; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+<Dropzone CopyItem="(item)=> { return new TodoItem() {Titel = item.Titel }; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
     <div style="border: 2px solid black">
         @context.Titel
     </div>
