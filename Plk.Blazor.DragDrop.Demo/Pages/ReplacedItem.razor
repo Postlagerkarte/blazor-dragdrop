@@ -1,0 +1,47 @@
+﻿@page "/replacedItem"
+
+<div class="row">
+    <b class="col-12">
+        DropedItem:@DropedItem
+    </b>
+    <br />
+    <b class="col-12">
+        ReplacedItem:@replacedItem
+    </b>
+</div>
+<hr />
+
+<div class="grid-container">
+    <Dropzone Items="Items" InstantReplace="true" TItem="string" OnItemDrop="@((p)=>OnItemDrop(p))" OnReplacedItemDrop="@((p)=>OnReplacedItemDrop(p))">
+        <div>
+            <div class="grid-item">@context</div>
+        </div>
+    </Dropzone>
+</div>
+
+@code {
+    private string DropedItem = "";
+    private string replacedItem = "";
+    public List<string> Items = new List<string>()
+{
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+    };
+    public void OnItemDrop(string item)
+    {
+        DropedItem = item;
+        StateHasChanged();
+    }
+    public void OnReplacedItemDrop(string item)
+    {
+        replacedItem = item;
+        StateHasChanged();
+    }
+}

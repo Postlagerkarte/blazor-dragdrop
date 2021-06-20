@@ -21,7 +21,8 @@ Install-Package blazor-dragdrop
 services.AddBlazorDragDrop();
 ```
 
-2) Add to your Imports.razor
+2) Add Plk.Blazor.DragDrop to your _Imports.razor
+
 ```csharp
 @using Plk.Blazor.DragDrop
 ```
