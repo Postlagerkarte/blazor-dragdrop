@@ -23,7 +23,7 @@
     {
         if (!string.IsNullOrWhiteSpace(newTodo))
         {
-            MyToDoList.Add(new TodoItem { Titel = newTodo });
+            MyToDoList.Add(new TodoItem { Title = newTodo });
             newTodo = string.Empty;
         }
     }
@@ -32,13 +32,13 @@
 
     public List<TodoItem> MyToDoList = new List<TodoItem>()
     {
-            new TodoItem(){Titel = "Drag this item"},
-            new TodoItem(){Titel = "Add another item"},
-            new TodoItem(){Titel = "Remove this item"},
-            new TodoItem(){Titel = "Style this list"},
-            new TodoItem(){Titel = "Fix a bug"},
-            new TodoItem(){Titel = "Build a feature"},
-            new TodoItem(){Titel = "Create a PR"},
+            new TodoItem(){Title = "Drag this item"},
+            new TodoItem(){Title = "Add another item"},
+            new TodoItem(){Title = "Remove this item"},
+            new TodoItem(){Title = "Style this list"},
+            new TodoItem(){Title = "Fix a bug"},
+            new TodoItem(){Title = "Build a feature"},
+            new TodoItem(){Title = "Create a PR"},
     };
 
 }
