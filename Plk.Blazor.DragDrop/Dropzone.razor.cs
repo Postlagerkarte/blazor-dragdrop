@@ -155,11 +155,21 @@ namespace Plk.Blazor.DragDrop
 
         public void OnDragStart(TItem item)
         {
+            if (BeforeDragStart != null)
+            {
+                BeforeDragStart(item);
+            }
+
             DragDropService.ShouldRender = true;
             DragDropService.ActiveItem = item;
             DragDropService.Items = Items;
             StateHasChanged();
             DragDropService.ShouldRender = false;
+
+            if (AfterDragStart != null)
+            {
+                AfterDragStart(item);
+            }
         }
 
         public string CheckIfItemIsInTransit(TItem item)
@@ -238,6 +248,12 @@ namespace Plk.Blazor.DragDrop
         /// </summary>
         [Parameter]
         public Action<TItem> DragEnd { get; set; }
+
+        [Parameter]
+        public Action<TItem> BeforeDragStart { get; set; }
+
+        [Parameter]
+        public Action<TItem> AfterDragStart { get; set; }
 
         /// <summary>
         /// Raises a callback with the dropped item as parameter in case the item can not be dropped due to the given Accept Delegate
