@@ -94,23 +94,6 @@ namespace Plk.Blazor.DragDrop
             base.OnInitialized();
         }
 
-        public string CheckIfDraggable(TItem item)
-        {
-            if (AllowsDrag == null)
-                return "";
-            if (item == null)
-                return "";
-            if (AllowsDrag(item))
-                return "";
-            return "plk-dd-noselect";
-        }
-
-        public string CheckIfDragOperationIsInProgess()
-        {
-            var activeItem = DragDropService.ActiveItem;
-            return activeItem == null ? "" : "plk-dd-inprogess";
-        }
-
         public void OnDragEnd()
         {
             if (DragEnd != null)
@@ -161,34 +144,36 @@ namespace Plk.Blazor.DragDrop
             DragDropService.ShouldRender = false;
         }
 
-        public string CheckIfItemIsInTransit(TItem item)
+        public string CheckIfDragOperationIsInProgess()
         {
-            return item.Equals(DragDropService.ActiveItem) ? "plk-dd-in-transit no-pointer-events" : "";
-        }
-
-        public string CheckIfItemIsDragTarget(TItem item)
-        {
-            if (item.Equals(DragDropService.ActiveItem))
-                return "";
-            if (item.Equals(DragDropService.DragTargetItem))
-            {
-                return IsItemAccepted(DragDropService.DragTargetItem) ? "plk-dd-dragged-over" : "plk-dd-dragged-over-denied";
-            }
-
-            return string.Empty;
+            return DragDropService.ActiveItem == null ? string.Empty : "plk-dd-inprogess";
         }
 
         private string GetClassesForDraggable(TItem item)
         {
-            var builder = new StringBuilder();
-            builder.Append("plk-dd-draggable");
-            if (ItemWrapperClass != null)
-            {
-                var itemWrapperClass = ItemWrapperClass(item);
-                builder.AppendLine(" " + itemWrapperClass);
-            }
+            var classes = new List<string>();
 
-            return builder.ToString();
+            classes.Add("plk-dd-draggable");
+
+            if (ItemWrapperClass != null)
+                classes.Add(ItemWrapperClass(item));
+
+            if (item.Equals(DragDropService.ActiveItem))
+                classes.Add("plk-dd-in-transit no-pointer-events");
+
+            if (!item.Equals(DragDropService.ActiveItem) && item.Equals(DragDropService.DragTargetItem))
+                if (IsItemAccepted(DragDropService.DragTargetItem))
+                    classes.Add("plk-dd-dragged-over");
+                else
+                    classes.Add("plk-dd-dragged-over-denied");
+
+            if (DragDropService.ActiveItem != null)
+                classes.Add("plk-dd-inprogess");
+
+            if (AllowsDrag != null && item != null && !AllowsDrag(item))
+                classes.Add("plk-dd-noselect");
+
+            return string.Join(' ', classes);
         }
 
         private string GetClassesForDropzone()

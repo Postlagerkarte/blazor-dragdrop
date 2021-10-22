@@ -1,6 +1,5 @@
 @typeparam TItem
 @inject DragDropService<TItem> DragDropService
-@using System.Text
 @implements IDisposable
 
 <div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);" 
@@ -24,7 +23,7 @@
      @ondragend="()=>OnDragEnd()"
      @ondragenter="()=>OnDragEnter(item)"
      @ondragleave="()=>OnDragLeave()"
-     class="@GetClassesForDraggable(item) @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess() @CheckIfDraggable(item)"
+     class="@GetClassesForDraggable(item)"
      @attributes="@(ItemWrapperStyle == null ? null : new Dictionary<string, object>() { { "style", ItemWrapperStyle(item) } })">
     @{
         if (ChildContent != null)
