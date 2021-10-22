@@ -1,9 +1,7 @@
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using System.Text;
 
 namespace Plk.Blazor.DragDrop
@@ -192,6 +190,19 @@ namespace Plk.Blazor.DragDrop
             return builder.ToString();
         }
 
+        private string GetStyleForDraggable(TItem item)
+        {
+            var builder = new StringBuilder();
+
+            if (ItemWrapperStyle != null)
+            {
+                var itemWrapperStyle = ItemWrapperStyle(item);
+                builder.AppendLine(" " + itemWrapperStyle);
+            }
+
+            return builder.ToString();
+        }
+
         private string GetClassesForDropzone()
         {
             var builder = new StringBuilder();
@@ -301,6 +312,12 @@ namespace Plk.Blazor.DragDrop
         /// </summary>
         [Parameter]
         public Func<TItem, string> ItemWrapperClass { get; set; }
+
+        /// <summary>
+        /// Allows to pass a delegate which specifies style for the draggable div that wraps your elements.
+        /// </summary>
+        [Parameter]
+        public Func<TItem, string> ItemWrapperStyle { get; set; }
 
         /// <summary>
         /// If set items dropped are copied to this dropzone and are not removed from their source.
