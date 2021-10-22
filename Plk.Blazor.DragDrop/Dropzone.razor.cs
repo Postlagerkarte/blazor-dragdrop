@@ -118,7 +118,7 @@ namespace Plk.Blazor.DragDrop
             }
 
             DragDropService.Reset();
-        //dragTargetItem = default;
+            //dragTargetItem = default;
         }
 
         public void OnDragEnter(TItem item)
@@ -192,15 +192,12 @@ namespace Plk.Blazor.DragDrop
 
         private string GetStyleForDraggable(TItem item)
         {
-            var builder = new StringBuilder();
+            var itemWrapperStyle = string.Empty;
 
             if (ItemWrapperStyle != null)
-            {
-                var itemWrapperStyle = ItemWrapperStyle(item);
-                builder.AppendLine(" " + itemWrapperStyle);
-            }
+                itemWrapperStyle = ItemWrapperStyle(item);
 
-            return builder.ToString();
+            return itemWrapperStyle;
         }
 
         private string GetClassesForDropzone()
@@ -374,7 +371,7 @@ namespace Plk.Blazor.DragDrop
                 }
                 else
                 {
-                //what to do here?
+                    //what to do here?
                 }
             }
             else // we have a direct target
