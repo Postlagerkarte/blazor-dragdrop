@@ -90,6 +90,7 @@ namespace Plk.Blazor.DragDrop
         protected override void OnInitialized()
         {
             DragDropService.StateHasChanged += ForceRender;
+
             base.OnInitialized();
         }
 
@@ -174,7 +175,7 @@ namespace Plk.Blazor.DragDrop
                 return IsItemAccepted(DragDropService.DragTargetItem) ? "plk-dd-dragged-over" : "plk-dd-dragged-over-denied";
             }
 
-            return "";
+            return string.Empty;
         }
 
         private string GetClassesForDraggable(TItem item)
@@ -188,16 +189,6 @@ namespace Plk.Blazor.DragDrop
             }
 
             return builder.ToString();
-        }
-
-        private string GetStyleForDraggable(TItem item)
-        {
-            var itemWrapperStyle = string.Empty;
-
-            if (ItemWrapperStyle != null)
-                itemWrapperStyle = ItemWrapperStyle(item);
-
-            return itemWrapperStyle;
         }
 
         private string GetClassesForDropzone()

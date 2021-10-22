@@ -25,8 +25,7 @@
      @ondragenter="()=>OnDragEnter(item)"
      @ondragleave="()=>OnDragLeave()"
      class="@GetClassesForDraggable(item) @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess() @CheckIfDraggable(item)"
-     style="@GetStyleForDraggable(item)">
-
+     @attributes="@(ItemWrapperStyle == null ? null : new Dictionary<string, object>() { { "style", ItemWrapperStyle(item) } })">
     @{
         if (ChildContent != null)
         {
