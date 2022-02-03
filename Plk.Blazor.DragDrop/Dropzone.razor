@@ -3,7 +3,7 @@
 @using System.Text
 @implements IDisposable
 
-<div class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);" 
+<div id="@Id" class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);" 
      @ondrop:stopPropagation 
      @ondragenter:stopPropagation
      @ondragend:stopPropagation
