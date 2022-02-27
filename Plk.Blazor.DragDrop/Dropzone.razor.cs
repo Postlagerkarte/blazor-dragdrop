@@ -48,7 +48,7 @@ namespace Plk.Blazor.DragDrop
             }
 
             //Operation is finished
-            DragDropService.Reset();
+            if (DragEnd == null) DragDropService.Reset();
             OnItemDrop.InvokeAsync(activeItem);
         }
 
@@ -389,7 +389,7 @@ namespace Plk.Blazor.DragDrop
                 }
             }
 
-            DragDropService.Reset();
+            if (DragEnd == null) DragDropService.Reset();
             StateHasChanged();
             OnItemDrop.InvokeAsync(activeItem);
         }
