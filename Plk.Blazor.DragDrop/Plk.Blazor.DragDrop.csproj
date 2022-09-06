@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>2.4.0</Version>
+    <!--<RazorLangVersion>3.0</RazorLangVersion>-->
+    <Version>2.5.0</Version>
     <PackageId>blazor-dragdrop</PackageId>
     <Authors>Postlagerkarte</Authors>
     <Product>Blazor Drag Drop Library</Product>
@@ -14,15 +14,14 @@
     <Description>Easy-to-use and feature rich Drag and drop library for Blazor</Description>
     <AssemblyVersion>2.2.2.0</AssemblyVersion>
     <FileVersion>2.2.2.0</FileVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
-
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
