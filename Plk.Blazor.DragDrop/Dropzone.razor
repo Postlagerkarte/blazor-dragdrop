@@ -3,8 +3,8 @@
 @using System.Text
 @implements IDisposable
 
-<div id="@Id" class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);" 
-     @ondrop:stopPropagation 
+<div id="@Id" class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);"
+     @ondrop:stopPropagation
      @ondragenter:stopPropagation
      @ondragend:stopPropagation
      @ondragover:stopPropagation
@@ -40,7 +40,7 @@
             <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" @ondrop:stopPropagation @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
         }
     }
-
+    @Footer
 </div>
 
 
