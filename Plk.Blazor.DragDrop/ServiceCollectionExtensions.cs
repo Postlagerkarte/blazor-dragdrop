@@ -1,15 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Plk.Blazor.DragDrop
+namespace Plk.Blazor.DragDrop;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static IServiceCollection AddBlazorDragDrop(this IServiceCollection services)
     {
-        public static IServiceCollection AddBlazorDragDrop(this IServiceCollection services)
-        {
-            return services.AddScoped(typeof(DragDropService<>));
-        }
+        return services.AddScoped(typeof(DragDropService<>));
     }
 }
