@@ -342,7 +342,7 @@ public partial class Dropzone<TItem>
         }
 
         var activeItem = DragDropService.ActiveItem;
-        if (DragDropService.DragTargetItem == null) //no direct drag target
+        if (EqualityComparer<TItem>.Default.Equals(DragDropService.DragTargetItem, default)) //no direct drag target
         {
             if (!Items.Contains(activeItem)) //if dragged to another dropzone
             {
