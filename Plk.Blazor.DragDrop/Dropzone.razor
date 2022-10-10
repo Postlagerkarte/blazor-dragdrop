@@ -21,9 +21,9 @@
 
         <div draggable="@IsItemDragable(item)"
              @ondragstart="()=>OnDragStart(item)"
-             @ondragend="()=>OnDragEnd()"
+             @ondragend="async ()=> await OnDragEnd()"
              @ondragenter="()=>OnDragEnter(item)"
-             @ondragleave="()=>OnDragLeave()"
+             @ondragleave="()=> OnDragLeave()"
              class="@GetClassesForDraggable(item) @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess() @CheckIfDraggable(item)">
 
             @{

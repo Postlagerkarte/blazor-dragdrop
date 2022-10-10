@@ -5,7 +5,7 @@ namespace Plk.Blazor.DragDrop;
 
 public partial class Dropzone<TItem>
 {
-    private void OnDropItemOnSpacing(int newIndex)
+    private async Task OnDropItemOnSpacing(int newIndex)
     {
         if (!IsDropAllowed())
         {
@@ -44,7 +44,7 @@ public partial class Dropzone<TItem>
 
         //Operation is finished
         DragDropService.Reset();
-        OnItemDrop.InvokeAsync(activeItem);
+        await OnItemDrop.InvokeAsync(activeItem);
     }
 
     private bool IsMaxItemLimitReached()
@@ -107,13 +107,14 @@ public partial class Dropzone<TItem>
         return activeItem == null ? "" : "plk-dd-inprogess";
     }
 
-    public void OnDragEnd()
+    public async Task OnDragEnd()
     {
         if (DragEnd != null)
         {
             DragEnd(DragDropService.ActiveItem);
         }
 
+        await ItemsChanged.InvokeAsync(Items);
         DragDropService.Reset();
         //dragTargetItem = default;
     }
@@ -168,7 +169,9 @@ public partial class Dropzone<TItem>
             return "";
         if (item.Equals(DragDropService.DragTargetItem))
         {
-            return IsItemAccepted(DragDropService.DragTargetItem) ? "plk-dd-dragged-over" : "plk-dd-dragged-over-denied";
+            return IsItemAccepted(DragDropService.DragTargetItem)
+                ? "plk-dd-dragged-over"
+                : "plk-dd-dragged-over-denied";
         }
 
         return "";
@@ -208,7 +211,9 @@ public partial class Dropzone<TItem>
         {
             builder.Append(" plk-dd-spacing-dragged-over");
         } // else -> check if active space id and that it is an item that needs space
-        else if (DragDropService.ActiveSpacerId == spacerId && (spacerId != Items.IndexOf(DragDropService.ActiveItem)) && (spacerId != Items.IndexOf(DragDropService.ActiveItem) + 1))
+        else if (DragDropService.ActiveSpacerId == spacerId &&
+                 (spacerId != Items.IndexOf(DragDropService.ActiveItem)) &&
+                 (spacerId != Items.IndexOf(DragDropService.ActiveItem) + 1))
         {
             builder.Append(" plk-dd-spacing-dragged-over");
         }
@@ -264,6 +269,8 @@ public partial class Dropzone<TItem>
     [Parameter]
     public IList<TItem> Items { get; set; }
 
+    [Parameter] public EventCallback<IList<TItem>> ItemsChanged { get; set; }
+
     /// <summary>
     /// Maximum Number of items which can be dropped in this dropzone. Defaults to null which means unlimited.
     /// </summary>
@@ -276,8 +283,7 @@ public partial class Dropzone<TItem>
     [Parameter]
     public EventCallback<TItem> OnItemDropRejectedByMaxItemLimit { get; set; }
 
-    [Parameter]
-    public RenderFragment<TItem> ChildContent { get; set; }
+    [Parameter] public RenderFragment<TItem> ChildContent { get; set; }
 
     /// <summary>
     /// Specifies one or more classnames for the Dropzone element.
@@ -376,7 +382,8 @@ public partial class Dropzone<TItem>
                 {
                     if (!InstantReplace)
                     {
-                        Swap(DragDropService.DragTargetItem, CopyItem(activeItem)); //swap target with a copy of active item
+                        Swap(DragDropService.DragTargetItem,
+                            CopyItem(activeItem)); //swap target with a copy of active item
                     }
                 }
             }
