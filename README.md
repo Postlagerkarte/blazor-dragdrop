@@ -60,7 +60,7 @@ You can also use your own component as a render template:
 
 ```html
     <Dropzone Items="MyItems">
-        <MyCompoenent Item="@context"></MyComponent>
+        <MyComponent Item="@context"></MyComponent>
     </Dropzone>
 ```
 You access your item via the @context - Alternatively, you can specify the Context attribute on the Dropzone element to assign a different name.
