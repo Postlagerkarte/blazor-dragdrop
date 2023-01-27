@@ -30,17 +30,9 @@ internal class DragDropService<T>
     /// </summary>
     public void Reset()
     {
-        ShouldRender = true;
         ActiveItem = default;
         ActiveSpacerId = null;
         Items = null;
         DragTargetItem = default;
-
-        StateHasChanged?.Invoke(this, EventArgs.Empty);
     }
-
-    public bool ShouldRender { get; set; } = true;
-
-    // Notify subscribers that there is a need for rerender
-    public EventHandler StateHasChanged { get; set; }
 }

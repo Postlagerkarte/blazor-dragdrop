@@ -1,7 +1,6 @@
 @typeparam TItem
 @inject DragDropService<TItem> DragDropService
 @using System.Text
-@implements IDisposable
 
 <div id="@Id" class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);"
      @ondrop:stopPropagation
