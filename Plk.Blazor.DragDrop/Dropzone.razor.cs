@@ -73,23 +73,6 @@ public partial class Dropzone<TItem>
     {
         return DragDropService.ActiveItem != null;
     }
-
-    protected override bool ShouldRender()
-    {
-        return DragDropService.ShouldRender;
-    }
-
-    private void ForceRender(object sender, EventArgs e)
-    {
-        StateHasChanged();
-    }
-
-    protected override void OnInitialized()
-    {
-        DragDropService.StateHasChanged += ForceRender;
-        base.OnInitialized();
-    }
-
     public string CheckIfDraggable(TItem item)
     {
         if (AllowsDrag == null)
@@ -134,27 +117,17 @@ public partial class Dropzone<TItem>
         {
             Swap(DragDropService.DragTargetItem, activeItem);
         }
-
-        DragDropService.ShouldRender = true;
-        StateHasChanged();
-        DragDropService.ShouldRender = false;
     }
 
     public void OnDragLeave()
     {
         DragDropService.DragTargetItem = default;
-        DragDropService.ShouldRender = true;
-        StateHasChanged();
-        DragDropService.ShouldRender = false;
     }
 
     public void OnDragStart(TItem item)
     {
-        DragDropService.ShouldRender = true;
         DragDropService.ActiveItem = item;
         DragDropService.Items = Items;
-        StateHasChanged();
-        DragDropService.ShouldRender = false;
     }
 
     public string CheckIfItemIsInTransit(TItem item)
@@ -334,7 +307,6 @@ public partial class Dropzone<TItem>
 
     private void OnDrop()
     {
-        DragDropService.ShouldRender = true;
         if (!IsDropAllowed())
         {
             DragDropService.Reset();
@@ -391,7 +363,6 @@ public partial class Dropzone<TItem>
         }
 
         DragDropService.Reset();
-        StateHasChanged();
         OnItemDrop.InvokeAsync(activeItem);
     }
 
@@ -423,10 +394,5 @@ public partial class Dropzone<TItem>
             Items.RemoveAt(indexActiveItem);
             Items.Insert(indexDraggedOverItem, tmp);
         }
-    }
-
-    public void Dispose()
-    {
-        DragDropService.StateHasChanged -= ForceRender;
     }
 }
