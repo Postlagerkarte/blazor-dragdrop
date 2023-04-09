@@ -104,9 +104,9 @@ By default, items are moved between dropzones.
 If you instead want the item to be copied you can make use of the "CopyItem" attribute:
 
 ```html
-<Dropzone CopyItem="(item)=> { return new TodoItem() {Titel = item.Titel}; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
+<Dropzone CopyItem="(item)=> { return new TodoItem() {Title = item.Title}; }" Items="MyThirdList" TItem="TodoItem" OnItemDrop="@((i)=>lastdropped = i)">
     <div style="border: 2px solid black">
-        @context.Titel
+        @context.Title
     </div>
 </Dropzone>
 ```
