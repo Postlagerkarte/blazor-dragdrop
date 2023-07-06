@@ -309,6 +309,15 @@ public partial class Dropzone<TItem>
     [Parameter]
     public RenderFragment Footer { get; set; }
 
+    /// <summary>
+    /// Add support for virtualization
+    /// </summary>
+    [Parameter]
+    public bool Virtualize { get; set; }
+
+    [Parameter]
+    public VirtualizeOptions<TItem> VirtualizeOptions { get; set; } = new VirtualizeOptions<TItem>();
+
     private bool IsDropAllowed()
     {
         var activeItem = DragDropService.ActiveItem;

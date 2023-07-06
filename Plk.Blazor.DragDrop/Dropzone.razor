@@ -1,46 +1,64 @@
 @typeparam TItem
 @inject DragDropService<TItem> DragDropService
 @using System.Text
+@using Microsoft.AspNetCore.Components.Web.Virtualization;
 @implements IDisposable
 
 <div id="@Id" class="@GetClassesForDropzone()" @ondragover:preventDefault @ondragover="()=> { }" @ondragenter:preventDefault @ondragenter="()=> { }" @ondrop="()=>OnDrop()" @ondrop:preventDefault ondragstart="event.dataTransfer.setData('text', event.target.id);"
-     @ondrop:stopPropagation
-     @ondragenter:stopPropagation
-     @ondragend:stopPropagation
-     @ondragover:stopPropagation
-     @ondragleave:stopPropagation
-     @ondragstart:stopPropagation>
+@ondrop:stopPropagation
+@ondragenter:stopPropagation
+@ondragend:stopPropagation
+@ondragover:stopPropagation
+@ondragleave:stopPropagation
+@ondragstart:stopPropagation>
 
-    @foreach (var item in Items)
+    @if (Virtualize)
     {
-
-        if (Items.IndexOf(item) == 0 && MaxItems == null || MaxItems > 1)
+        <Virtualize Context="item" TItem="TItem" Items="Items" OverscanCount="VirtualizeOptions.OverscanCount" ItemSize="VirtualizeOptions.ItemSize" ItemsProvider="VirtualizeOptions.ItemsProvider">
+            @rowFragment(item)
+        </Virtualize>
+    }
+    else
+    {
+        @foreach (var item in Items)
         {
-            <div @ondrop="()=>OnDropItemOnSpacing(0)" @ondrop:stopPropagation @ondragenter="()=>DragDropService.ActiveSpacerId =  0" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@GetClassesForSpacing(0)"></div>
-        }
-
-        <div draggable="@IsItemDragable(item)"
-             @ondragstart="()=>OnDragStart(item)"
-             @ondragend="()=>OnDragEnd()"
-             @ondragenter="()=>OnDragEnter(item)"
-             @ondragleave="()=>OnDragLeave()"
-             class="@GetClassesForDraggable(item) @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess() @CheckIfDraggable(item)">
-
-            @{
-                if (ChildContent != null)
-                {
-                    @ChildContent(item);
-                }
-            }
-
-        </div>
-
-        @if (MaxItems == null || MaxItems > 1)
-        {
-            <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" @ondrop:stopPropagation @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
+            @rowFragment(item)
         }
     }
+
     @Footer
 </div>
+@code {
+    protected RenderFragment<TItem> rowFragment => item => __builder =>
+     {
 
+         @if (Items != null && (Items.IndexOf(item) == 0 && MaxItems == null || MaxItems > 1))
+         {
+             <div @ondrop="()=>OnDropItemOnSpacing(0)" @ondrop:stopPropagation @ondragenter="()=>DragDropService.ActiveSpacerId =  0" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@GetClassesForSpacing(0)"></div>
+         }
+
+         <div draggable="@IsItemDragable(item)"
+         @ondragstart="()=>OnDragStart(item)"
+         @ondragend="()=>OnDragEnd()"
+         @ondragenter="()=>OnDragEnter(item)"
+         @ondragleave="()=>OnDragLeave()"
+          class="@GetClassesForDraggable(item) @CheckIfItemIsInTransit(item) @CheckIfItemIsDragTarget(item) @CheckIfDragOperationIsInProgess() @CheckIfDraggable(item)">
+
+             @{
+                 if (ChildContent != null)
+                 {
+                     @ChildContent(item)
+                 }
+             }
+
+         </div>
+
+         @if (Items!=null && (MaxItems == null || MaxItems > 1))
+         {
+             <div @ondrop="()=>OnDropItemOnSpacing(Items.IndexOf(item)+1)" @ondrop:stopPropagation @ondragenter="()=>DragDropService.ActiveSpacerId = Items.IndexOf(item)+1" @ondragleave="()=>DragDropService.ActiveSpacerId = null" class="@CheckIfDragOperationIsInProgess() @GetClassesForSpacing(Items.IndexOf(item)+1)"></div>
+         }
+
+     };
+
+}
 
