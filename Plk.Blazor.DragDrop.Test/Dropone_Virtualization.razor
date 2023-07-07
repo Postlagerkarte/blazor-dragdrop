@@ -1,0 +1,131 @@
+﻿@using Microsoft.AspNetCore.Components.Web.Virtualization;
+@inherits TestComponentBase
+
+@code
+{
+    void RegisterService(Fixture fixture)
+    {
+        fixture.Services.AddBlazorDragDrop();
+    }
+
+    public class MyItem
+    {
+        public string Name { get; set; }
+    }
+
+    public List<MyItem> Items = Enumerable.Range(1, 1000).Select(x => new MyItem() { Name = $"Hello world {x}" }).ToList();
+
+    public List<MyItem> Items2 = new List<MyItem>()
+    {
+
+    };
+}
+
+<Fixture Setup="RegisterService" Test="DropzoneMoveTest">
+    <ComponentUnderTest>
+        <Dropzone Items="Items" Virtualize=true>
+            @context.Name
+        </Dropzone>
+        <hr />
+        <Dropzone TItem="MyItem" Id="SecondDropzone" Items="Items2" Virtualize=true>
+            @context.Name
+        </Dropzone>
+    </ComponentUnderTest>
+
+
+    @code
+    {
+        void DropzoneMoveTest(Fixture fixture)
+        {
+            var cut = fixture.GetComponentUnderTest();
+
+            //get the DragDropService
+            var service = fixture.Services.GetService<DragDropService<MyItem>>();
+            service.ActiveItem = Items[0];
+            service.Items = Items;
+            var initialItemsCount = Items.Count();
+
+            var movedItem = service.ActiveItem;
+
+
+            var secondDropzone = cut.Find("#SecondDropzone");
+            secondDropzone.Drop();
+
+            Assert.Equal(initialItemsCount - 1, Items.Count);
+            Assert.Single(Items2);
+            Assert.Equal(movedItem, Items2[0]);
+        }
+    }
+</Fixture>
+
+<Fixture Setup="RegisterService" Test="DropzoneCopyTest">
+    <ComponentUnderTest>
+        <Dropzone Items="Items" Virtualize=true>
+            @context.Name
+        </Dropzone>
+        <hr />
+        <Dropzone TItem="MyItem" Virtualize=true CopyItem="(item)=> { return new MyItem() { Name = item.Name }; }" Id="SecondDropzone" Items="Items2">
+            @context.Name
+        </Dropzone>
+    </ComponentUnderTest>
+
+
+    @code
+    {
+        void DropzoneCopyTest(Fixture fixture)
+        {
+            var cut = fixture.GetComponentUnderTest();
+
+            //get the DragDropService
+            var service = fixture.Services.GetService<DragDropService<MyItem>>();
+            service.ActiveItem = Items[0];
+            service.Items = Items;
+            var movedItem = service.ActiveItem;
+
+            var secondDropzone = cut.Find("#SecondDropzone");
+            secondDropzone.Drop();
+
+            Assert.Equal(1000, Items.Count);
+            Assert.Single(Items2);
+            Assert.NotEqual(movedItem, Items2[0]);
+        }
+    }
+</Fixture>
+
+<Fixture Setup="RegisterService" Test="DefaultDropzoneRendersCorrectly">
+    <ComponentUnderTest>
+        <div style="height:100px;overflow:hidden">
+            <Dropzone Virtualize=true VirtualizeOptions=@(new VirtualizeOptions<MyItem>{ItemSize=500, ItemsProvider=@LoadItems }) TItem="MyItem">
+                <div style="height:50px">
+                    @context.Name
+                </div>
+            </Dropzone>
+        </div>
+        <hr />
+    </ComponentUnderTest>
+
+
+    @code
+    {
+        int numberOfRenderedElements = 10;
+        private ValueTask<ItemsProviderResult<MyItem>> LoadItems(ItemsProviderRequest request)
+        {
+            var numItems = Math.Min(request.Count, Items.Count - request.StartIndex);
+            var items = Items.Skip(request.StartIndex).Take(numberOfRenderedElements);
+
+            return ValueTask.FromResult(new ItemsProviderResult<MyItem>(items, Items.Count));
+        }
+
+        void DefaultDropzoneRendersCorrectly(Fixture fixture)
+        {
+            var cut = fixture.GetComponentUnderTest();
+
+            var service = fixture.Services.GetService<DragDropService<MyItem>>();
+            service.Items = Items;
+            var draggable = cut.FindAll(".plk-dd-draggable");
+
+            Assert.Equal(numberOfRenderedElements, draggable.Count());
+            Assert.Equal(1000, Items.Count);
+        }
+    }
+</Fixture>
